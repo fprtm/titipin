@@ -445,7 +445,7 @@ export const draftOrders = pgTable(
       .unique()
       .references(() => users.id, { onDelete: 'cascade' }), // 1 draft active per cashier (BR-012, BR-016)
     customerId: uuid('customer_id').references(() => customers.id, { onDelete: 'set null' }),
-    items: jsonb('items').$type<Array<{ productId: number; quantity: number }>>().notNull(),
+    items: jsonb('items').$type<Array<{ product_id: number; quantity: number }>>().notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
   },
