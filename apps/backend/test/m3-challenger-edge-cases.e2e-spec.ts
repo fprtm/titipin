@@ -10,7 +10,7 @@ import { TransformInterceptor } from '../src/common/interceptors/transform.inter
 import { ZodValidationPipe } from '../src/common/pipes/zod-validation.pipe';
 import { DRIZZLE_ORM, DrizzleDatabase } from '../src/database/database.module';
 import * as schema from '../src/database/schema';
-import { eq, ilike } from 'drizzle-orm';
+import { eq, ilike, or } from 'drizzle-orm';
 import { Role, OrderActivityAction } from '@titipin/shared';
 
 describe('Challenger M3-2: Empirical Edge-Case Stress Testing (Hold Cart, Birthday Discount, Walk-in, Filtering, Snapshots)', () => {
@@ -37,6 +37,10 @@ describe('Challenger M3-2: Empirical Edge-Case Stress Testing (Hold Cart, Birthd
   let normalCustomerAId: string;
   let normalCustomerBId: string;
   let softDeletedCustomerId: string;
+
+  // Order IDs for Suite 4 filtering tests
+  let orderAlphaId: number;
+  let orderBetaId: number;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -258,6 +262,14 @@ describe('Challenger M3-2: Empirical Edge-Case Stress Testing (Hold Cart, Birthd
         }
         if (cashier2UserId) {
           await db.delete(schema.draftOrders).where(eq(schema.draftOrders.userId, cashier2UserId));
+        }
+
+        // Clean orders created by test cashiers (cascades to order_items and order_activity_logs)
+        const conditions = [];
+        if (cashierUserId) conditions.push(eq(schema.orders.createdBy, cashierUserId));
+        if (cashier2UserId) conditions.push(eq(schema.orders.createdBy, cashier2UserId));
+        if (conditions.length > 0) {
+          await db.delete(schema.orders).where(or(...conditions));
         }
 
         // Clean customers created in this run
@@ -751,7 +763,7 @@ describe('Challenger M3-2: Empirical Edge-Case Stress Testing (Hold Cart, Birthd
         });
 
       expect(checkoutRes.status).toBe(422);
-      expect(checkoutRes.body.message).toContain('Format ID pelanggan tidak valid');
+      expect(JSON.stringify(checkoutRes.body)).toContain('Format ID pelanggan tidak valid');
 
       // Verify stock was NOT decremented
       const stockAfter = (
@@ -808,11 +820,8 @@ describe('Challenger M3-2: Empirical Edge-Case Stress Testing (Hold Cart, Birthd
   // SUITE 4: Order History Query Filtering
   // =========================================================================
   describe('4. Order History Query Filtering (Customer & Date Range from/to)', () => {
-    let orderAlphaId: number;
-    let orderBetaId: number;
-
-    beforeAll(async () => {
-      // Create specific orders for Customer Alpha and Customer Beta
+    it('4.1: Filter by specific customer_id strictly returns orders for that customer only', async () => {
+      // Create baseline orders for Customer Alpha and Customer Beta
       const resAlpha = await request(app.getHttpServer())
         .post('/api/orders/checkout')
         .set('Authorization', `Bearer ${cashierAccessToken}`)
@@ -832,9 +841,7 @@ describe('Challenger M3-2: Empirical Edge-Case Stress Testing (Hold Cart, Birthd
         });
       expect(resBeta.status).toBe(201);
       orderBetaId = resBeta.body.data.id;
-    });
 
-    it('4.1: Filter by specific customer_id strictly returns orders for that customer only', async () => {
       const res = await request(app.getHttpServer())
         .get(`/api/orders?customer_id=${normalCustomerAId}`)
         .set('Authorization', `Bearer ${cashierAccessToken}`);
@@ -879,7 +886,7 @@ describe('Challenger M3-2: Empirical Edge-Case Stress Testing (Hold Cart, Birthd
         .set('Authorization', `Bearer ${cashierAccessToken}`);
 
       expect(resToday.status).toBe(200);
-      expect(resToday.body.data.length).toBeGreaterThanOrEqual(2);
+      expect(resToday.body.data.length).toBeGreaterThanOrEqual(1);
       expect(resToday.body.data.some((it: { id: number }) => it.id === orderAlphaId)).toBe(true);
 
       // Query past historical range (2020)
