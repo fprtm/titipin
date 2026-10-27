@@ -1,0 +1,9 @@
+node_modules
+.git
+.turbo
+.agents
+scratch
+dist
+.next
+*.log
+.DS_Store

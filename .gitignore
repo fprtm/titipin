@@ -40,3 +40,7 @@ Thumbs.db
 # Docker & Persistence
 docker-compose.override.yml
 pgdata/
+
+# Agent Workspaces & Scratch
+.agents/teamwork/
+scratch/

@@ -48,7 +48,7 @@ describe('DashboardPage Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (apiClient.get as any).mockImplementation((url: string) => {
+    vi.mocked(apiClient.get).mockImplementation((url: string) => {
       if (url.includes('/dashboard/summary')) {
         return Promise.resolve({ data: { data: mockSummary } });
       }

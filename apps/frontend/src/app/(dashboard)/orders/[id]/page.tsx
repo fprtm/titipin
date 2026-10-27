@@ -6,7 +6,6 @@ import {
   ArrowLeft,
   Printer,
   Receipt,
-  CheckCircle2,
   Calendar,
   User,
   ShoppingBag,
