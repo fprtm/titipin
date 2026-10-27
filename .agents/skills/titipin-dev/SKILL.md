@@ -44,6 +44,10 @@ To master specific layers of the codebase, consult the dedicated guides below:
 - [5. Testing Strategy & Test Suites](./references/testing-guide.md): 10 Critical Integration Test Suites, Supertest setup, database transaction rollback in tests, and Vitest component testing.
 - [6. Cheatsheet & CLI Commands](./references/cheatsheet-commands.md): Step-by-step commands for setup, migrations, seeds, dev server, and testing.
 
+### Executable Helper Scripts
+- [audit-code-quality.sh](./scripts/audit-code-quality.sh): Run automated code compliance check (zero raw SVG check, lint, typecheck, test).
+- [verify-links.py](./scripts/verify-links.py): Validate all internal documentation links across the monorepo.
+
 ---
 
 ## Standard Development Workflow

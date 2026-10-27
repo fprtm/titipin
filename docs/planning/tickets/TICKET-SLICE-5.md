@@ -6,7 +6,7 @@
 | **Ticket ID** | `TICKET-SLICE-5` |
 | **Epic Terkait** | `EPIC-04: TRANSAKSI PENJUALAN KASIR (POINT OF SALE)` |
 | **Target Branch** | `feature/slice-5-core-pos-engine` |
-| **Aturan Bisnis** | [BR-001 s/d BR-005, BR-013, BR-017](../../product/PRD.md#L45-L75) |
+| **Aturan Bisnis** | [BR-001, BR-002, BR-003, BR-004, BR-005, BR-013, BR-017](../../product/PRD.md#L45-L75) |
 | **Dokumen Acuan** | [ARCHITECTURE.md Section 4.2](../../architecture/ARCHITECTURE.md#L182-L238), [DATA-MODEL.md Section 4.4](../../architecture/DATA-MODEL.md#L384-L437), [openapi.yaml](../../api/openapi.yaml#L516-L540) |
 | **Spesifikasi UI** | [03-pos-checkout.md](../../design/pages/03-pos-checkout.md), [COMPONENTS.md](../../design/COMPONENTS.md) |
 | **Integration Tests** | [TEST-01, TEST-02, TEST-03, TEST-05](../../product/ACCEPTANCE-CRITERIA.md#L466-L470) |

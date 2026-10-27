@@ -75,7 +75,7 @@ The relational data model consists of 8 core tables:
 5. `order_items`: Line items with historical `unit_price`, `quantity`, `subtotal`.
 6. `order_activity_logs`: Timeline log of order status transitions (`ORDER_CREATED`, `ORDER_HELD`, etc.).
 7. `audit_logs`: Centralized audit trail for all write mutations with JSON diff.
-8. `held_orders`: Draft transactions stored when cashiers hold customer orders.
+8. `draft_orders`: Draft transactions stored when cashiers hold customer orders.
 
 ---
 

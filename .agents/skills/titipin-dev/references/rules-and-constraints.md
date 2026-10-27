@@ -80,7 +80,7 @@ This document defines the strict non-negotiable rules, styling conventions, and 
   - **TypeScript Interfaces / Types / Classes**: Wajib `PascalCase`:
     `CreateProductDto`, `OrderResponse`, `ProductEntity`, `ApiResponse<T>`.
   - **Constants & Enums**: Wajib `UPPER_SNAKE_CASE` untuk nilai konstan:
-    `MAX_RETRY_ATTEMPTS = 3`, `DEFAULT_PAGE_SIZE = 10`, `OrderStatus.COMPLETED`.
+    `MAX_RETRY_ATTEMPTS = 3`, `DEFAULT_PAGE_SIZE = 10`, `OrderActivityAction.ORDER_FINALIZED`.
 
 ---
 
