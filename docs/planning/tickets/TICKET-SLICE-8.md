@@ -53,11 +53,11 @@ Menyajikan ringkasan metrik performa finansial toko (akumulasi total omset dan j
 
 ## 3. DEFINITION OF DONE (DOD) CHECKLIST
 
-- [ ] Filter periode (Harian, Bulanan, Kuartalan) mengubah metrik kartu dan grafik tren secara real-time.
-- [ ] Kalkulasi omset dan total transaksi akurat sesuai data di tabel `orders`.
-- [ ] Top 5 Produk Terlaris dan Bottom 5 Produk Lesu ter-render dengan benar (produk 0 penjualan muncul di urutan pertama pada panel lesu).
-- [ ] Kartu peringatan stok kritis menampilkan jumlah produk dengan stok $<5$.
-- [ ] Grafik tren Recharts responsif sempurna di perangkat mobile ponsel, tablet, dan desktop.
-- [ ] Seluruh icon menggunakan `lucide-react`.
-- [ ] Branch `feature/slice-8-dashboard-analytics` di-merge ke `develop` menggunakan flag `--no-ff`.
-- [ ] Branch fitur lokal dihapus setelah merge.
+- [x] Filter periode (Harian, Bulanan, Kuartalan) mengubah metrik kartu dan grafik tren secara real-time.
+- [x] Kalkulasi omset dan total transaksi akurat sesuai data di tabel `orders`.
+- [x] Top 5 Produk Terlaris dan Bottom 5 Produk Lesu ter-render dengan benar (produk 0 penjualan muncul di urutan pertama pada panel lesu).
+- [x] Kartu peringatan stok kritis menampilkan jumlah produk dengan stok $<5$.
+- [x] Grafik tren Recharts responsif sempurna di perangkat mobile ponsel, tablet, dan desktop.
+- [x] Seluruh icon menggunakan `lucide-react`.
+- [x] Branch `feature/slice-8-dashboard-analytics` di-merge ke `develop` menggunakan flag `--no-ff`.
+- [x] Branch fitur lokal dihapus setelah merge.

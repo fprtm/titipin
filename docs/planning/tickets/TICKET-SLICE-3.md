@@ -58,12 +58,12 @@ Mengelola katalog produk barang dagangan toko (kode produk unik, harga satuan, s
 
 ## 3. DEFINITION OF DONE (DOD) CHECKLIST
 
-- [ ] Pengguna (Kasir & Admin) dapat melihat, mencari, dan mengurutkan katalog produk.
-- [ ] Admin dapat menambah, mengedit, dan menghapus (soft-delete) produk.
-- [ ] Produk yang di-soft-delete tidak muncul lagi di katalog kasir POS maupun API listing normal.
-- [ ] Tombol Export berhasil mengunduh file `.xlsx` yang valid dan dapat dibuka di Microsoft Excel.
-- [ ] Import Excel bersifat idempoten: mengunggah file yang sama dua kali tidak menghasilkan duplikasi produk (`inserted: 0, updated: N`).
-- [ ] Automated Test `TEST-07` lulus 100%.
-- [ ] Tampilan halaman responsif di layar mobile (tabel dapat di-scroll horizontal secara halus di layar sempit).
-- [ ] Branch `feature/slice-3-product-catalog` di-merge ke `develop` menggunakan flag `--no-ff`.
-- [ ] Branch fitur lokal dihapus setelah merge.
+- [x] Pengguna (Kasir & Admin) dapat melihat, mencari, dan mengurutkan katalog produk.
+- [x] Admin dapat menambah, mengedit, dan menghapus (soft-delete) produk.
+- [x] Produk yang di-soft-delete tidak muncul lagi di katalog kasir POS maupun API listing normal.
+- [x] Tombol Export berhasil mengunduh file `.xlsx` yang valid dan dapat dibuka di Microsoft Excel.
+- [x] Import Excel bersifat idempoten: mengunggah file yang sama dua kali tidak menghasilkan duplikasi produk (`inserted: 0, updated: N`).
+- [x] Automated Test `TEST-07` lulus 100%.
+- [x] Tampilan halaman responsif di layar mobile (tabel dapat di-scroll horizontal secara halus di layar sempit).
+- [x] Branch `feature/slice-3-product-catalog` di-merge ke `develop` menggunakan flag `--no-ff`.
+- [x] Branch fitur lokal dihapus setelah merge.

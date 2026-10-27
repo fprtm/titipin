@@ -51,12 +51,12 @@ Menyediakan fitur administrasi pengguna bagi Admin toko untuk mendaftarkan akun 
 
 ## 3. DEFINITION OF DONE (DOD) CHECKLIST
 
-- [ ] Admin dapat melihat daftar seluruh staf dan mendaftarkan staf kasir baru (`POST /api/users`).
-- [ ] Admin dapat mereset password staf dan sesi staf tersebut langsung terputus (silent refresh ditolak).
-- [ ] Admin dapat menonaktifkan akun staf (soft delete), dan akun tersebut langsung diblokir dari login.
-- [ ] Self-Guard aktif: Admin tidak bisa mereset atau menonaktifkan akun miliknya sendiri (403 Forbidden).
-- [ ] Kasir diblokir dari endpoint `/api/users` dan halaman `/users` dengan respon 403 Forbidden.
-- [ ] Seluruh mutasi pengguna tercatat lengkap di tabel `audit_logs`.
-- [ ] Automated Test `TEST-08` dan `TEST-09` (bagian users) lulus 100%.
-- [ ] Branch `feature/slice-2-user-management` di-merge ke `develop` menggunakan flag `--no-ff`.
-- [ ] Branch fitur lokal dihapus setelah merge.
+- [x] Admin dapat melihat daftar seluruh staf dan mendaftarkan staf kasir baru (`POST /api/users`).
+- [x] Admin dapat mereset password staf dan sesi staf tersebut langsung terputus (silent refresh ditolak).
+- [x] Admin dapat menonaktifkan akun staf (soft delete), dan akun tersebut langsung diblokir dari login.
+- [x] Self-Guard aktif: Admin tidak bisa mereset atau menonaktifkan akun miliknya sendiri (403 Forbidden).
+- [x] Kasir diblokir dari endpoint `/api/users` dan halaman `/users` dengan respon 403 Forbidden.
+- [x] Seluruh mutasi pengguna tercatat lengkap di tabel `audit_logs`.
+- [x] Automated Test `TEST-08` dan `TEST-09` (bagian users) lulus 100%.
+- [x] Branch `feature/slice-2-user-management` di-merge ke `develop` menggunakan flag `--no-ff`.
+- [x] Branch fitur lokal dihapus setelah merge.

@@ -66,10 +66,10 @@ Menyempurnakan database seeder dengan data yang kaya dan realistis (akun admin, 
 
 ## 3. DEFINITION OF DONE (DOD) CHECKLIST
 
-- [ ] Perintah `pnpm db:seed` mengisi minimal 2 akun user, 20 produk, 15 member, dan 30 order historis tanpa error.
-- [ ] Perintah `pnpm test` menghasilkan 9/9 skenario integration test PASS (100% green).
-- [ ] `docker-compose.prod.yml` dapat dijalankan dan seluruh fungsionalitas aplikasi dapat diakses.
-- [ ] Master README.md lengkap dan panduan setup $\le 6$ perintah CLI terbukti berhasil dijalankan dari database kosong.
-- [ ] Seluruh kode bebas dari hardcoded SVG/emoji dan seluruh halaman responsif mobile-first.
-- [ ] Branch `feature/slice-9-seeder-prod-release` di-merge ke `develop` menggunakan flag `--no-ff`.
-- [ ] Branch `develop` di-merge ke `main` dan ditandai Git Tag **`v1.0.0`**.
+- [x] Perintah `pnpm db:seed` mengisi minimal 2 akun user, 20 produk, 15 member, dan 30 order historis tanpa error.
+- [x] Perintah `pnpm test` menghasilkan 9/9 skenario integration test PASS (100% green).
+- [x] `docker-compose.prod.yml` dapat dijalankan dan seluruh fungsionalitas aplikasi dapat diakses.
+- [x] Master README.md lengkap dan panduan setup $\le 6$ perintah CLI terbukti berhasil dijalankan dari database kosong.
+- [x] Seluruh kode bebas dari hardcoded SVG/emoji dan seluruh halaman responsif mobile-first.
+- [x] Branch `feature/slice-9-seeder-prod-release` di-merge ke `develop` menggunakan flag `--no-ff`.
+- [x] Branch `develop` di-merge ke `main` dan ditandai Git Tag **`v1.0.0`**.

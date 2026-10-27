@@ -72,12 +72,12 @@ Membangun fondasi monorepo berbasis **Turborepo** dan **pnpm workspaces** yang m
 
 ## 3. DEFINITION OF DONE (DOD) CHECKLIST
 
-- [ ] `pnpm install` di root berjalan sukses tanpa error resolusi dependensi.
-- [ ] `docker compose up -d db` sukses menyalakan kontainer PostgreSQL 16 dan dapat diakses dari backend.
-- [ ] Backend NestJS dapat dijalankan via `pnpm --filter @titipin/backend dev` di port 3001.
-- [ ] Endpoint `GET http://localhost:3001/api/health` mengembalikan `200 OK` dengan status koneksi database `connected`.
-- [ ] Frontend Next.js dapat dijalankan via `pnpm --filter @titipin/frontend dev` di port 3000.
-- [ ] Import package `@titipin/shared` berjalan type-safe baik di backend maupun frontend.
-- [ ] Script migrasi Drizzle `pnpm db:generate` dan `pnpm db:migrate` berhasil membuat tabel `audit_logs` di PostgreSQL.
-- [ ] Branch `feature/slice-0-monorepo-baseline` di-merge ke `develop` menggunakan flag `--no-ff`.
-- [ ] Branch fitur lokal dihapus (`git branch -d feature/slice-0-monorepo-baseline`) setelah sukses merge.
+- [x] `pnpm install` di root berjalan sukses tanpa error resolusi dependensi.
+- [x] `docker compose up -d db` sukses menyalakan kontainer PostgreSQL 16 dan dapat diakses dari backend.
+- [x] Backend NestJS dapat dijalankan via `pnpm --filter @titipin/backend dev` di port 3001.
+- [x] Endpoint `GET http://localhost:3001/api/health` mengembalikan `200 OK` dengan status koneksi database `connected`.
+- [x] Frontend Next.js dapat dijalankan via `pnpm --filter @titipin/frontend dev` di port 3000.
+- [x] Import package `@titipin/shared` berjalan type-safe baik di backend maupun frontend.
+- [x] Script migrasi Drizzle `pnpm db:generate` dan `pnpm db:migrate` berhasil membuat tabel `audit_logs` di PostgreSQL.
+- [x] Branch `feature/slice-0-monorepo-baseline` di-merge ke `develop` menggunakan flag `--no-ff`.
+- [x] Branch fitur lokal dihapus (`git branch -d feature/slice-0-monorepo-baseline`) setelah sukses merge.

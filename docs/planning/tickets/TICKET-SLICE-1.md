@@ -55,12 +55,12 @@ Mengimplementasikan modul autentikasi aman dengan arsitektur Dual-Token JWT (Acc
 
 ## 3. DEFINITION OF DONE (DOD) CHECKLIST
 
-- [ ] Pengguna dapat login dengan email dan password yang sah dan menerima cookie HttpOnly.
-- [ ] Percobaan login dengan akun nonaktif (`deleted_at IS NOT NULL`) atau password salah ditolak 401 Unauthorized.
-- [ ] Mutex refresh token bekerja mulus: saat access token kadaluarsa, 3 request paralel berhasil dieksekusi ulang otomatis setelah silent refresh.
-- [ ] Logout berhasil mengosongkan `refresh_token_hash` di database dan menghapus cookie di browser.
-- [ ] Halaman login dan dashboard shell responsif sempurna di layar mobile (375px), tablet (768px), dan desktop (1280px).
-- [ ] Tidak ada penggunaan icon hardcoded SVG/emoji — seluruh ikon menggunakan `lucide-react`.
-- [ ] Automated Test `TEST-06` (Akses endpoint tanpa token ditolak 401) lulus 100%.
-- [ ] Branch `feature/slice-1-auth-app-shell` di-merge ke `develop` menggunakan flag `--no-ff`.
-- [ ] Branch fitur lokal dihapus setelah merge.
+- [x] Pengguna dapat login dengan email dan password yang sah dan menerima cookie HttpOnly.
+- [x] Percobaan login dengan akun nonaktif (`deleted_at IS NOT NULL`) atau password salah ditolak 401 Unauthorized.
+- [x] Mutex refresh token bekerja mulus: saat access token kadaluarsa, 3 request paralel berhasil dieksekusi ulang otomatis setelah silent refresh.
+- [x] Logout berhasil mengosongkan `refresh_token_hash` di database dan menghapus cookie di browser.
+- [x] Halaman login dan dashboard shell responsif sempurna di layar mobile (375px), tablet (768px), dan desktop (1280px).
+- [x] Tidak ada penggunaan icon hardcoded SVG/emoji — seluruh ikon menggunakan `lucide-react`.
+- [x] Automated Test `TEST-06` (Akses endpoint tanpa token ditolak 401) lulus 100%.
+- [x] Branch `feature/slice-1-auth-app-shell` di-merge ke `develop` menggunakan flag `--no-ff`.
+- [x] Branch fitur lokal dihapus setelah merge.

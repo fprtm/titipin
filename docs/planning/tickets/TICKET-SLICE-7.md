@@ -51,13 +51,13 @@ Menyediakan fitur pencarian riwayat transaksi dengan filter rentang tanggal dan 
 
 ## 3. DEFINITION OF DONE (DOD) CHECKLIST
 
-- [ ] Pengguna dapat melihat daftar transaksi historis dan memfilter berdasarkan rentang tanggal dan pelanggan.
-- [ ] Detail transaksi menampilkan harga satuan snapshot historis yang tidak berubah meski harga master produk diubah.
-- [ ] Detail transaksi menyajikan kronologi kejadian lengkap dari `order_activity_logs`.
-- [ ] Halaman cetak nota thermal menghasilkan struk rapi tanpa elemen navigasi aplikasi.
-- [ ] Admin dapat melihat audit trail terpusat dan membuka modal perbandingan JSON diff.
-- [ ] Kasir diblokir dari endpoint `/api/audit-logs` dan halaman `/audit-logs` dengan respon 403 Forbidden (`TEST-09`).
-- [ ] Seluruh halaman responsif sempurna di perangkat mobile dan tablet.
-- [ ] Seluruh icon menggunakan `lucide-react`.
-- [ ] Branch `feature/slice-7-history-audit` di-merge ke `develop` menggunakan flag `--no-ff`.
-- [ ] Branch fitur lokal dihapus setelah merge.
+- [x] Pengguna dapat melihat daftar transaksi historis dan memfilter berdasarkan rentang tanggal dan pelanggan.
+- [x] Detail transaksi menampilkan harga satuan snapshot historis yang tidak berubah meski harga master produk diubah.
+- [x] Detail transaksi menyajikan kronologi kejadian lengkap dari `order_activity_logs`.
+- [x] Halaman cetak nota thermal menghasilkan struk rapi tanpa elemen navigasi aplikasi.
+- [x] Admin dapat melihat audit trail terpusat dan membuka modal perbandingan JSON diff.
+- [x] Kasir diblokir dari endpoint `/api/audit-logs` dan halaman `/audit-logs` dengan respon 403 Forbidden (`TEST-09`).
+- [x] Seluruh halaman responsif sempurna di perangkat mobile dan tablet.
+- [x] Seluruh icon menggunakan `lucide-react`.
+- [x] Branch `feature/slice-7-history-audit` di-merge ke `develop` menggunakan flag `--no-ff`.
+- [x] Branch fitur lokal dihapus setelah merge.

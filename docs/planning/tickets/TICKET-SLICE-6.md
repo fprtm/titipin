@@ -61,13 +61,13 @@ Mengizinkan kasir menahan (*hold*) keranjang belanja yang sedang aktif saat pela
 
 ## 3. DEFINITION OF DONE (DOD) CHECKLIST
 
-- [ ] Kasir dapat menahan transaksi aktif ke tabel `draft_orders` dan stok fisik tidak terpotong sama sekali.
-- [ ] Database menolak jika kasir mencoba hold transaksi kedua tanpa menyelesaikan/membuang draft pertama (`UNIQUE user_id`).
-- [ ] Kasir dapat memuat kembali transaksi tertahan ke keranjang belanja POS.
-- [ ] Kasir dapat membuang (discard) transaksi tertahan dan draft terhapus dari server.
-- [ ] Finalisasi transaksi held sukses memotong stok secara atomik, menerbitkan invoice di `orders`, menghapus draft, dan mencatat kronologi di `order_activity_logs`.
-- [ ] Tabel `orders` tetap 100% bersih dan hanya berisi transaksi yang sudah final lunas.
-- [ ] Automated Test `TEST-04` lulus 100%.
-- [ ] Seluruh icon menggunakan `lucide-react` (`Clock`, `Play`, `Trash2`, `AlertCircle`).
-- [ ] Branch `feature/slice-6-pos-hold-orders` di-merge ke `develop` menggunakan flag `--no-ff`.
-- [ ] Branch fitur lokal dihapus setelah merge.
+- [x] Kasir dapat menahan transaksi aktif ke tabel `draft_orders` dan stok fisik tidak terpotong sama sekali.
+- [x] Database menolak jika kasir mencoba hold transaksi kedua tanpa menyelesaikan/membuang draft pertama (`UNIQUE user_id`).
+- [x] Kasir dapat memuat kembali transaksi tertahan ke keranjang belanja POS.
+- [x] Kasir dapat membuang (discard) transaksi tertahan dan draft terhapus dari server.
+- [x] Finalisasi transaksi held sukses memotong stok secara atomik, menerbitkan invoice di `orders`, menghapus draft, dan mencatat kronologi di `order_activity_logs`.
+- [x] Tabel `orders` tetap 100% bersih dan hanya berisi transaksi yang sudah final lunas.
+- [x] Automated Test `TEST-04` lulus 100%.
+- [x] Seluruh icon menggunakan `lucide-react` (`Clock`, `Play`, `Trash2`, `AlertCircle`).
+- [x] Branch `feature/slice-6-pos-hold-orders` di-merge ke `develop` menggunakan flag `--no-ff`.
+- [x] Branch fitur lokal dihapus setelah merge.
