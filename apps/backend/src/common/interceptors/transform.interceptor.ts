@@ -42,7 +42,7 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
           if (dataObject.meta) {
             responseMeta = dataObject.meta;
           }
-          if ('items' in dataObject) {
+          if ('items' in dataObject && dataObject.meta) {
             responseData = dataObject.items;
           } else if ('data' in dataObject) {
             responseData = dataObject.data;
