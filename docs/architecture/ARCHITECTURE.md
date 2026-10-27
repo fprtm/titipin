@@ -284,6 +284,12 @@ sequenceDiagram
 3. **SSR Protection via Next.js Edge Middleware:**
    - Middleware mengecek keberadaan session cookie sebelum merender halaman `/dashboard/*`.
    - Jika belum login, request diarahkan langsung ke `/login` di level SSR tanpa *flash of unauthenticated content* (zero-FOUC).
+4. **Cross-Origin Resource Sharing (CORS) Policy:**
+   - Karena backend (`:3001`) dan frontend (`:3000`) merupakan dua service terpisah, NestJS mengonfigurasi CORS dengan `credentials: true` dan origin eksplisit (`http://localhost:3000` atau domain production). Nilai wildcard `*` dilarang keras agar browser mengizinkan pengiriman cookie `refresh_token`.
+5. **Rate Limiting & Proteksi Brute-Force:**
+   - Modul `auth` diproteksi oleh `@nestjs/throttler` dengan batas maksimal 10 request per menit per alamat IP pada rute `POST /api/auth/login`. Pelanggaran batas memicu respon **HTTP 429 Too Many Requests**.
+6. **Layanan Pemantauan & Healthcheck Kontainer (`GET /api/health`):**
+   - Menyediakan endpoint non-terproteksi untuk pemantauan ketersediaan sistem dan konektivitas pool database oleh Docker Compose (`healthcheck.test`). Mengembalikan status `200 OK` jika DB terhubung, atau `503 Service Unavailable` jika koneksi DB terputus.
 
 ---
 

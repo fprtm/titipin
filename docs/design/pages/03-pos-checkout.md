@@ -122,3 +122,29 @@
 * **Tombol Aksi:**
   * `<Button variant="outline">Cetak Struk (Thermal)</Button>` (Memicu window.print dengan CSS print thermal).
   * `<Button variant="default">Transaksi Baru</Button>` (Mengosongkan keranjang dan kembali ke state awal).
+
+### 5.1 Spesifikasi Styling Struk Cetak Thermal (`@media print`)
+Untuk memastikan cetakan nota kasir rapi pada printer struk thermal (lebar 58mm atau 80mm):
+```css
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-receipt, #printable-receipt * {
+    visibility: visible;
+  }
+  #printable-receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm;
+    margin: 0;
+    padding: 2mm;
+    font-family: monospace;
+    font-size: 11px;
+    line-height: 1.3;
+    color: #000000;
+    background: #FFFFFF;
+  }
+}
+```

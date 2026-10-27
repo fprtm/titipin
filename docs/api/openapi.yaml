@@ -30,6 +30,28 @@ tags:
 
 paths:
   # ==========================================================
+  # SYSTEM HEALTHCHECK
+  # ==========================================================
+  /api/health:
+    get:
+      tags: [System]
+      summary: Health check status sistem dan konektivitas database
+      security: []
+      responses:
+        '200':
+          description: Layanan dan database berjalan normal
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: 'ok' }
+                  timestamp: { type: string, format: date-time }
+                  database: { type: string, example: 'connected' }
+        '503':
+          description: Layanan atau konektivitas database terputus
+
+  # ==========================================================
   # AUTH ENDPOINTS
   # ==========================================================
   /api/auth/login:
