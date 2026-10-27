@@ -56,10 +56,10 @@ Mengelola data pelanggan toko yang mendaftar sebagai member (nama, alamat, gende
 
 ## 3. DEFINITION OF DONE (DOD) CHECKLIST
 
-- [ ] Kasir dan Admin dapat melihat daftar pelanggan aktif dan mencari member berdasarkan nama.
-- [ ] Kasir dan Admin dapat mendaftarkan member baru melalui modal dialog.
-- [ ] Admin dapat mengedit dan menonaktifkan member (soft delete).
-- [ ] Member yang dihapus tidak muncul di pencarian autocomplete kasir POS.
-- [ ] Seluruh aksi mutasi tercatat di tabel `audit_logs`.
-- [ ] Branch `feature/slice-4-customer-management` di-merge ke `develop` menggunakan flag `--no-ff`.
-- [ ] Branch fitur lokal dihapus setelah merge.
+- [x] Kasir dan Admin dapat melihat daftar pelanggan aktif dan mencari member berdasarkan nama.
+- [x] Kasir dan Admin dapat mendaftarkan member baru melalui modal dialog.
+- [x] Admin dapat mengedit dan menonaktifkan member (soft delete).
+- [x] Member yang dihapus tidak muncul di pencarian autocomplete kasir POS.
+- [x] Seluruh aksi mutasi tercatat di tabel `audit_logs`.
+- [x] Branch `feature/slice-4-customer-management` di-merge ke `develop` menggunakan flag `--no-ff`.
+- [x] Branch fitur lokal dihapus setelah merge.

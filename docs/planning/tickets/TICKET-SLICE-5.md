@@ -71,13 +71,13 @@ Mengimplementasikan **jantung operasional POS Titipin**: pemrosesan transaksi pe
 
 ## 3. DEFINITION OF DONE (DOD) CHECKLIST
 
-- [ ] Transaksi member sukses memotong stok, menyimpan snapshot harga, dan menghasilkan nota (`TEST-01`).
-- [ ] Transaksi walk-in sukses dengan `customer_id = null` dan label "Pelanggan Umum" (`TEST-02`).
-- [ ] Concurrency test: jika stok produk 3 dan ada dua kasir meminta 2 unit secara paralel, kasir pertama sukses dan kasir kedua ditolak 422 tanpa ada stok minus (`TEST-03`).
-- [ ] Transaksi gagal memotong stok sama sekali jika salah satu item melebihi kuantitas yang tersedia (Rollback total).
-- [ ] Validasi input korup atau kuantitas negatif ditolak dengan status HTTP 422 (`TEST-05`).
-- [ ] Harga dan total dihitung murni di server — manipulasi payload harga dari client diabaikan.
-- [ ] Tampilan kasir responsif: dual-pane di desktop, floating sheet drawer di mobile/tablet.
-- [ ] Seluruh icon menggunakan `lucide-react` (`ShoppingCart`, `Search`, `Plus`, `Minus`, `Trash2`, `Printer`, `CheckCircle2`).
-- [ ] Branch `feature/slice-5-core-pos-engine` di-merge ke `develop` menggunakan flag `--no-ff`.
-- [ ] Branch fitur lokal dihapus setelah merge.
+- [x] Transaksi member sukses memotong stok, menyimpan snapshot harga, dan menghasilkan nota (`TEST-01`).
+- [x] Transaksi walk-in sukses dengan `customer_id = null` dan label "Pelanggan Umum" (`TEST-02`).
+- [x] Concurrency test: jika stok produk 3 dan ada dua kasir meminta 2 unit secara paralel, kasir pertama sukses dan kasir kedua ditolak 422 tanpa ada stok minus (`TEST-03`).
+- [x] Transaksi gagal memotong stok sama sekali jika salah satu item melebihi kuantitas yang tersedia (Rollback total).
+- [x] Validasi input korup atau kuantitas negatif ditolak dengan status HTTP 422 (`TEST-05`).
+- [x] Harga dan total dihitung murni di server — manipulasi payload harga dari client diabaikan.
+- [x] Tampilan kasir responsif: dual-pane di desktop, floating sheet drawer di mobile/tablet.
+- [x] Seluruh icon menggunakan `lucide-react` (`ShoppingCart`, `Search`, `Plus`, `Minus`, `Trash2`, `Printer`, `CheckCircle2`).
+- [x] Branch `feature/slice-5-core-pos-engine` di-merge ke `develop` menggunakan flag `--no-ff`.
+- [x] Branch fitur lokal dihapus setelah merge.
