@@ -108,12 +108,14 @@ export interface DraftOrderData {
   id: number;
   userId: string;
   customerId: string | null;
+  customerName?: string;
   items: DraftOrderItem[];
   createdAt: string;
   updatedAt?: string;
   // snake_case aliases
   user_id?: string;
   customer_id?: string | null;
+  customer_name?: string;
   created_at?: string;
   updated_at?: string;
 }

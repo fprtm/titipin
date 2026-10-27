@@ -172,6 +172,7 @@ export class ProductsRepository {
       .select()
       .from(schema.products)
       .where(and(inArray(schema.products.id, sortedIds), isNull(schema.products.deletedAt)))
+      .orderBy(asc(schema.products.id))
       .for('update');
 
     return lockedProducts;
