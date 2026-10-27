@@ -30,7 +30,10 @@ Complete and verify Milestone 3 (Slices 5 & 6: POS Engine & Hold Cart Isolation)
 - **Code layout**: /Users/yuma/Workspace/lab/titipin
 
 ## Key Decisions Made
-- [TBD]
+- Replaced explicit `any` in `apps/frontend/src/app/(dashboard)/pos/page.tsx` with dedicated types `HeldDraftData`, `CompletedReceiptData`, and `ApiErrorResponse`.
+- Fixed `vi.mocked` type assertions in `apps/frontend/src/app/(dashboard)/pos/pos.test.tsx` using `as never` following repository pattern.
+- Fixed unused variable warnings in `apps/backend/test/m1-challenger-stress.e2e-spec.ts`.
+- Verified Milestone 3 commits: `008f46c` (feat(pos)) and `7b766aa` (merge).
 
 ## Artifact Index
 - DISPATCH.md — Dispatch instructions
@@ -39,14 +42,17 @@ Complete and verify Milestone 3 (Slices 5 & 6: POS Engine & Hold Cart Isolation)
 - handoff.md — Verification & handoff report
 
 ## Change Tracker
-- **Files modified**: [TBD]
-- **Build status**: [TBD]
-- **Pending issues**: [TBD]
+- **Files modified**:
+  - `apps/frontend/src/app/(dashboard)/pos/page.tsx`: strictly typed receipt, draft, and error responses (0 lint warnings)
+  - `apps/frontend/src/app/(dashboard)/pos/pos.test.tsx`: clean typing without `as any` (0 lint warnings)
+  - `apps/backend/test/m1-challenger-stress.e2e-spec.ts`: removed unused imports and variables
+- **Build status**: All packages build and typecheck cleanly
+- **Pending issues**: None for Milestone 3
 
 ## Quality Status
-- **Build/test result**: [TBD]
-- **Lint status**: [TBD]
-- **Tests added/modified**: [TBD]
+- **Build/test result**: PASS. Backend orders.e2e-spec.ts 11/11 passed (100%), frontend pos.test.tsx 5/5 passed (100%), 12 backend test suites passed (142 passed, 12 skipped).
+- **Lint status**: 0 errors, 0 warnings in Milestone 3 files.
+- **Tests added/modified**: `apps/frontend/src/app/(dashboard)/pos/pos.test.tsx`, `apps/backend/test/orders.e2e-spec.ts`
 
 ## Loaded Skills
 - **Source**: /Users/yuma/.gemini/config/skills/titipin-dev/SKILL.md

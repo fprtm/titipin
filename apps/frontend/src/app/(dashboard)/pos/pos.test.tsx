@@ -175,7 +175,7 @@ describe('PosPage Component', () => {
       updatedAt: new Date().toISOString(),
     };
 
-    (apiClient.get as any).mockImplementation((url: string) => {
+    vi.mocked(apiClient.get).mockImplementation(((url: string) => {
       if (url === '/products') {
         return Promise.resolve({ data: { success: true, data: mockProductsList } });
       }
@@ -183,7 +183,7 @@ describe('PosPage Component', () => {
         return Promise.resolve({ data: { success: true, data: [birthdayMember] } });
       }
       return Promise.resolve({ data: { data: null } });
-    });
+    }) as never);
 
     render(<PosPage />);
 
@@ -212,9 +212,9 @@ describe('PosPage Component', () => {
   });
 
   it('holds cart to draft_orders and sends payload to /orders/hold', async () => {
-    (apiClient.post as any).mockResolvedValueOnce({
+    vi.mocked(apiClient.post).mockResolvedValueOnce({
       data: { success: true, message: 'Draft order created' },
-    });
+    } as never);
 
     render(<PosPage />);
 

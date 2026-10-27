@@ -52,12 +52,17 @@ Complete implementation, verification, and merge of remaining vertical slices (M
 ## Team Roster
 | Agent | Type | Work Item | Status | Conv ID |
 |-------|------|-----------|--------|---------|
-| worker_m3_finish | teamwork_preview_worker | M3 Full-Stack Worker | in-progress | e44eed59-e6c5-4773-a153-62316bc64a9d |
+| worker_m3_finish | teamwork_preview_worker | M3 Full-Stack Worker | completed | e44eed59-e6c5-4773-a153-62316bc64a9d |
+| reviewer_m3_1 | teamwork_preview_reviewer | Backend Clean Arch Reviewer | in-progress | 4bb82fd8-907a-49c3-8ee5-c111ad6e78c2 |
+| reviewer_m3_2 | teamwork_preview_reviewer | Frontend & Quality Reviewer | in-progress | 8f917fbc-f8f2-4eb0-b386-310673736dad |
+| challenger_m3_1 | teamwork_preview_challenger | Concurrency Stress Challenger | in-progress | d8ce2a0a-5e08-4f1f-8adb-32d520e932ec |
+| challenger_m3_2 | teamwork_preview_challenger | Edge Cases Challenger | in-progress | 32063b73-c607-4566-9bfd-98e3a9735bef |
+| auditor_m3 | teamwork_preview_auditor | Forensic Integrity Auditor | in-progress | 1fc0d220-52c8-4002-ad4b-444424a3b969 |
 
 ## Succession Status
 - Succession required: no
-- Spawn count: 1 / 16
-- Pending subagents: e44eed59-e6c5-4773-a153-62316bc64a9d
+- Spawn count: 6 / 16
+- Pending subagents: 4bb82fd8-907a-49c3-8ee5-c111ad6e78c2, 8f917fbc-f8f2-4eb0-b386-310673736dad, d8ce2a0a-5e08-4f1f-8adb-32d520e932ec, 32063b73-c607-4566-9bfd-98e3a9735bef, 1fc0d220-52c8-4002-ad4b-444424a3b969
 - Predecessor: orchestrator_2
 - Successor: not yet spawned
 
