@@ -6,9 +6,10 @@
 | **Ticket ID** | `TICKET-SLICE-2` |
 | **Epic Terkait** | `EPIC-07: MANAJEMEN PENGGUNA INTERNAL (USER MANAGEMENT)` |
 | **Target Branch** | `feature/slice-2-user-management` |
-| **Aturan Bisnis** | `BR-010`, `BR-011`, `BR-015` |
-| **Spesifikasi UI** | [06-users.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/06-users.md) |
-| **Integration Tests** | `TEST-08` (Soft delete blokir login & revoke sesi), `TEST-09` (Kasir ditolak 403) |
+| **Aturan Bisnis** | [BR-010, BR-011, BR-015](file:///Users/yuma/Workspace/lab/titipin/docs/product/PRD.md#L55-L65) |
+| **Dokumen Acuan** | [ARCHITECTURE.md Section 3](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/ARCHITECTURE.md#L145-L158), [DATA-MODEL.md Section 3.1 & 4.1](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/DATA-MODEL.md#L133-L149), [openapi.yaml](file:///Users/yuma/Workspace/lab/titipin/docs/api/openapi.yaml#L197-L270) |
+| **Spesifikasi UI** | [06-users.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/06-users.md), [COMPONENTS.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/COMPONENTS.md) |
+| **Integration Tests** | [TEST-08 (Soft delete & revocation), TEST-09 (RBAC 403)](file:///Users/yuma/Workspace/lab/titipin/docs/product/ACCEPTANCE-CRITERIA.md#L473-L474) |
 
 ---
 
