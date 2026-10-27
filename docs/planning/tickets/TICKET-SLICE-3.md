@@ -6,10 +6,10 @@
 | **Ticket ID** | `TICKET-SLICE-3` |
 | **Epic Terkait** | `EPIC-02: MANAJEMEN KATALOG PRODUK (INVENTARIS)` |
 | **Target Branch** | `feature/slice-3-product-catalog` |
-| **Aturan Bisnis** | [BR-001, BR-006, BR-009](file:///Users/yuma/Workspace/lab/titipin/docs/product/PRD.md#L45-L60) |
-| **Dokumen Acuan** | [DATA-MODEL.md Section 3.2 & 4.2](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/DATA-MODEL.md#L152-L170), [openapi.yaml](file:///Users/yuma/Workspace/lab/titipin/docs/api/openapi.yaml#L275-L417) |
-| **Spesifikasi UI** | [04-products.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/04-products.md), [COMPONENTS.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/COMPONENTS.md) |
-| **Integration Test** | [TEST-07 (Soft delete produk & import idempoten)](file:///Users/yuma/Workspace/lab/titipin/docs/product/ACCEPTANCE-CRITERIA.md#L472) |
+| **Aturan Bisnis** | [BR-001, BR-006, BR-009](../../product/PRD.md#L45-L60) |
+| **Dokumen Acuan** | [DATA-MODEL.md Section 3.2 & 4.2](../../architecture/DATA-MODEL.md#L152-L170), [openapi.yaml](../../api/openapi.yaml#L275-L417) |
+| **Spesifikasi UI** | [04-products.md](../../design/pages/04-products.md), [COMPONENTS.md](../../design/COMPONENTS.md) |
+| **Integration Test** | [TEST-07 (Soft delete produk & import idempoten)](../../product/ACCEPTANCE-CRITERIA.md#L472) |
 
 ---
 

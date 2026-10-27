@@ -54,13 +54,13 @@ docs/design/
 
 ## 3. INDEKS SPESIFIKASI & REFERENSI CEPAT
 
-* **[TOKENS.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/TOKENS.md):**
+* **[TOKENS.md](./TOKENS.md):**
   * Palet warna OKLCH (`--primary`, neutral slate, feedback semantic).
   * Kelas CSS `.glass-panel`, `.glass-card`, `.glass-input`, `.bg-canvas-pattern`.
   * Skala kurva sudut `rounded-xl`, `rounded-2xl`, `rounded-3xl`.
   * Padding dan margin scale default.
-* **[COMPONENTS.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/COMPONENTS.md):**
+* **[COMPONENTS.md](./COMPONENTS.md):**
   * 12 Komponen Primitives: Button, Badge, Input & SearchInput, QuantityStepper, DataTable, Dialog/AlertDialog, Sheet Drawer, Combobox Member, StatCard, Skeleton, SonnerToast, DropdownMenu.
   * Interactive States (Idle, Hover, Active, Focus Ring, Disabled, Loading Spinner).
-* **[Pages Specifications](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages):**
+* **[Pages Specifications](./pages):**
   * Detil wireframe ASCII, flow form, error handling, permission guards, dan endpoint integrasi untuk seluruh 10 rute aplikasi.
