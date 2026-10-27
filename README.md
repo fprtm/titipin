@@ -87,7 +87,20 @@ pnpm db:studio
 
 # Audit otomatis kualitas kode & zero-hardcoded icon
 pnpm audit:quality
+
+# Menjalankan orkestrasi produksi via Docker Compose
+docker compose -f docker-compose.prod.yml up --build
 ```
+
+---
+
+## 🏛️ Pola Desain & Clean Architecture (Repositories & Use-Cases)
+
+Sistem mengadopsi prinsip pemisahan tanggung jawab yang ketat:
+- **Dedicated Repositories (`repositories/*.repository.ts`)**: Seluruh interaksi database Drizzle ORM, query, transaksi atomik, dan lock concurrency terisolasi penuh di lapisan repositori (`UsersRepository`, `ProductsRepository`, `CustomersRepository`, `OrdersRepository`, `AuditRepository`, `DashboardRepository`). Tidak ada pemanggilan query Drizzle langsung dari controller atau use-case.
+- **Single-Responsibility Use-Cases (`use-cases/*.use-case.ts`)**: Logika bisnis domain dipecah menjadi kelas use-case terfokus (misal: `ProcessCheckoutUseCase`, `HoldDraftOrderUseCase`, `ResumeDraftOrderUseCase`, `FindOrdersUseCase`, `RecordAuditLogUseCase`).
+- **Pessimistic Concurrency & Stock Locking**: Checkout kasir mengunci baris stok produk (`SELECT ... FOR UPDATE`) secara terurut untuk mencegah race condition, deadlocks, dan overselling (`TEST-01` s/d `TEST-03`).
+- **Isolated Cart Holding (ADR-005)**: Penahanan keranjang POS dialokasikan ke tabel khusus `draft_orders` dengan penegakan unik per kasir (`UNIQUE user_id`), sehingga stok fisik tidak terpotong dan tabel `orders` tetap murni mencatat transaksi final lunas (`TEST-04`).
 
 ---
 
