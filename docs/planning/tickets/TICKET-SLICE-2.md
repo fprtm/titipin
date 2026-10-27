@@ -21,24 +21,24 @@ Menyediakan fitur administrasi pengguna bagi Admin toko untuk mendaftarkan akun 
 ## 2. DETAIL TUGAS TEKNIS (TASK BREAKDOWN)
 
 ### 2.1 Shared Contracts (`packages/shared`)
-* [ ] Buat Zod schema `createUserSchema` (`name`, `email`, `password` min 8, `role` enum `ADMIN`|`CASHIER`).
-* [ ] Buat Zod schema `resetPasswordSchema` (`new_password` min 8, `new_password_confirmation`).
+* [x] Buat Zod schema `createUserSchema` (`name`, `email`, `password` min 8, `role` enum `ADMIN`|`CASHIER`).
+* [x] Buat Zod schema `resetPasswordSchema` (`new_password` min 8, `new_password_confirmation`).
 
 ### 2.2 Backend API (`apps/backend/src/modules/users/`)
-* [ ] Buat `RolesGuard` dan decorator `@Roles('ADMIN')`.
-* [ ] Implementasikan endpoint `GET /api/users`: listing seluruh pengguna (hanya bisa diakses role `ADMIN`).
-* [ ] Implementasikan endpoint `POST /api/users`: Admin membuat pengguna baru (`AC-USR-04`). Hash password dengan bcrypt.
-* [ ] Implementasikan endpoint `PATCH /api/users/:id/reset-password`:
+* [x] Buat `RolesGuard` dan decorator `@Roles('ADMIN')`.
+* [x] Implementasikan endpoint `GET /api/users`: listing seluruh pengguna (hanya bisa diakses role `ADMIN`).
+* [x] Implementasikan endpoint `POST /api/users`: Admin membuat pengguna baru (`AC-USR-04`). Hash password dengan bcrypt.
+* [x] Implementasikan endpoint `PATCH /api/users/:id/reset-password`:
   * Validasi Self-Guard: tolak jika target ID adalah ID akun Admin pemanggil (403 Forbidden).
   * Validasi status target: tolak jika target sudah dinonaktifkan (422 Unprocessable Entity).
   * Update hash password dan set `refresh_token_hash = NULL` secara atomik.
-* [ ] Implementasikan endpoint `DELETE /api/users/:id`:
+* [x] Implementasikan endpoint `DELETE /api/users/:id`:
   * Validasi Self-Guard: tolak jika target ID adalah diri sendiri (403 Forbidden).
   * Set `deleted_at = NOW()` dan `refresh_token_hash = NULL` secara atomik.
-* [ ] Catat seluruh mutasi data ke tabel `audit_logs` (`USER_CREATED`, `USER_RESET_PASSWORD`, `USER_DEACTIVATED`).
+* [x] Catat seluruh mutasi data ke tabel `audit_logs` (`USER_CREATED`, `USER_RESET_PASSWORD`, `USER_DEACTIVATED`).
 
 ### 2.3 Frontend UI Mobile-First (`apps/frontend`)
-* [ ] Buat halaman `/users` mengacu pada `docs/design/pages/06-users.md`:
+* [x] Buat halaman `/users` mengacu pada `docs/design/pages/06-users.md`:
   * Di-guard oleh Edge Middleware Next.js: jika kasir mencoba membuka, redirect atau tampilkan halaman 403 Forbidden.
   * Header aksi: judul dan tombol `+ Tambah Pengguna` (`rounded-xl h-11 bg-emerald-700`).
   * Data Table Staf (`glass-panel rounded-2xl`): kolom Nama, Email, Badge Role (`ADMIN` biru / `CASHIER` hijau), Badge Status (`Aktif` / `Nonaktif`), Aksi.

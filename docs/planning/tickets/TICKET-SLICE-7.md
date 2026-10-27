@@ -21,27 +21,27 @@ Menyediakan fitur pencarian riwayat transaksi dengan filter rentang tanggal dan 
 ## 2. DETAIL TUGAS TEKNIS (TASK BREAKDOWN)
 
 ### 2.1 Backend API
-* [ ] `GET /api/orders`:
+* [x] `GET /api/orders`:
   * Filter query: `from` (tanggal mulai), `to` (tanggal akhir), `customer_id` (uuid), `page`, `per_page`.
   * Join tabel `orders` dengan `customers` (LEFT JOIN untuk walk-in) dan `users`.
   * Kembalikan format standar `OrderListResponse`.
-* [ ] `GET /api/orders/:id`:
+* [x] `GET /api/orders/:id`:
   * Cari berdasarkan ID atau `order_number`.
   * Ambil detail invoice: header order, rincian barang dari `order_items` (`unit_price` historis), dan timeline kronologi dari `order_activity_logs`.
-* [ ] `GET /api/audit-logs` (Admin Only):
+* [x] `GET /api/audit-logs` (Admin Only):
   * Filter query: `user_id`, `action`, `entity_type`, `from`, `to`, `page`, `per_page`.
   * Di-guard oleh `RolesGuard` (`@Roles('ADMIN')`) — kasir ditolak 403 Forbidden.
   * Kembalikan entri log dengan detail user agent, IP address, dan payload diff.
 
 ### 2.2 Frontend UI Mobile-First (`apps/frontend`)
-* [ ] Halaman Riwayat `/orders` mengacu pada `docs/design/pages/07-orders-history.md`:
+* [x] Halaman Riwayat `/orders` mengacu pada `docs/design/pages/07-orders-history.md`:
   * Toolbar: Date range picker (`rounded-xl`), dropdown member, tombol reset filter.
   * Data Table Kaca: nomor nota, tanggal, pelanggan (badge "Pelanggan Umum" untuk walk-in), kasir, total Rp, tombol aksi "Lihat Nota".
-* [ ] Halaman Detail Nota `/orders/[id]` mengacu pada `docs/design/pages/08-order-detail.md`:
+* [x] Halaman Detail Nota `/orders/[id]` mengacu pada `docs/design/pages/08-order-detail.md`:
   * Kartu Nota Kaca (`glass-panel rounded-3xl p-8`): header invoice resmi, tabel rincian item belanja (harga snapshot), total bayar.
   * Komponen Timeline Vertikal (`order_activity_logs`): menampilkan kronologi kejadian transaksi (`ORDER_CREATED`, `ORDER_HELD`, `ORDER_FINALIZED`) dengan icon Lucide `CheckCircle2`, `Clock`, `Play`.
   * Tombol Cetak Nota (Lucide `Printer`) dengan format siap cetak printer thermal.
-* [ ] Halaman Audit Trail `/audit-logs` (Admin Only) mengacu pada `docs/design/pages/09-audit-logs.md`:
+* [x] Halaman Audit Trail `/audit-logs` (Admin Only) mengacu pada `docs/design/pages/09-audit-logs.md`:
   * Filter multi-kriteria: staf, aksi, entitas, tanggal.
   * Tabel log audit: timestamp, aktor, kode aksi badge, entitas target, IP address.
   * Modal Inspeksi Diff Payload: menampilkan perbandingan JSON sebelum & sesudah mutasi (`font-mono text-xs rounded-2xl bg-slate-900 text-slate-100 p-5`).

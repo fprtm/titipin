@@ -20,24 +20,24 @@ Menyempurnakan database seeder dengan data yang kaya dan realistis (akun admin, 
 ## 2. DETAIL TUGAS TEKNIS (TASK BREAKDOWN)
 
 ### 2.1 Database Seeder Realistis (`apps/backend/src/database/seed.ts`)
-* [ ] Seeding Akun Pengguna:
+* [x] Seeding Akun Pengguna:
   * 1 Akun Admin: `admin@titipin.id` / `password123` (`role = ADMIN`).
   * 1 Akun Kasir: `kasir@titipin.id` / `password123` (`role = CASHIER`).
-* [ ] Seeding Master Produk:
+* [x] Seeding Master Produk:
   * Minimal **20 produk katalog aktif** dengan variasi kategori (Makanan, Minuman, Kebutuhan Rumah).
   * Variasi harga realistis (Rp 3.500 s/d Rp 150.000).
   * Beberapa produk dengan sisa stok aman ($>10$), stok menipis ($5-10$), stok kritis ($<5$), dan stok habis ($=0$).
-* [ ] Seeding Pelanggan / Member:
+* [x] Seeding Pelanggan / Member:
   * Minimal **15 data member aktif** dengan variasi gender, alamat, dan tanggal lahir.
-* [ ] Seeding Riwayat Transaksi Penjualan:
+* [x] Seeding Riwayat Transaksi Penjualan:
   * Minimal **30 data order transaksi historis** yang tersebar realistis dalam 30 hari terakhir.
   * Campuran antara transaksi Pelanggan Umum (Walk-in, `customer_id = null`) dan Member terdaftar.
   * Setiap transaksi memiliki rincian item di `order_items` (dengan snapshot `unit_price`) dan kronologi timeline di `order_activity_logs`.
-* [ ] Seeding Audit Trail:
+* [x] Seeding Audit Trail:
   * Record awal di tabel `audit_logs` yang mencerminkan aktivitas sistem.
 
 ### 2.2 Eksekusi Automated Integration Tests (`apps/backend/test/`)
-* [ ] Jalankan dan pastikan 9 skenario integration test lulus 100%:
+* [x] Jalankan dan pastikan 9 skenario integration test lulus 100%:
   * `[PASS] TEST-01`: Buat order member sukses (stok terpotong, invoice terbit, total valid).
   * `[PASS] TEST-02`: Buat order walk-in sukses (customer_id null, label Pelanggan Umum).
   * `[PASS] TEST-03`: Stok tidak cukup (seluruh transaksi rollback atomik, stok utuh).
@@ -49,13 +49,13 @@ Menyempurnakan database seeder dengan data yang kaya dan realistis (akun admin, 
   * `[PASS] TEST-09`: RBAC Guard — Kasir mengakses endpoint Admin ditolak 403 Forbidden.
 
 ### 2.3 Production Orchestration & Dockerization
-* [ ] Buat multi-stage `Dockerfile` untuk backend NestJS.
-* [ ] Buat standalone build `Dockerfile` untuk frontend Next.js 15.
-* [ ] Buat `docker-compose.prod.yml` yang menghubungkan service backend, frontend, dan database PostgreSQL.
-* [ ] Verifikasi perintah `docker compose -f docker-compose.prod.yml up --build` berjalan lancar.
+* [x] Buat multi-stage `Dockerfile` untuk backend NestJS.
+* [x] Buat standalone build `Dockerfile` untuk frontend Next.js 15.
+* [x] Buat `docker-compose.prod.yml` yang menghubungkan service backend, frontend, dan database PostgreSQL.
+* [x] Verifikasi perintah `docker compose -f docker-compose.prod.yml up --build` berjalan lancar.
 
 ### 2.4 Master README Documentation
-* [ ] Tulis `README.md` utama yang memuat:
+* [x] Tulis `README.md` utama yang memuat:
   1. Penjelasan tech stack yang dipilih dan alasannya.
   2. Panduan setup dari *git clone* sampai aplikasi berjalan dalam maksimal 6 perintah CLI.
   3. Kredensial akun login seeder (Admin & Kasir).

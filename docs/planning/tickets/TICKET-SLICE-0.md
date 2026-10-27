@@ -20,28 +20,28 @@ Membangun fondasi monorepo berbasis **Turborepo** dan **pnpm workspaces** yang m
 ## 2. DETAIL TUGAS TEKNIS (TASK BREAKDOWN)
 
 ### 2.1 Workspace Root & Tooling
-* [ ] Buat file root `pnpm-workspace.yaml` yang mendaftarkan `packages/*` dan `apps/*`:
+* [x] Buat file root `pnpm-workspace.yaml` yang mendaftarkan `packages/*` dan `apps/*`:
   ```yaml
   packages:
     - 'apps/*'
     - 'packages/*'
   ```
-* [ ] Buat file root `turbo.json` dengan task pipeline: `build`, `dev`, `lint`, `test`, `db:generate`, `db:migrate`, `db:seed`.
-* [ ] Konfigurasi root `package.json` dengan script helper pnpm (`pnpm dev`, `pnpm build`, `pnpm test`, `pnpm db:migrate`, `pnpm db:seed`).
+* [x] Buat file root `turbo.json` dengan task pipeline: `build`, `dev`, `lint`, `test`, `db:generate`, `db:migrate`, `db:seed`.
+* [x] Konfigurasi root `package.json` dengan script helper pnpm (`pnpm dev`, `pnpm build`, `pnpm test`, `pnpm db:migrate`, `pnpm db:seed`).
 
 ### 2.2 Paket Shared (`packages/shared`)
-* [ ] Setup package `@titipin/shared` dengan TypeScript composite / bundler `tsup`.
-* [ ] Ekspor enum sistem di `packages/shared/src/enums/`:
+* [x] Setup package `@titipin/shared` dengan TypeScript composite / bundler `tsup`.
+* [x] Ekspor enum sistem di `packages/shared/src/enums/`:
   * `Role`: `'ADMIN' | 'CASHIER'`
   * `Gender`: `'Pria' | 'Wanita'`
-* [ ] Ekspor interface standar API response di `packages/shared/src/types/`:
+* [x] Ekspor interface standar API response di `packages/shared/src/types/`:
   * `ApiResponse<T> { success: true; message?: string; data: T; meta?: PaginationMeta }`
   * `ApiErrorResponse { success: false; message: string; errors?: Record<string, string[]> }`
   * `PaginationMeta { page: number; per_page: number; total: number; total_pages: number }`
 
 ### 2.3 Backend Bootstrap (`apps/backend`)
-* [ ] Inisialisasi NestJS 11+ dengan TypeScript strict mode (`tsconfig.json`).
-* [ ] Konfigurasi validasi variabel lingkungan menggunakan Zod (`apps/backend/src/config/env.config.ts`) mencakup 9 variabel wajib secara eksplisit tanpa asumsi:
+* [x] Inisialisasi NestJS 11+ dengan TypeScript strict mode (`tsconfig.json`).
+* [x] Konfigurasi validasi variabel lingkungan menggunakan Zod (`apps/backend/src/config/env.config.ts`) mencakup 9 variabel wajib secara eksplisit tanpa asumsi:
   1. `NODE_ENV`: `'development' | 'production' | 'test'` (default `'development'`)
   2. `PORT`: number (default `3001`)
   3. `FRONTEND_URL`: string (default `'http://localhost:3000'`)
@@ -51,22 +51,22 @@ Membangun fondasi monorepo berbasis **Turborepo** dan **pnpm workspaces** yang m
   7. `JWT_REFRESH_SECRET`: string (min 32 karakter)
   8. `JWT_REFRESH_EXPIRES_IN`: string (default `'7d'`)
   9. `THROTTLE_TTL`: number (default `60`), `THROTTLE_LIMIT`: number (default `10`)
-* [ ] Buat file template `.env.example` di root dan di `apps/backend/`.
-* [ ] Setup Drizzle ORM provider dengan connection pool `node-postgres` (`pg`) di `apps/backend/src/database/`.
-* [ ] Buat skema Drizzle awal `src/database/schema/audit.schema.ts` (mengacu pada [DATA-MODEL.md Section 4.5](../../architecture/DATA-MODEL.md#L480-L505)) dan hook service internal `AuditService` (agar seluruh modul selanjutnya langsung dapat mencatat audit mutasi tanpa refactoring ulang).
-* [ ] Daftarkan Global Validation Pipe (Zod/class-validator), Global Exception Filter (mengembalikan format error nested), dan Global Response Transform Interceptor.
-* [ ] Buat endpoint `GET /api/health` (mengacu pada [openapi.yaml](../../api/openapi.yaml#L32-L55)) yang mengecek koneksi database PostgreSQL dan mengembalikan `{ status: 'ok', timestamp: '...', database: 'connected' }`.
-* [ ] Konfigurasi CORS pada `main.ts` dengan `origin: [config.FRONTEND_URL]`, `credentials: true`.
+* [x] Buat file template `.env.example` di root dan di `apps/backend/`.
+* [x] Setup Drizzle ORM provider dengan connection pool `node-postgres` (`pg`) di `apps/backend/src/database/`.
+* [x] Buat skema Drizzle awal `src/database/schema/audit.schema.ts` (mengacu pada [DATA-MODEL.md Section 4.5](../../architecture/DATA-MODEL.md#L480-L505)) dan hook service internal `AuditService` (agar seluruh modul selanjutnya langsung dapat mencatat audit mutasi tanpa refactoring ulang).
+* [x] Daftarkan Global Validation Pipe (Zod/class-validator), Global Exception Filter (mengembalikan format error nested), dan Global Response Transform Interceptor.
+* [x] Buat endpoint `GET /api/health` (mengacu pada [openapi.yaml](../../api/openapi.yaml#L32-L55)) yang mengecek koneksi database PostgreSQL dan mengembalikan `{ status: 'ok', timestamp: '...', database: 'connected' }`.
+* [x] Konfigurasi CORS pada `main.ts` dengan `origin: [config.FRONTEND_URL]`, `credentials: true`.
 
 ### 2.4 Frontend Skeleton (`apps/frontend`)
-* [ ] Inisialisasi Next.js 15 App Router dengan TypeScript dan React 19.
-* [ ] Setup Tailwind CSS v3/v4 dengan konfigurasi design tokens dari [TOKENS.md](../../design/TOKENS.md) (`oklch` colors, `rounded-xl`, `rounded-2xl`, `rounded-3xl`, `.glass-panel`, `.glass-card`, `.bg-canvas-pattern`).
-* [ ] Install `lucide-react` (wajib digunakan untuk seluruh icon UI tanpa hardcode raw SVG).
-* [ ] Konfigurasi `QueryClientProvider` (TanStack Query v5) pada root layout shell (`apps/frontend/src/app/layout.tsx`).
-* [ ] Siapkan file `apps/frontend/.env.example` berisi `NEXT_PUBLIC_API_URL=http://localhost:3001/api`.
+* [x] Inisialisasi Next.js 15 App Router dengan TypeScript dan React 19.
+* [x] Setup Tailwind CSS v3/v4 dengan konfigurasi design tokens dari [TOKENS.md](../../design/TOKENS.md) (`oklch` colors, `rounded-xl`, `rounded-2xl`, `rounded-3xl`, `.glass-panel`, `.glass-card`, `.bg-canvas-pattern`).
+* [x] Install `lucide-react` (wajib digunakan untuk seluruh icon UI tanpa hardcode raw SVG).
+* [x] Konfigurasi `QueryClientProvider` (TanStack Query v5) pada root layout shell (`apps/frontend/src/app/layout.tsx`).
+* [x] Siapkan file `apps/frontend/.env.example` berisi `NEXT_PUBLIC_API_URL=http://localhost:3001/api`.
 
 ### 2.5 Infrastruktur Database Lokal
-* [ ] Buat file `docker-compose.yml` untuk PostgreSQL 16 dengan port `5432`, image `postgres:16-alpine`, dan volume data persisten `pgdata`.
+* [x] Buat file `docker-compose.yml` untuk PostgreSQL 16 dengan port `5432`, image `postgres:16-alpine`, dan volume data persisten `pgdata`.
 
 ---
 

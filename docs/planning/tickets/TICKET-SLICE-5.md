@@ -21,20 +21,20 @@ Mengimplementasikan **jantung operasional POS Titipin**: pemrosesan transaksi pe
 ## 2. DETAIL TUGAS TEKNIS (TASK BREAKDOWN)
 
 ### 2.1 Database & Skema Drizzle
-* [ ] Buat skema `src/database/schema/orders.schema.ts`:
+* [x] Buat skema `src/database/schema/orders.schema.ts`:
   * Tabel `orders`: id bigint PK identity, order_number unique varchar(30), customer_id uuid nullable FK ke customers (RESTRICT), created_by uuid FK ke users (RESTRICT), order_date timestamptz, total_amount numeric(14,2).
   * Tabel `order_items`: id bigint PK identity, order_id bigint FK ke orders (CASCADE), product_id bigint FK ke products (RESTRICT), quantity int check (>0), unit_price numeric(12,2) snapshot, subtotal numeric(14,2).
   * Tabel `order_activity_logs`: id bigint PK identity, order_id bigint FK ke orders (CASCADE), action varchar(50), performed_by uuid FK ke users, details jsonb, created_at timestamptz.
-* [ ] Jalankan migrasi Drizzle untuk membuat tabel `orders`, `order_items`, dan `order_activity_logs`.
+* [x] Jalankan migrasi Drizzle untuk membuat tabel `orders`, `order_items`, dan `order_activity_logs`.
 
 ### 2.2 Shared Contracts (`packages/shared`)
-* [ ] Buat Zod schema `createOrderSchema`:
+* [x] Buat Zod schema `createOrderSchema`:
   * `customer_id`: string uuid nullable opsional (null = Walk-in).
   * `items`: array non-kosong dari `{ product_id: number, quantity: number (min 1) }`.
-* [ ] Buat interface DTO `OrderDetailResponse`, `OrderItemDetail`.
+* [x] Buat interface DTO `OrderDetailResponse`, `OrderItemDetail`.
 
 ### 2.3 Backend Engine (`apps/backend/src/modules/orders/`)
-* [ ] Implementasikan `POST /api/orders` di dalam `db.transaction`:
+* [x] Implementasikan `POST /api/orders` di dalam `db.transaction`:
   1. Panggil `ProductsService.lockAndDeductStock(tx, items)`:
      * Lakukan query `db.select().from(products).where(inArray(products.id, productIds)).for('update')`.
      * Validasi: jika ada produk yang stoknya kurang dari diminta, lemparkan `UnprocessableEntityException` dengan payload error nested standar: `errors["items.X.quantity"] = ["Stok Hydrococo tersisa 3, diminta 5"]`.
@@ -48,7 +48,7 @@ Mengimplementasikan **jantung operasional POS Titipin**: pemrosesan transaksi pe
   9. Kembalikan detail transaksi lengkap beserta invoice number.
 
 ### 2.4 Frontend UI Mobile-First (`apps/frontend/src/app/(dashboard)/pos/`)
-* [ ] Bangun layout kasir mengacu pada `docs/design/pages/03-pos-checkout.md`:
+* [x] Bangun layout kasir mengacu pada `docs/design/pages/03-pos-checkout.md`:
   * **Mobile-First Layout:**
     * Di mobile (`<1024px`): Katalog produk tampil penuh; tombol floating bar di bawah menampilkan total keranjang belanja dan icon Lucide `ShoppingCart`; menekan bar membuka keranjang via slide-over `<Sheet />` (`rounded-l-3xl`).
     * Di desktop (`lg:` $\ge 1024px$): Tampil dalam bentuk **Dual-Pane Split Screen** (Katalog 65% + Sticky Cart Drawer 35%).

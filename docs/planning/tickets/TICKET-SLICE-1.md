@@ -21,32 +21,32 @@ Mengimplementasikan modul autentikasi aman dengan arsitektur Dual-Token JWT (Acc
 ## 2. DETAIL TUGAS TEKNIS (TASK BREAKDOWN)
 
 ### 2.1 Database & Skema Drizzle
-* [ ] Buat skema `src/database/schema/users.schema.ts` (id uuid PK, name varchar(100), email unique varchar(150), password varchar, role enum `ADMIN`|`CASHIER`, refresh_token_hash varchar, created_at, updated_at, deleted_at).
-* [ ] Jalankan migrasi Drizzle untuk membuat tabel `users`.
+* [x] Buat skema `src/database/schema/users.schema.ts` (id uuid PK, name varchar(100), email unique varchar(150), password varchar, role enum `ADMIN`|`CASHIER`, refresh_token_hash varchar, created_at, updated_at, deleted_at).
+* [x] Jalankan migrasi Drizzle untuk membuat tabel `users`.
 
 ### 2.2 Shared Contracts (`packages/shared`)
-* [ ] Buat Zod schema `loginSchema` (email format, password min 1).
-* [ ] Buat interface DTO: `LoginInput`, `LoginResponse`, `RefreshResponse`, `UserItem`.
+* [x] Buat Zod schema `loginSchema` (email format, password min 1).
+* [x] Buat interface DTO: `LoginInput`, `LoginResponse`, `RefreshResponse`, `UserItem`.
 
 ### 2.3 Backend API (`apps/backend/src/modules/auth/`)
-* [ ] Implementasikan endpoint `POST /api/auth/login`: validasi password bcrypt/argon2id, simpan hash refresh token di DB, kirim access token di body dan refresh token via HttpOnly Cookie.
-* [ ] Implementasikan endpoint `POST /api/auth/refresh`: baca cookie refresh token, cocokkan dengan hash di DB, terbitkan access token baru.
-* [ ] Implementasikan endpoint `POST /api/auth/logout`: kosongkan `refresh_token_hash = NULL` dan hapus cookie.
-* [ ] Implementasikan endpoint `GET /api/auth/me`, `PATCH /api/auth/me` (update nama), dan `POST /api/auth/change-password` (verifikasi password lama).
-* [ ] Implementasikan `JwtAuthGuard` untuk memproteksi endpoint authenticated.
-* [ ] Catat event `AUTH_LOGIN`, `AUTH_LOGOUT`, dan `AUTH_PASSWORD_CHANGED` ke `audit_logs`.
+* [x] Implementasikan endpoint `POST /api/auth/login`: validasi password bcrypt/argon2id, simpan hash refresh token di DB, kirim access token di body dan refresh token via HttpOnly Cookie.
+* [x] Implementasikan endpoint `POST /api/auth/refresh`: baca cookie refresh token, cocokkan dengan hash di DB, terbitkan access token baru.
+* [x] Implementasikan endpoint `POST /api/auth/logout`: kosongkan `refresh_token_hash = NULL` dan hapus cookie.
+* [x] Implementasikan endpoint `GET /api/auth/me`, `PATCH /api/auth/me` (update nama), dan `POST /api/auth/change-password` (verifikasi password lama).
+* [x] Implementasikan `JwtAuthGuard` untuk memproteksi endpoint authenticated.
+* [x] Catat event `AUTH_LOGIN`, `AUTH_LOGOUT`, dan `AUTH_PASSWORD_CHANGED` ke `audit_logs`.
 
 ### 2.4 Frontend UI Mobile-First (`apps/frontend`)
-* [ ] Buat halaman `/login` mengacu pada `docs/design/pages/01-login.md`:
+* [x] Buat halaman `/login` mengacu pada `docs/design/pages/01-login.md`:
   * Centered card `glass-panel rounded-3xl p-8 max-w-md w-full`.
   * Form input email dan password dengan toggle Lucide `Eye` / `EyeOff`.
   * Tombol login dengan state loading Lucide `Loader2`.
   * Banner error merah kaca jika kredensial salah (401).
-* [ ] Buat Axios Client dengan **Mutex Queue Interceptor**:
+* [x] Buat Axios Client dengan **Mutex Queue Interceptor**:
   * Saat menerima 401, tahan request paralel di dalam antrean (`failedQueue`).
   * Panggil `POST /api/auth/refresh`.
   * Setelah token baru diperoleh, perbarui in-memory token dan ulangi seluruh request antrean tanpa me-reload browser kasir.
-* [ ] Buat Layout Shell `(dashboard)/layout.tsx` mengacu pada `docs/design/pages/02-app-shell.md`:
+* [x] Buat Layout Shell `(dashboard)/layout.tsx` mengacu pada `docs/design/pages/02-app-shell.md`:
   * Top Navbar kaca (`glass-panel rounded-2xl h-16`): Logo Titipin, status terminal, Held Orders quick pill, dan avatar user dropdown (Lucide `LogOut`, `KeyRound`).
   * Responsive Sidebar: Muncul di desktop (`hidden md:flex rounded-3xl w-64 p-6 glass-panel`).
   * Mobile First Drawer: Pada mobile (`<768px`), tombol hamburger Lucide `Menu` membuka slide-over sheet drawer dari sisi kiri.

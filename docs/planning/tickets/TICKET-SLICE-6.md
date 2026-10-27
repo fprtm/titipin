@@ -21,24 +21,24 @@ Mengizinkan kasir menahan (*hold*) keranjang belanja yang sedang aktif saat pela
 ## 2. DETAIL TUGAS TEKNIS (TASK BREAKDOWN)
 
 ### 2.1 Database & Skema Drizzle
-* [ ] Tambahkan skema tabel `draft_orders` di `src/database/schema/orders.schema.ts`:
+* [x] Tambahkan skema tabel `draft_orders` di `src/database/schema/orders.schema.ts`:
   * `id`: bigint identity primary key.
   * `user_id`: uuid not null unique references ke `users.id` (ON DELETE CASCADE) — menjamin constraint 1 kasir maksimal 1 draft aktif (`BR-012`).
   * `customer_id`: uuid nullable references ke `customers.id` (ON DELETE SET NULL).
   * `items`: jsonb not null (`Array<{ product_id: number; quantity: number }>`).
   * `created_at`, `updated_at`: timestamptz not null default now.
-* [ ] Jalankan migrasi Drizzle untuk membuat tabel `draft_orders`.
+* [x] Jalankan migrasi Drizzle untuk membuat tabel `draft_orders`.
 
 ### 2.2 Backend API (`apps/backend/src/modules/orders/`)
-* [ ] `POST /api/orders/hold`:
+* [x] `POST /api/orders/hold`:
   * Ambil `user_id` dari access token kasir yang sedang login.
   * Cek apakah sudah ada record di `draft_orders` untuk `user_id` tersebut. Jika sudah ada, tolak dengan status `422 Unprocessable Entity` ("Kasir sudah memiliki 1 transaksi aktif yang tertahan").
   * Simpan keranjang ke `draft_orders` (tanpa memotong stok).
-* [ ] `GET /api/orders/held`:
+* [x] `GET /api/orders/held`:
   * Ambil data held transaction milik kasir yang sedang login (jika tidak ada, kembalikan 404).
-* [ ] `DELETE /api/orders/held`:
+* [x] `DELETE /api/orders/held`:
   * Hapus draft aktif milik kasir dari `draft_orders` (discard draft).
-* [ ] `POST /api/orders/held/finalize`:
+* [x] `POST /api/orders/held/finalize`:
   * Terima body keranjang terbaru (jika ada perubahan item saat di-resume) atau gunakan data draft yang tersimpan.
   * Jalankan transaksi atomik `db.transaction`:
     1. Lock stok produk `FOR UPDATE` dan validasi kuantitas.
@@ -49,13 +49,13 @@ Mengizinkan kasir menahan (*hold*) keranjang belanja yang sedang aktif saat pela
     6. Hook ke `audit_logs`.
 
 ### 2.3 Frontend UI Mobile-First (`apps/frontend`)
-* [ ] Integrasikan tombol "Tahan Keranjang (Hold)" pada panel keranjang kasir (`/pos`):
+* [x] Integrasikan tombol "Tahan Keranjang (Hold)" pada panel keranjang kasir (`/pos`):
   * Tombol `<Button variant="outline">` dengan icon Lucide `Clock`.
   * Tombol otomatis ter-disable jika kasir sudah memiliki 1 draft aktif.
-* [ ] Buat **Held Order Pill Indicator** di Top Navbar (`top-navbar.tsx`):
+* [x] Buat **Held Order Pill Indicator** di Top Navbar (`top-navbar.tsx`):
   * Jika kasir memiliki transaksi tertahan, muncul pill kuning berkedip: `"1 Transaksi Tertahan (Klik untuk Melanjutkan)"`.
   * Menekan pill membuka modal konfirmasi: "Lanjutkan Transaksi" (muat keranjang ke kasir) atau "Buang Draft" (icon Lucide `Trash2`).
-* [ ] Alur Resume: saat keranjang di-resume, kasir dapat mengubah jumlah barang, menambah item, lalu menekan tombol "Bayar Sekarang" seperti transaksi normal.
+* [x] Alur Resume: saat keranjang di-resume, kasir dapat mengubah jumlah barang, menambah item, lalu menekan tombol "Bayar Sekarang" seperti transaksi normal.
 
 ---
 

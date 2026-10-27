@@ -21,7 +21,7 @@ Menyajikan ringkasan metrik performa finansial toko (akumulasi total omset dan j
 ## 2. DETAIL TUGAS TEKNIS (TASK BREAKDOWN)
 
 ### 2.1 Backend API (`apps/backend/src/modules/dashboard/`)
-* [ ] `GET /api/dashboard/summary?period=daily|monthly|quarterly`:
+* [x] `GET /api/dashboard/summary?period=daily|monthly|quarterly`:
   * Tentukan rentang waktu server:
     * `daily`: 00:00:00 s/d 23:59:59 hari ini.
     * `monthly`: tanggal 1 s/d akhir bulan kalender saat ini.
@@ -30,11 +30,11 @@ Menyajikan ringkasan metrik performa finansial toko (akumulasi total omset dan j
   * Top 5 Best Sellers: query 5 produk aktif dengan total kuantitas unit terjual tertinggi di `order_items` dalam periode.
   * Bottom 5 Slow Movers: query 5 produk aktif dengan total unit terjual terendah dalam periode, prioritaskan produk dengan 0 transaksi di posisi teratas (`BR-018`).
   * Peringatan Stok Kritis: query produk aktif yang memiliki `stock < 5` (tidak terikat filter periode).
-* [ ] `GET /api/dashboard/trend?period=daily|monthly|quarterly`:
+* [x] `GET /api/dashboard/trend?period=daily|monthly|quarterly`:
   * Return array data harian: `{ date, transactions, revenue }` untuk periode terpilih.
 
 ### 2.2 Frontend UI Mobile-First (`apps/frontend`)
-* [ ] Bangun halaman `/dashboard` mengacu pada `docs/design/pages/10-dashboard.md`:
+* [x] Bangun halaman `/dashboard` mengacu pada `docs/design/pages/10-dashboard.md`:
   * Header & Period Switch: Pill capsule (`rounded-full p-1.5 glass-panel`) dengan pilihan `Hari Ini`, `Bulan Ini`, `Kuartal Ini`.
   * Baris 1: 4 Kartu KPI Kaca (`glass-card rounded-2xl p-6`):
     * Total Omset Penjualan (format Rupiah tebal monospace `text-2xl lg:text-3xl font-bold font-mono`).
