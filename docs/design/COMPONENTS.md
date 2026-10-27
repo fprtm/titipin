@@ -4,10 +4,24 @@
 | Metadata | Keterangan |
 | :--- | :--- |
 | **Dokumen ID** | `DS-COMPONENTS-001` |
-| **Versi** | `1.0.0` |
+| **Versi** | `1.1.0` |
 | **Status** | APPROVED FOR IMPLEMENTATION |
 | **Styling Foundation** | Radix UI Headless, Tailwind CSS, Frosted Glass, Prominent Rounded (`rounded-xl` / `rounded-2xl` / `rounded-3xl`) |
+| **Iconography Standard** | **STRICT: `lucide-react` ONLY** (Dilarang keras inline SVG hardcode atau emoji sebagai icon) |
+| **Layout Standard** | **STRICT: Mobile-First Responsive** (Base mobile `<640px>`, Tablet `md:768px`, Desktop `lg:1024px`) |
 | **Accessibility Target** | WCAG 2.1 AA (Keyboard Navigation, ARIA Attributes, Focus Visible) |
+
+---
+
+## 0. STANDAR KONSISTENSI & ATURAN KERAS (STRICT RULES)
+
+1. **Aturan Ikonografi Resmi (`lucide-react`):**
+   * **DILARANG KERAS** menggunakan inline raw SVG `<svg>...</svg>` yang di-hardcode dalam kode komponen atau emoji Unicode (seperti 🗑️, 🛒, 🔍) sebagai icon interface.
+   * Seluruh ikon antarmuka wajib diimpor langsung dari paket resmi `lucide-react` (misal: `import { Search, ShoppingCart, Trash2, Plus, Minus, Eye, EyeOff, Loader2 } from 'lucide-react'`).
+   * Ukuran default ikon: `w-4 h-4` (ukuran kompak) atau `w-5 h-5` (ukuran default), dengan `strokeWidth={2}`.
+2. **Aturan Desain Mobile-First:**
+   * Seluruh kelas Tailwind CSS ditulis dengan filosofi **Mobile-First**: kelas dasar (*base classes*) tanpa prefix berlaku untuk layar mobile ponsel (`< 640px`), kemudian ditingkatkan secara bertahap menggunakan prefix breakpoint `sm:` ($\ge 640px$), `md:` ($\ge 768px$), dan `lg:` ($\ge 1024px$).
+   * Pada mobile, drawer keranjang belanja kasir ditampilkan sebagai bottom sheet geser ke atas (`Sheet` dari bawah/samping), sedangkan pada desktop tampil sebagai panel permanen di sebelah kanan (*dual-pane split view*).
 
 ---
 
