@@ -79,6 +79,7 @@ export class AuthService {
         jti: crypto.randomUUID(),
         sub: user.id,
         email: user.email,
+        role: user.role,
       },
       {
         secret: envConfig.JWT_REFRESH_SECRET,
@@ -167,6 +168,7 @@ export class AuthService {
         jti: crypto.randomUUID(),
         sub: user.id,
         email: user.email,
+        role: user.role,
       },
       {
         secret: envConfig.JWT_REFRESH_SECRET,
