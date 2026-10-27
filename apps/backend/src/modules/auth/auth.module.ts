@@ -14,7 +14,7 @@ type JwtExpiresIn = NonNullable<JwtSignOptions['expiresIn']>;
 @Module({
   imports: [
     DatabaseModule,
-    AuditModule,
+    forwardRef(() => AuditModule),
     forwardRef(() => UsersModule),
     JwtModule.register({
       secret: envConfig.JWT_SECRET,

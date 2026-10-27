@@ -51,8 +51,10 @@ export class FindAuditLogsUseCase {
       meta: {
         page,
         per_page: perPage,
+        perPage,
         total,
         total_pages: totalPages,
+        totalPages,
       },
     };
   }

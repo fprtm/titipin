@@ -3,4 +3,6 @@ export interface PaginationMeta {
   per_page: number;
   total: number;
   total_pages: number;
+  perPage?: number;
+  totalPages?: number;
 }
