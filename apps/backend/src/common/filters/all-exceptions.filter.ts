@@ -25,6 +25,16 @@ export class AllExceptionsFilter implements ExceptionFilter {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
 
+      // Pass through health check status if present
+      if (
+        typeof exceptionResponse === 'object' &&
+        exceptionResponse !== null &&
+        'database' in (exceptionResponse as Record<string, unknown>)
+      ) {
+        response.status(status).json(exceptionResponse);
+        return;
+      }
+
       if (typeof exceptionResponse === 'string') {
         message = exceptionResponse;
       } else if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {

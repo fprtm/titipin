@@ -5,12 +5,18 @@ import { ZodSchema, ZodError } from 'zod';
 export class ZodValidationPipe implements PipeTransform {
   constructor(private readonly schema?: ZodSchema) {}
 
-  transform(value: unknown, _metadata: ArgumentMetadata) {
-    if (!this.schema) {
+  transform(value: unknown, metadata: ArgumentMetadata) {
+    const targetSchema =
+      this.schema ??
+      (metadata?.metatype && typeof metadata.metatype === 'function' && 'schema' in metadata.metatype
+        ? (metadata.metatype as unknown as { schema: ZodSchema }).schema
+        : undefined);
+
+    if (!targetSchema) {
       return value;
     }
 
-    const result = this.schema.safeParse(value);
+    const result = targetSchema.safeParse(value);
     if (!result.success) {
       const formattedErrors = this.formatZodError(result.error);
       throw new BadRequestException({

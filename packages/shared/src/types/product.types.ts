@@ -1,24 +1,27 @@
 export interface Product {
   id: number;
   productCode: string;
-  name: string;
+  productName: string;
+  name?: string;
   price: number;
   stock: number;
-  category: string;
+  category?: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface CreateProductInput {
   productCode: string;
-  name: string;
+  productName: string;
+  name?: string;
   price: number;
   stock: number;
-  category: string;
+  category?: string;
 }
 
 export interface UpdateProductInput {
   productCode?: string;
+  productName?: string;
   name?: string;
   price?: number;
   stock?: number;

@@ -35,17 +35,17 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
         let responseMeta: unknown = undefined;
 
         if (data && typeof data === 'object' && !Array.isArray(data)) {
-          const obj = data as Record<string, unknown>;
-          if (typeof obj.message === 'string') {
-            responseMessage = obj.message;
+          const dataObject = data as Record<string, unknown>;
+          if (typeof dataObject.message === 'string') {
+            responseMessage = dataObject.message;
           }
-          if (obj.meta) {
-            responseMeta = obj.meta;
+          if (dataObject.meta) {
+            responseMeta = dataObject.meta;
           }
-          if ('items' in obj) {
-            responseData = obj.items;
-          } else if ('data' in obj) {
-            responseData = obj.data;
+          if ('items' in dataObject) {
+            responseData = dataObject.items;
+          } else if ('data' in dataObject) {
+            responseData = dataObject.data;
           }
         }
 

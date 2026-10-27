@@ -1,4 +1,4 @@
-import { Global, Module, OnModuleDestroy, Inject } from '@nestjs/common';
+import { Global, Module, OnModuleDestroy, Inject, Logger } from '@nestjs/common';
 import { Pool } from 'pg';
 import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from './schema';
@@ -14,9 +14,14 @@ export type DrizzleDatabase = NodePgDatabase<typeof schema>;
     {
       provide: PG_POOL,
       useFactory: () => {
-        return new Pool({
+        const pool = new Pool({
           connectionString: envConfig.DATABASE_URL,
         });
+        pool.on('error', (poolError: Error) => {
+          const logger = new Logger('DatabasePool');
+          logger.error('Unexpected error on idle PostgreSQL client', poolError.stack || poolError.message);
+        });
+        return pool;
       },
     },
     {
@@ -33,6 +38,8 @@ export class DatabaseModule implements OnModuleDestroy {
   constructor(@Inject(PG_POOL) private readonly pool: Pool) {}
 
   async onModuleDestroy() {
-    await this.pool.end();
+    if (this.pool && typeof this.pool.end === 'function') {
+      await this.pool.end();
+    }
   }
 }
