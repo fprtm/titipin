@@ -1,0 +1,17 @@
+{
+  "extends": "@titipin/typescript-config/nest.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2022",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "rootDir": "./"
+  },
+  "include": ["src/**/*", "test/**/*", "drizzle.config.ts"]
+}
