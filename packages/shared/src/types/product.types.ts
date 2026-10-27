@@ -1,29 +1,47 @@
-export interface Product {
+export interface ProductItem {
   id: number;
   productCode: string;
   productName: string;
-  name?: string;
-  price: number;
   stock: number;
-  category?: string;
+  price: string;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
+  // snake_case aliases for OpenAPI/client compatibility
+  product_code: string;
+  product_name: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string | null;
 }
 
+export type Product = ProductItem;
+
 export interface CreateProductInput {
-  productCode: string;
-  productName: string;
-  name?: string;
-  price: number;
+  product_code: string;
+  product_name: string;
   stock: number;
-  category?: string;
+  price: number;
+  productCode?: string;
+  productName?: string;
 }
 
 export interface UpdateProductInput {
-  productCode?: string;
-  productName?: string;
-  name?: string;
-  price?: number;
+  product_name?: string;
   stock?: number;
-  category?: string;
+  price?: number;
+  productName?: string;
+}
+
+export interface ImportSummaryData {
+  total_rows: number;
+  inserted: number;
+  updated: number;
+  failed: number;
+}
+
+export interface ImportSummaryResponse {
+  success: boolean;
+  message: string;
+  data: ImportSummaryData;
 }
