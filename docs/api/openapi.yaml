@@ -191,6 +191,26 @@ paths:
                       $ref: '#/components/schemas/UserItem'
         '403':
           $ref: '#/components/responses/Forbidden'
+    post:
+      tags: [Users]
+      summary: Menambahkan pengguna baru staf/kasir (Admin Only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserInput'
+      responses:
+        '201':
+          description: Pengguna baru berhasil didaftarkan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
 
   /api/users/{id}/reset-password:
     patch:
@@ -598,6 +618,16 @@ paths:
     post:
       tags: [Orders]
       summary: Melanjutkan dan memfinalisasi held transaction menjadi order selesai
+      description: |
+        Memfinalisasi transaksi held menjadi order final atomik.
+        Menerima requestBody opsional jika kasir mengubah kuantitas/item keranjang saat melanjutkan.
+        Jika requestBody tidak disertakan, menggunakan data items dari draft_orders yang tersimpan.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderInput'
       responses:
         '201':
           description: Draft dipromosikan ke orders, stok terpotong atomik, draft dihapus
@@ -799,6 +829,15 @@ components:
         success: { type: boolean, example: true }
         data: { $ref: '#/components/schemas/UserItem' }
 
+    CreateUserInput:
+      type: object
+      required: [name, email, password, role]
+      properties:
+        name: { type: string, maxLength: 100, example: 'Kasir Cabang 1' }
+        email: { type: string, format: email, maxLength: 150, example: 'kasir1@titipin.id' }
+        password: { type: string, minLength: 8, example: 'password123' }
+        role: { type: string, enum: [ADMIN, CASHIER], example: 'CASHIER' }
+
     CreateProductInput:
       type: object
       required: [product_code, product_name, stock, price]
@@ -922,7 +961,7 @@ components:
           items:
             type: object
             properties:
-              productId: { type: integer }
+              product_id: { type: integer }
               quantity: { type: integer }
         created_at: { type: string, format: date-time }
 

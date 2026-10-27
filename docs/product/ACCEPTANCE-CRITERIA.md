@@ -441,6 +441,28 @@ Format pengujian mengadopsi standar **BDD (Behavior-Driven Development)**:
 * **When (Negative — Self-Guard):** Admin menargetkan ID akun dirinya sendiri.
 * **Then:** Server mengembalikan `403 Forbidden`.
 
+### AC-USR-04: Menambahkan Pengguna Baru oleh Admin
+* **Terkait:** FR-USR-04, US-USR-04, BR-011, BR-015
+* **Given:** Admin aktif memanggil sistem dengan Bearer token yang sah.
+* **When (Happy Path):** Admin mengirimkan `POST /api/users` dengan payload:
+  ```json
+  {
+    "name": "Kasir Baru",
+    "email": "kasirbaru@titipin.id",
+    "password": "password123",
+    "role": "CASHIER"
+  }
+  ```
+* **Then (Happy Path):**
+  1. Server mengembalikan status `201 Created`.
+  2. Data user tersimpan di tabel `users` dengan hash password terenkripsi (`bcrypt`/`argon2id`).
+  3. `deleted_at` bernilai `NULL` (status aktif).
+  4. Response body mengembalikan detail user tanpa membocorkan hash password.
+* **When (Negative — Duplicate Email):** Admin mengirimkan email yang sudah ada di database.
+* **Then:** Server menolak dengan `422 Unprocessable Entity` ("Email sudah terdaftar").
+* **When (Negative — Kasir Forbidden):** Kasir mencoba mengirimkan request ke `POST /api/users`.
+* **Then:** Server menolak dengan `403 Forbidden`.
+
 ---
 
 ## 9. SEEDER & AUTOMATED INTEGRATION TESTS (DEFINITION OF DONE)

@@ -416,3 +416,20 @@
   7. Riwayat transaksi yang dibuat pengguna ini tetap tampil lengkap pada riwayat order.
 * **Kasus Pengecualian:**
   - Admin mencoba menonaktifkan akun dirinya sendiri: HTTP 403 Forbidden.
+
+### US-USR-04: Menambahkan Pengguna Baru (Admin Only)
+* **Sebagai:** Admin Toko
+* **Saya ingin:** Mendaftarkan akun staf kasir atau admin baru ke dalam sistem
+* **Agar:** Staf baru dapat memiliki kredensial resmi untuk mengoperasikan kasir POS.
+* **Prioritas:** `MUST HAVE` (P0)
+* **Aturan Terkait:** BR-011, BR-015
+* **Alur Skenario:**
+  1. Admin membuka menu "Manajemen Pengguna" (`/users`) dan menekan tombol "Tambah Pengguna".
+  2. Muncul dialog modal pendaftaran pengguna.
+  3. Admin mengisi: Nama Lengkap, Alamat Email, Password (minimal 8 karakter), dan Pilihan Role (`ADMIN` atau `CASHIER`).
+  4. Admin menekan tombol "Simpan".
+  5. Server memvalidasi keunikan alamat email, format password, dan hak akses Admin pemanggil.
+  6. Akun berhasil dibuat dan otomatis muncul pada tabel daftar pengguna.
+* **Kasus Pengecualian:**
+  - Email sudah digunakan oleh akun lain: Server menolak dengan HTTP 422 "Email sudah terdaftar".
+  - Kasir mencoba memanggil endpoint pendaftaran pengguna: Ditolak dengan HTTP 403 Forbidden.
