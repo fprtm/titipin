@@ -9,7 +9,7 @@
 | **Aturan Bisnis** | [BR-018, BR-019](../../product/PRD.md#L75-L85) |
 | **Dokumen Acuan** | [PRD.md Section 3.1 Item 7](../../product/PRD.md#L95-L101), [openapi.yaml](../../api/openapi.yaml#L650-L730) |
 | **Spesifikasi UI** | [10-dashboard.md](../../design/pages/10-dashboard.md), [COMPONENTS.md](../../design/COMPONENTS.md) |
-| **Integration Test** | [ACCEPTANCE-CRITERIA.md Section 7 (AC-DSH-01 s/d AC-DSH-04)](../../product/ACCEPTANCE-CRITERIA.md#L350-L405) |
+| **Integration Test** | [TEST-10 (Kalkulasi metrik dashboard & slow-moving products)](../../product/ACCEPTANCE-CRITERIA.md#L475) |
 
 ---
 

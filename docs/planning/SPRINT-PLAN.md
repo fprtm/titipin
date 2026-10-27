@@ -53,7 +53,7 @@ flowchart TD
 | **Slice 5** | Core POS Engine & Stock Lock | `orders` | `orders`, `order_items`, `order_activity_logs` | `POST /api/orders` | [03-pos-checkout.md](../design/pages/03-pos-checkout.md) | `TEST-01`, `TEST-02`, `TEST-03`, `TEST-05` | BR-001..005, BR-013, BR-017 |
 | **Slice 6** | POS Hold & Resume Drafts | `orders` | `draft_orders` | `/api/orders/hold`, `/api/orders/held*` | [03-pos-checkout.md](../design/pages/03-pos-checkout.md) | `TEST-04` | BR-012, BR-016, BR-017 |
 | **Slice 7** | Order History & Audit Viewer | `orders`, `audit` | `orders`, `audit_logs` | `GET /api/orders/*`, `/api/audit-logs` | [07-orders-history.md](../design/pages/07-orders-history.md), [08-order-detail.md](../design/pages/08-order-detail.md), [09-audit-logs.md](../design/pages/09-audit-logs.md) | `TEST-09` (Audit RBAC) | BR-002, BR-014, BR-017 |
-| **Slice 8** | Dashboard & Analytics | `dashboard` | Agregasi `orders`, `products` | `/api/dashboard/*` | [10-dashboard.md](../design/pages/10-dashboard.md) | Period filter verification | BR-018, BR-019 |
+| **Slice 8** | Dashboard & Analytics | `dashboard` | Agregasi `orders`, `products` | `/api/dashboard/*` | [10-dashboard.md](../design/pages/10-dashboard.md) | `TEST-10` | BR-018, BR-019 |
 | **Slice 9** | Seeder, Polish & Production Docker | Seluruh Sistem | 8 Tabel | Seluruh 23 Endpoint | Seluruh UI Pages | `TEST-01` s/d `TEST-09` (100% Pass) | NFR-DEV-01, Seluruh BR |
 
 ---

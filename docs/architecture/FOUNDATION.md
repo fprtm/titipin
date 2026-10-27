@@ -66,7 +66,7 @@ titipin/
 ├── packages/
 │   ├── shared/                            # Shared domain contracts, enums, interfaces, Zod schemas
 │   │   ├── src/
-│   │   │   ├── enums/                     # Role, Gender, OrderStatus, AuditAction
+│   │   │   ├── enums/                     # Role, Gender, OrderActivityAction, AuditAction
 │   │   │   ├── types/                     # ApiResponse, ApiErrorResponse, PaginationMeta, DTOs
 │   │   │   └── index.ts
 │   │   ├── package.json                   # @titipin/shared
