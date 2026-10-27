@@ -82,10 +82,13 @@ export default function HomePage() {
             </code>
           </div>
           <div className="flex w-full items-center justify-end sm:w-auto">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-teal-700">
-              <span>Status Operasional Normal</span>
+            <a
+              href="/login"
+              className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 transition-colors hover:text-emerald-800"
+            >
+              <span>Masuk ke Sistem Kasir</span>
               <ArrowRight className="h-3.5 w-3.5" />
-            </div>
+            </a>
           </div>
         </footer>
       </div>

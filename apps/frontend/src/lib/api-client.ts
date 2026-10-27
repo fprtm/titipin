@@ -5,11 +5,33 @@ export const apiClient = axios.create({
   withCredentials: true,
 });
 
+let inMemoryAccessToken: string | null = null;
+
+export function setAccessToken(token: string | null): void {
+  inMemoryAccessToken = token;
+  if (token) {
+    apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  } else {
+    delete apiClient.defaults.headers.common['Authorization'];
+  }
+}
+
+export function getAccessToken(): string | null {
+  return inMemoryAccessToken;
+}
+
 let isRefreshing = false;
 let failedQueue: Array<{
   resolve: (token: string) => void;
   reject: (error: unknown) => void;
 }> = [];
+
+apiClient.interceptors.request.use((config) => {
+  if (inMemoryAccessToken && !config.headers['Authorization']) {
+    config.headers['Authorization'] = `Bearer ${inMemoryAccessToken}`;
+  }
+  return config;
+});
 
 apiClient.interceptors.response.use(
   (response) => response,
@@ -41,14 +63,16 @@ apiClient.interceptors.response.use(
 
       try {
         const { data } = await apiClient.post('/auth/refresh');
-        const newToken = data.data.accessToken;
-        apiClient.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+        const newToken = data.data.accessToken || data.data.access_token;
+        setAccessToken(newToken);
         failedQueue.forEach((promiseItem) => promiseItem.resolve(newToken));
         failedQueue = [];
+        originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
         return apiClient(originalRequest);
       } catch (refreshError) {
         failedQueue.forEach((promiseItem) => promiseItem.reject(refreshError));
         failedQueue = [];
+        setAccessToken(null);
         if (typeof window !== 'undefined') {
           window.location.href = '/login';
         }

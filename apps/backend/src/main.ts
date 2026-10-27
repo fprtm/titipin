@@ -1,4 +1,5 @@
 import { NestFactory, Reflector } from '@nestjs/core';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { envConfig } from './config/env.config';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
@@ -10,6 +11,7 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
 
+  app.use(cookieParser());
   app.setGlobalPrefix('api');
 
   app.enableCors({
