@@ -1,15 +1,14 @@
-import { Injectable, Inject, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { JwtService, type JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
-import { eq } from 'drizzle-orm';
 
 type JwtExpiresIn = NonNullable<JwtSignOptions['expiresIn']>;
-import { DRIZZLE_ORM, DrizzleDatabase } from '../../database/database.module';
 import * as schema from '../../database/schema';
 import { envConfig } from '../../config/env.config';
 import { AuditService } from '../audit/audit.service';
 import { AuditAction, UserItem, Role } from '@titipin/shared';
+import { UsersRepository } from '../users/repositories/users.repository';
 import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -17,7 +16,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject(DRIZZLE_ORM) private readonly db: DrizzleDatabase,
+    private readonly usersRepository: UsersRepository,
     private readonly jwtService: JwtService,
     private readonly auditService: AuditService,
   ) {}
@@ -46,11 +45,7 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto, ipAddress?: string, userAgent?: string) {
-    const [user] = await this.db
-      .select()
-      .from(schema.users)
-      .where(eq(schema.users.email, loginDto.email))
-      .limit(1);
+    const user = await this.usersRepository.findByEmail(loginDto.email);
 
     if (!user || user.deletedAt !== null) {
       throw new UnauthorizedException('Email atau kata sandi tidak valid. Silakan coba kembali.');
@@ -90,13 +85,7 @@ export class AuthService {
     const tokenDigest = this.hashTokenForStorage(refreshToken);
     const refreshTokenHash = await bcrypt.hash(tokenDigest, 10);
 
-    await this.db
-      .update(schema.users)
-      .set({
-        refreshTokenHash,
-        updatedAt: new Date(),
-      })
-      .where(eq(schema.users.id, user.id));
+    await this.usersRepository.updateRefreshTokenHash(user.id, refreshTokenHash);
 
     await this.auditService.log({
       userId: user.id,
@@ -134,11 +123,7 @@ export class AuthService {
       throw new UnauthorizedException('Refresh token kadaluarsa atau tidak valid');
     }
 
-    const [user] = await this.db
-      .select()
-      .from(schema.users)
-      .where(eq(schema.users.id, payload.sub))
-      .limit(1);
+    const user = await this.usersRepository.findById(payload.sub);
 
     if (!user || user.deletedAt !== null || !user.refreshTokenHash) {
       throw new UnauthorizedException('Sesi tidak valid atau telah dicabut');
@@ -178,13 +163,7 @@ export class AuthService {
 
     const newRefreshTokenHash = await bcrypt.hash(this.hashTokenForStorage(newRefreshToken), 10);
 
-    await this.db
-      .update(schema.users)
-      .set({
-        refreshTokenHash: newRefreshTokenHash,
-        updatedAt: new Date(),
-      })
-      .where(eq(schema.users.id, user.id));
+    await this.usersRepository.updateRefreshTokenHash(user.id, newRefreshTokenHash);
 
     return {
       accessToken: newAccessToken,
@@ -193,13 +172,7 @@ export class AuthService {
   }
 
   async logout(userId: string, ipAddress?: string, userAgent?: string) {
-    await this.db
-      .update(schema.users)
-      .set({
-        refreshTokenHash: null,
-        updatedAt: new Date(),
-      })
-      .where(eq(schema.users.id, userId));
+    await this.usersRepository.updateRefreshTokenHash(userId, null);
 
     await this.auditService.log({
       userId,
@@ -214,11 +187,7 @@ export class AuthService {
   }
 
   async getProfile(userId: string) {
-    const [user] = await this.db
-      .select()
-      .from(schema.users)
-      .where(eq(schema.users.id, userId))
-      .limit(1);
+    const user = await this.usersRepository.findById(userId);
 
     if (!user || user.deletedAt !== null) {
       throw new UnauthorizedException('Pengguna tidak ditemukan atau telah dinonaktifkan');
@@ -233,24 +202,19 @@ export class AuthService {
     ipAddress?: string,
     userAgent?: string,
   ) {
-    const [existing] = await this.db
-      .select()
-      .from(schema.users)
-      .where(eq(schema.users.id, userId))
-      .limit(1);
+    const existing = await this.usersRepository.findById(userId);
 
     if (!existing || existing.deletedAt !== null) {
       throw new UnauthorizedException('Pengguna tidak ditemukan atau telah dinonaktifkan');
     }
 
-    const [updated] = await this.db
-      .update(schema.users)
-      .set({
-        name: dto.name,
-        updatedAt: new Date(),
-      })
-      .where(eq(schema.users.id, userId))
-      .returning();
+    const updated = await this.usersRepository.update(userId, {
+      name: dto.name,
+    });
+
+    if (!updated) {
+      throw new UnauthorizedException('Pengguna tidak ditemukan');
+    }
 
     await this.auditService.log({
       userId,
@@ -274,11 +238,7 @@ export class AuthService {
     ipAddress?: string,
     userAgent?: string,
   ) {
-    const [user] = await this.db
-      .select()
-      .from(schema.users)
-      .where(eq(schema.users.id, userId))
-      .limit(1);
+    const user = await this.usersRepository.findById(userId);
 
     if (!user || user.deletedAt !== null) {
       throw new UnauthorizedException('Pengguna tidak ditemukan atau telah dinonaktifkan');
@@ -291,13 +251,7 @@ export class AuthService {
 
     const newPasswordHash = await bcrypt.hash(dto.new_password, 10);
 
-    await this.db
-      .update(schema.users)
-      .set({
-        password: newPasswordHash,
-        updatedAt: new Date(),
-      })
-      .where(eq(schema.users.id, userId));
+    await this.usersRepository.updatePassword(userId, newPasswordHash);
 
     await this.auditService.log({
       userId,
