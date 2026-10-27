@@ -6,10 +6,10 @@
 | **Ticket ID** | `TICKET-SLICE-8` |
 | **Epic Terkait** | `EPIC-06: DASHBOARD ANALITIK & MONITORING` |
 | **Target Branch** | `feature/slice-8-dashboard-analytics` |
-| **Aturan Bisnis** | [BR-018, BR-019](file:///Users/yuma/Workspace/lab/titipin/docs/product/PRD.md#L75-L85) |
-| **Dokumen Acuan** | [PRD.md Section 3.1 Item 7](file:///Users/yuma/Workspace/lab/titipin/docs/product/PRD.md#L95-L101), [openapi.yaml](file:///Users/yuma/Workspace/lab/titipin/docs/api/openapi.yaml#L650-L730) |
-| **Spesifikasi UI** | [10-dashboard.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/10-dashboard.md), [COMPONENTS.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/COMPONENTS.md) |
-| **Integration Test** | [ACCEPTANCE-CRITERIA.md Section 7 (AC-DSH-01 s/d AC-DSH-04)](file:///Users/yuma/Workspace/lab/titipin/docs/product/ACCEPTANCE-CRITERIA.md#L350-L405) |
+| **Aturan Bisnis** | [BR-018, BR-019](../../product/PRD.md#L75-L85) |
+| **Dokumen Acuan** | [PRD.md Section 3.1 Item 7](../../product/PRD.md#L95-L101), [openapi.yaml](../../api/openapi.yaml#L650-L730) |
+| **Spesifikasi UI** | [10-dashboard.md](../../design/pages/10-dashboard.md), [COMPONENTS.md](../../design/COMPONENTS.md) |
+| **Integration Test** | [ACCEPTANCE-CRITERIA.md Section 7 (AC-DSH-01 s/d AC-DSH-04)](../../product/ACCEPTANCE-CRITERIA.md#L350-L405) |
 
 ---
 

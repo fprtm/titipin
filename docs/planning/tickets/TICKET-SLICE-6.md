@@ -6,10 +6,10 @@
 | **Ticket ID** | `TICKET-SLICE-6` |
 | **Epic Terkait** | `EPIC-04: TRANSAKSI PENJUALAN KASIR (POINT OF SALE)` |
 | **Target Branch** | `feature/slice-6-pos-hold-orders` |
-| **Aturan Bisnis** | [BR-012, BR-016, BR-017](file:///Users/yuma/Workspace/lab/titipin/docs/product/PRD.md#L60-L75) |
-| **Dokumen Acuan** | [ARCHITECTURE.md Section 4.3](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/ARCHITECTURE.md#L241-L267), [ADR-005](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/ADR/ADR-005-pos-draft-orders-isolation.md), [DATA-MODEL.md Section 3.6 & 4.4](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/DATA-MODEL.md#L238-L252), [openapi.yaml](file:///Users/yuma/Workspace/lab/titipin/docs/api/openapi.yaml#L564-L633) |
-| **Spesifikasi UI** | [03-pos-checkout.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/03-pos-checkout.md), [02-app-shell.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/02-app-shell.md), [COMPONENTS.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/COMPONENTS.md) |
-| **Integration Test** | [TEST-04 (Hold draft & finalize atomik)](file:///Users/yuma/Workspace/lab/titipin/docs/product/ACCEPTANCE-CRITERIA.md#L470) |
+| **Aturan Bisnis** | [BR-012, BR-016, BR-017](../../product/PRD.md#L60-L75) |
+| **Dokumen Acuan** | [ARCHITECTURE.md Section 4.3](../../architecture/ARCHITECTURE.md#L241-L267), [ADR-005](../../architecture/ADR/ADR-005-pos-draft-orders-isolation.md), [DATA-MODEL.md Section 3.6 & 4.4](../../architecture/DATA-MODEL.md#L238-L252), [openapi.yaml](../../api/openapi.yaml#L564-L633) |
+| **Spesifikasi UI** | [03-pos-checkout.md](../../design/pages/03-pos-checkout.md), [02-app-shell.md](../../design/pages/02-app-shell.md), [COMPONENTS.md](../../design/COMPONENTS.md) |
+| **Integration Test** | [TEST-04 (Hold draft & finalize atomik)](../../product/ACCEPTANCE-CRITERIA.md#L470) |
 
 ---
 

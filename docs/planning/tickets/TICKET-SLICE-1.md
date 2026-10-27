@@ -6,10 +6,10 @@
 | **Ticket ID** | `TICKET-SLICE-1` |
 | **Epic Terkait** | `EPIC-01: AUTENTIKASI DAN KEAMANAN SESI` |
 | **Target Branch** | `feature/slice-1-auth-app-shell` |
-| **Aturan Bisnis** | [BR-007, BR-008, BR-015](file:///Users/yuma/Workspace/lab/titipin/docs/product/PRD.md#L45-L65) |
-| **Dokumen Acuan** | [ARCHITECTURE.md Section 4.1](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/ARCHITECTURE.md#L157-L180), [DATA-MODEL.md Section 4.1](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/DATA-MODEL.md#L308-L327), [openapi.yaml](file:///Users/yuma/Workspace/lab/titipin/docs/api/openapi.yaml#L56-L175) |
-| **Spesifikasi UI** | [01-login.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/01-login.md), [02-app-shell.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/02-app-shell.md), [COMPONENTS.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/COMPONENTS.md) |
-| **Integration Test** | [TEST-06 (Akses tanpa token ditolak 401)](file:///Users/yuma/Workspace/lab/titipin/docs/product/ACCEPTANCE-CRITERIA.md#L471) |
+| **Aturan Bisnis** | [BR-007, BR-008, BR-015](../../product/PRD.md#L45-L65) |
+| **Dokumen Acuan** | [ARCHITECTURE.md Section 4.1](../../architecture/ARCHITECTURE.md#L157-L180), [DATA-MODEL.md Section 4.1](../../architecture/DATA-MODEL.md#L308-L327), [openapi.yaml](../../api/openapi.yaml#L56-L175) |
+| **Spesifikasi UI** | [01-login.md](../../design/pages/01-login.md), [02-app-shell.md](../../design/pages/02-app-shell.md), [COMPONENTS.md](../../design/COMPONENTS.md) |
+| **Integration Test** | [TEST-06 (Akses tanpa token ditolak 401)](../../product/ACCEPTANCE-CRITERIA.md#L471) |
 
 ---
 

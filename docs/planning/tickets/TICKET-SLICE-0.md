@@ -7,7 +7,7 @@
 | **Epic Terkait** | `EPIC-00: SYSTEM FOUNDATION` |
 | **Target Branch** | `feature/slice-0-monorepo-baseline` |
 | **Estimasi Beban** | Fondasi Utama (Infrastruktur & Monorepo Tooling) |
-| **Dokumen Acuan** | [ARCHITECTURE.md](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/ARCHITECTURE.md), [DATA-MODEL.md](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/DATA-MODEL.md#L480-L505), [TOKENS.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/TOKENS.md), [COMPONENTS.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/COMPONENTS.md), [openapi.yaml](file:///Users/yuma/Workspace/lab/titipin/docs/api/openapi.yaml#L32-L55) |
+| **Dokumen Acuan** | [ARCHITECTURE.md](../../architecture/ARCHITECTURE.md), [DATA-MODEL.md](../../architecture/DATA-MODEL.md#L480-L505), [TOKENS.md](../../design/TOKENS.md), [COMPONENTS.md](../../design/COMPONENTS.md), [openapi.yaml](../../api/openapi.yaml#L32-L55) |
 | **Standar UI** | Tailwind CSS v3/v4, `lucide-react`, Glassmorphism Tokens (`rounded-xl` / `rounded-2xl` / `rounded-3xl`) |
 
 ---
@@ -53,14 +53,14 @@ Membangun fondasi monorepo berbasis **Turborepo** dan **pnpm workspaces** yang m
   9. `THROTTLE_TTL`: number (default `60`), `THROTTLE_LIMIT`: number (default `10`)
 * [ ] Buat file template `.env.example` di root dan di `apps/backend/`.
 * [ ] Setup Drizzle ORM provider dengan connection pool `node-postgres` (`pg`) di `apps/backend/src/database/`.
-* [ ] Buat skema Drizzle awal `src/database/schema/audit.schema.ts` (mengacu pada [DATA-MODEL.md Section 4.5](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/DATA-MODEL.md#L480-L505)) dan hook service internal `AuditService` (agar seluruh modul selanjutnya langsung dapat mencatat audit mutasi tanpa refactoring ulang).
+* [ ] Buat skema Drizzle awal `src/database/schema/audit.schema.ts` (mengacu pada [DATA-MODEL.md Section 4.5](../../architecture/DATA-MODEL.md#L480-L505)) dan hook service internal `AuditService` (agar seluruh modul selanjutnya langsung dapat mencatat audit mutasi tanpa refactoring ulang).
 * [ ] Daftarkan Global Validation Pipe (Zod/class-validator), Global Exception Filter (mengembalikan format error nested), dan Global Response Transform Interceptor.
-* [ ] Buat endpoint `GET /api/health` (mengacu pada [openapi.yaml](file:///Users/yuma/Workspace/lab/titipin/docs/api/openapi.yaml#L32-L55)) yang mengecek koneksi database PostgreSQL dan mengembalikan `{ status: 'ok', timestamp: '...', database: 'connected' }`.
+* [ ] Buat endpoint `GET /api/health` (mengacu pada [openapi.yaml](../../api/openapi.yaml#L32-L55)) yang mengecek koneksi database PostgreSQL dan mengembalikan `{ status: 'ok', timestamp: '...', database: 'connected' }`.
 * [ ] Konfigurasi CORS pada `main.ts` dengan `origin: [config.FRONTEND_URL]`, `credentials: true`.
 
 ### 2.4 Frontend Skeleton (`apps/frontend`)
 * [ ] Inisialisasi Next.js 15 App Router dengan TypeScript dan React 19.
-* [ ] Setup Tailwind CSS v3/v4 dengan konfigurasi design tokens dari [TOKENS.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/TOKENS.md) (`oklch` colors, `rounded-xl`, `rounded-2xl`, `rounded-3xl`, `.glass-panel`, `.glass-card`, `.bg-canvas-pattern`).
+* [ ] Setup Tailwind CSS v3/v4 dengan konfigurasi design tokens dari [TOKENS.md](../../design/TOKENS.md) (`oklch` colors, `rounded-xl`, `rounded-2xl`, `rounded-3xl`, `.glass-panel`, `.glass-card`, `.bg-canvas-pattern`).
 * [ ] Install `lucide-react` (wajib digunakan untuk seluruh icon UI tanpa hardcode raw SVG).
 * [ ] Konfigurasi `QueryClientProvider` (TanStack Query v5) pada root layout shell (`apps/frontend/src/app/layout.tsx`).
 * [ ] Siapkan file `apps/frontend/.env.example` berisi `NEXT_PUBLIC_API_URL=http://localhost:3001/api`.

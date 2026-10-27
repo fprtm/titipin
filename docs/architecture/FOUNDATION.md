@@ -1,4 +1,4 @@
-# PHASE 3 — FOUNDATION & INFRASTRUCTURE SPECIFICATION
+# SYSTEM FOUNDATION & INFRASTRUCTURE SPECIFICATION
 ## Titipin POS — Monorepo Architecture, Tooling, CI/CD & Operational Blueprint
 
 | Metadata | Keterangan |
@@ -7,10 +7,9 @@
 | **Versi** | `1.0.0` |
 | **Tanggal Efektif** | 27 Oktober 2026 |
 | **Status** | APPROVED FOR IMPLEMENTATION |
-| **Penyusun** | Ferry Pratama (`fprtm`) |
 | **Monorepo Engine** | Turborepo + pnpm Workspaces |
 | **Runtime Target** | Node.js 24 LTS |
-| **Dokumen Acuan** | [ARCHITECTURE.md](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/ARCHITECTURE.md), [DATA-MODEL.md](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/DATA-MODEL.md), [openapi.yaml](file:///Users/yuma/Workspace/lab/titipin/docs/api/openapi.yaml), [TICKET-SLICE-0.md](file:///Users/yuma/Workspace/lab/titipin/docs/planning/tickets/TICKET-SLICE-0.md) |
+| **Dokumen Acuan** | [ARCHITECTURE.md](./ARCHITECTURE.md), [DATA-MODEL.md](./DATA-MODEL.md), [openapi.yaml](../api/openapi.yaml), [TICKET-SLICE-0.md](../planning/tickets/TICKET-SLICE-0.md) |
 
 ---
 
@@ -181,7 +180,7 @@ packages:
 ### 2.2 Strategi Pengujian Otomatis (Automated Tests)
 * **Backend Unit & Integration Testing**:
   * Tooling: **Vitest** (atau **Jest**) terintegrasi dengan **Supertest** untuk end-to-end HTTP endpoint verification.
-  * 10 Critical Integration Test Suites (mengacu pada [ARCHITECTURE.md Section 7](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/ARCHITECTURE.md#L280-L300)):
+  * 10 Critical Integration Test Suites (mengacu pada [ARCHITECTURE.md Section 7](./ARCHITECTURE.md#7-skenario-pengujian-kritis-critical-integration-test-matrix)):
     1. `TEST-01`: Login admin & kasir mengembalikan format token dan profil yang valid.
     2. `TEST-02`: Import katalog Excel memvalidasi format, deduplikasi SKU, dan menyisipkan item valid.
     3. `TEST-03`: Export katalog Excel menghasilkan file binary XLSX dengan header dan baris data yang tepat.
@@ -445,8 +444,7 @@ Sesuai rekomendasi standar Turborepo LLM indexability dan agentic pairing, `AGEN
 3. **Strict Constraints & Coding Guidelines**:
    - Dilarang keras meng-hardcode icon raw SVG / emoji; **wajib menggunakan `lucide-react`**.
    - Desain wajib responsive mobile-first dengan tema glassmorphism (`rounded-xl` / `rounded-2xl` / `rounded-3xl`).
-   - Git identity wajib `Ferry Pratama <ferryaguspratama@gmail.com>` (`fprtm`).
-   - Pola percabangan Git: Selalu buat branch fitur `feature/...` dari `develop`, merge dengan `--no-ff`, lalu hapus branch lokal.
+   - Pola percabangan Git: Standar industri best-practice (branch `feature/...` dari `develop`, merge dengan `--no-ff`, lalu hapus branch lokal).
    - Penamaan entitas dan variabel wajib eksplisit, konsisten, dan terhubung dengan schema Drizzle.
 4. **Contract Reference Index**: Tautan langsung ke `docs/api/openapi.yaml`, `docs/architecture/DATA-MODEL.md`, dan `docs/planning/TICKETS.md`.
 
@@ -454,7 +452,7 @@ Sesuai rekomendasi standar Turborepo LLM indexability dan agentic pairing, `AGEN
 
 ## 9. KESIMPULAN & TAHAP BERIKUTNYA
 
-Spesifikasi Fondasi Phase 3 ini melengkapi seluruh kriteria teknis yang diwajibkan:
+Spesifikasi Fondasi ini melengkapi seluruh kriteria teknis yang diwajibkan:
 1. Struktur monorepo Turborepo + pnpm workspaces yang bersih dan modular.
 2. Linting (ESLint 9 Flat), formatting (Prettier), dan 10 test suite integrasi backend.
 3. Validasi Zod fail-fast untuk variabel lingkungan.

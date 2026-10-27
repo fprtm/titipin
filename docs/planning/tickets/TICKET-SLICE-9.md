@@ -6,9 +6,9 @@
 | **Ticket ID** | `TICKET-SLICE-9` |
 | **Epic Terkait** | `EPIC-00: RELEASE & DEPLOYMENT` |
 | **Target Branch** | `feature/slice-9-seeder-prod-release` |
-| **Aturan Bisnis** | [NFR-DEV-01, Seluruh Aturan Bisnis BR-001 s/d BR-019](file:///Users/yuma/Workspace/lab/titipin/docs/product/PRD.md#L40-L85) |
-| **Dokumen Acuan** | [ARCHITECTURE.md Section 6 & 7](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/ARCHITECTURE.md#L290-L341), [PRD.md Section 3.1 Item 8](file:///Users/yuma/Workspace/lab/titipin/docs/product/PRD.md#L102-L107), [ACCEPTANCE-CRITERIA.md Section 9](file:///Users/yuma/Workspace/lab/titipin/docs/product/ACCEPTANCE-CRITERIA.md#L446-L474) |
-| **Integration Tests** | [Seluruh 9 Skenario Integrasi TEST-01 s/d TEST-09 Lolos 100%](file:///Users/yuma/Workspace/lab/titipin/docs/product/ACCEPTANCE-CRITERIA.md#L466-L474) |
+| **Aturan Bisnis** | [NFR-DEV-01, Seluruh Aturan Bisnis BR-001 s/d BR-019](../../product/PRD.md#L40-L85) |
+| **Dokumen Acuan** | [ARCHITECTURE.md Section 6 & 7](../../architecture/ARCHITECTURE.md#L290-L341), [PRD.md Section 3.1 Item 8](../../product/PRD.md#L102-L107), [ACCEPTANCE-CRITERIA.md Section 9](../../product/ACCEPTANCE-CRITERIA.md#L446-L474) |
+| **Integration Tests** | [Seluruh 9 Skenario Integrasi TEST-01 s/d TEST-09 Lolos 100%](../../product/ACCEPTANCE-CRITERIA.md#L466-L474) |
 
 ---
 

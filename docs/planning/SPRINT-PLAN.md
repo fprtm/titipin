@@ -45,15 +45,15 @@ flowchart TD
 
 | Slice ID | Nama Irisan Vertikal | Modul Domain | Tabel DB | Endpoint OpenAPI | UI Specs Terkait | Integration Test | Aturan Bisnis |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Slice 0** | Monorepo Baseline & Infra | `shared`, `core` | `audit_logs` (schema) | Global Error Response | [TOKENS.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/TOKENS.md), [COMPONENTS.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/COMPONENTS.md) | Setup verification | - |
-| **Slice 1** | Auth, Session & App Shell | `auth` | `users` | `/api/auth/*` | [01-login.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/01-login.md), [02-app-shell.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/02-app-shell.md) | `TEST-06` | BR-007, BR-008, BR-015 |
-| **Slice 2** | User Management & RBAC | `users` | `users` | `/api/users/*` | [06-users.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/06-users.md) | `TEST-08`, `TEST-09` | BR-010, BR-011, BR-015 |
-| **Slice 3** | Product Catalog & Inventory | `products` | `products` | `/api/products/*` | [04-products.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/04-products.md) | `TEST-07` | BR-001, BR-006, BR-009 |
-| **Slice 4** | Customer / Member Management | `customers` | `customers` | `/api/customers/*` | [05-customers.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/05-customers.md) | Customer CRUD verification | BR-006 |
-| **Slice 5** | Core POS Engine & Stock Lock | `orders` | `orders`, `order_items`, `order_activity_logs` | `POST /api/orders` | [03-pos-checkout.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/03-pos-checkout.md) | `TEST-01`, `TEST-02`, `TEST-03`, `TEST-05` | BR-001..005, BR-013, BR-017 |
-| **Slice 6** | POS Hold & Resume Drafts | `orders` | `draft_orders` | `/api/orders/hold`, `/api/orders/held*` | [03-pos-checkout.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/03-pos-checkout.md) | `TEST-04` | BR-012, BR-016, BR-017 |
-| **Slice 7** | Order History & Audit Viewer | `orders`, `audit` | `orders`, `audit_logs` | `GET /api/orders/*`, `/api/audit-logs` | [07-orders-history.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/07-orders-history.md), [08-order-detail.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/08-order-detail.md), [09-audit-logs.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/09-audit-logs.md) | `TEST-09` (Audit RBAC) | BR-002, BR-014, BR-017 |
-| **Slice 8** | Dashboard & Analytics | `dashboard` | Agregasi `orders`, `products` | `/api/dashboard/*` | [10-dashboard.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/10-dashboard.md) | Period filter verification | BR-018, BR-019 |
+| **Slice 0** | Monorepo Baseline & Infra | `shared`, `core` | `audit_logs` (schema) | Global Error Response | [TOKENS.md](../design/TOKENS.md), [COMPONENTS.md](../design/COMPONENTS.md) | Setup verification | - |
+| **Slice 1** | Auth, Session & App Shell | `auth` | `users` | `/api/auth/*` | [01-login.md](../design/pages/01-login.md), [02-app-shell.md](../design/pages/02-app-shell.md) | `TEST-06` | BR-007, BR-008, BR-015 |
+| **Slice 2** | User Management & RBAC | `users` | `users` | `/api/users/*` | [06-users.md](../design/pages/06-users.md) | `TEST-08`, `TEST-09` | BR-010, BR-011, BR-015 |
+| **Slice 3** | Product Catalog & Inventory | `products` | `products` | `/api/products/*` | [04-products.md](../design/pages/04-products.md) | `TEST-07` | BR-001, BR-006, BR-009 |
+| **Slice 4** | Customer / Member Management | `customers` | `customers` | `/api/customers/*` | [05-customers.md](../design/pages/05-customers.md) | Customer CRUD verification | BR-006 |
+| **Slice 5** | Core POS Engine & Stock Lock | `orders` | `orders`, `order_items`, `order_activity_logs` | `POST /api/orders` | [03-pos-checkout.md](../design/pages/03-pos-checkout.md) | `TEST-01`, `TEST-02`, `TEST-03`, `TEST-05` | BR-001..005, BR-013, BR-017 |
+| **Slice 6** | POS Hold & Resume Drafts | `orders` | `draft_orders` | `/api/orders/hold`, `/api/orders/held*` | [03-pos-checkout.md](../design/pages/03-pos-checkout.md) | `TEST-04` | BR-012, BR-016, BR-017 |
+| **Slice 7** | Order History & Audit Viewer | `orders`, `audit` | `orders`, `audit_logs` | `GET /api/orders/*`, `/api/audit-logs` | [07-orders-history.md](../design/pages/07-orders-history.md), [08-order-detail.md](../design/pages/08-order-detail.md), [09-audit-logs.md](../design/pages/09-audit-logs.md) | `TEST-09` (Audit RBAC) | BR-002, BR-014, BR-017 |
+| **Slice 8** | Dashboard & Analytics | `dashboard` | Agregasi `orders`, `products` | `/api/dashboard/*` | [10-dashboard.md](../design/pages/10-dashboard.md) | Period filter verification | BR-018, BR-019 |
 | **Slice 9** | Seeder, Polish & Production Docker | Seluruh Sistem | 8 Tabel | Seluruh 23 Endpoint | Seluruh UI Pages | `TEST-01` s/d `TEST-09` (100% Pass) | NFR-DEV-01, Seluruh BR |
 
 ---
@@ -70,7 +70,7 @@ flowchart TD
   2. Setup `packages/shared`: konfigurasi TypeScript composite / `tsup`, package metadata, shared enums (`Role`, `Gender`).
   3. Setup `apps/backend`: NestJS 11+ bootstrap, konfigurasi environment Zod, PostgreSQL connection pool provider via Drizzle ORM.
   4. Setup skema Drizzle awal `src/database/schema/audit.schema.ts` dan service hook internal `AuditService` (agar modul selanjutnya langsung bisa mencatat audit write tanpa refactoring ulang).
-  5. Setup `apps/frontend`: Next.js 15 App Router skeleton, Tailwind CSS v3/v4 dengan konfigurasi [TOKENS.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/TOKENS.md) (`oklch` palette, `rounded-xl`, `rounded-2xl`, `rounded-3xl`, `glass-panel`, `canvas-texture` dot matrix), dan TanStack Query provider.
+  5. Setup `apps/frontend`: Next.js 15 App Router skeleton, Tailwind CSS v3/v4 dengan konfigurasi [TOKENS.md](../design/TOKENS.md) (`oklch` palette, `rounded-xl`, `rounded-2xl`, `rounded-3xl`, `glass-panel`, `canvas-texture` dot matrix), dan TanStack Query provider.
   6. Buat `docker-compose.yml` untuk PostgreSQL 16 database lokal.
 * **Definition of Done (DoD):**
   * `pnpm install` dan `pnpm build` sukses di root.
@@ -83,7 +83,7 @@ flowchart TD
 ### SLICE 1: Autentikasi Pengguna, Silent Mutex Refresh & UI App Shell
 * **Tujuan:** Mengamankan sistem dengan JWT ganda (Access Token in-memory + Refresh Token HttpOnly Cookie) dan menyediakan layout dashboard kaca yang kokoh.
 * **Target Branch:** `feature/slice-1-auth-app-shell`
-* **Spesifikasi UI:** [01-login.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/01-login.md), [02-app-shell.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/02-app-shell.md)
+* **Spesifikasi UI:** [01-login.md](../design/pages/01-login.md), [02-app-shell.md](../design/pages/02-app-shell.md)
 * **Tasks:**
   1. **Database:** Skema Drizzle `src/database/schema/users.schema.ts` (id uuid, email unique, password hash, role enum, refresh_token_hash, deleted_at).
   2. **Shared:** Zod schema untuk login, refresh, dan DTO `LoginResponse`, `UserItem`.
@@ -105,7 +105,7 @@ flowchart TD
 ### SLICE 2: Manajemen Pengguna Internal & RBAC Guard
 * **Tujuan:** Menyelesaikan wewenang Admin untuk mendaftarkan staf, mereset password kasir, dan menonaktifkan akun kasir dengan pencabutan sesi instan.
 * **Target Branch:** `feature/slice-2-user-management`
-* **Spesifikasi UI:** [06-users.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/06-users.md)
+* **Spesifikasi UI:** [06-users.md](../design/pages/06-users.md)
 * **Tasks:**
   1. **Shared:** Zod schema `CreateUserInput`, `ResetPasswordInput`.
   2. **Backend (`users` module):**
@@ -128,7 +128,7 @@ flowchart TD
 ### SLICE 3: Katalog Produk, Inventaris & Import/Export Excel
 * **Tujuan:** Mengelola data master produk, validasi harga dan stok, ekspor `.xlsx`, serta impor massal idempoten.
 * **Target Branch:** `feature/slice-3-product-catalog`
-* **Spesifikasi UI:** [04-products.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/04-products.md)
+* **Spesifikasi UI:** [04-products.md](../design/pages/04-products.md)
 * **Tasks:**
   1. **Database:** Skema Drizzle `src/database/schema/products.schema.ts` (`stock >= 0`, `price > 0`, soft delete `deleted_at`, index pencarian).
   2. **Shared:** Zod schema `CreateProductInput`, `UpdateProductInput`, DTO `ProductItem`.
@@ -149,7 +149,7 @@ flowchart TD
 ### SLICE 4: Manajemen Pelanggan (Member Toko)
 * **Tujuan:** Mengelola profil pelanggan terdaftar toko (member) sebagai opsi identifikasi pembeli di POS.
 * **Target Branch:** `feature/slice-4-customer-management`
-* **Spesifikasi UI:** [05-customers.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/05-customers.md)
+* **Spesifikasi UI:** [05-customers.md](../design/pages/05-customers.md)
 * **Tasks:**
   1. **Database:** Skema Drizzle `src/database/schema/customers.schema.ts` (uuid PK, `customer_name`, `customer_address`, `gender`, `birth_date`, `phone`, soft delete `deleted_at`).
   2. **Shared:** Zod schema `CreateCustomerInput`, `CustomerItem`.
@@ -165,7 +165,7 @@ flowchart TD
 ### SLICE 5: Core POS Checkout Engine & Atomic Concurrency Stock Locking (Jantung Sistem)
 * **Tujuan:** Menuntaskan transaksi penjualan POS secara atomik, aman dari *race condition* stok, dengan kalkulasi harga di server dan snapshot harga historis.
 * **Target Branch:** `feature/slice-5-core-pos-engine`
-* **Spesifikasi UI:** [03-pos-checkout.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/03-pos-checkout.md)
+* **Spesifikasi UI:** [03-pos-checkout.md](../design/pages/03-pos-checkout.md)
 * **Tasks:**
   1. **Database:** Skema Drizzle `src/database/schema/orders.schema.ts`: tabel `orders` (`total_amount numeric(14,2)`), tabel `order_items` (`unit_price numeric(12,2)` snapshot), tabel `order_activity_logs`.
   2. **Shared:** Zod schema `CreateOrderInput` (`customer_id` nullable, `items: [{ product_id, quantity }]`).
@@ -199,7 +199,7 @@ flowchart TD
 ### SLICE 6: Hold & Resume Transaksi POS (Draft Orders Isolation)
 * **Tujuan:** Mengizinkan kasir menahan antrean keranjang tanpa memotong stok dan melanjutkannya kembali tanpa mencemari tabel `orders`.
 * **Target Branch:** `feature/slice-6-pos-hold-orders`
-* **Spesifikasi UI:** [03-pos-checkout.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/03-pos-checkout.md)
+* **Spesifikasi UI:** [03-pos-checkout.md](../design/pages/03-pos-checkout.md)
 * **Tasks:**
   1. **Database:** Skema Drizzle `src/database/schema/orders.schema.ts`: tabel `draft_orders` dengan constraint `UNIQUE user_id` (1 kasir max 1 draft).
   2. **Backend (`orders` module):**
@@ -219,7 +219,7 @@ flowchart TD
 ### SLICE 7: Riwayat Penjualan, Rincian Nota & Audit Trail Terpusat
 * **Tujuan:** Menyediakan pencarian riwayat transaksi dengan filter tanggal/pelanggan dan transparansi audit mutasi data sistem bagi Admin.
 * **Target Branch:** `feature/slice-7-history-audit`
-* **Spesifikasi UI:** [07-orders-history.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/07-orders-history.md), [08-order-detail.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/08-order-detail.md), [09-audit-logs.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/09-audit-logs.md)
+* **Spesifikasi UI:** [07-orders-history.md](../design/pages/07-orders-history.md), [08-order-detail.md](../design/pages/08-order-detail.md), [09-audit-logs.md](../design/pages/09-audit-logs.md)
 * **Tasks:**
   1. **Backend:**
      * `GET /api/orders`: listing riwayat dengan filter rentang tanggal (`from`, `to`), filter `customer_id`, dan paginasi.
@@ -237,7 +237,7 @@ flowchart TD
 ### SLICE 8: Dashboard Analitik Penjualan & Monitoring Inventaris
 * **Tujuan:** Menyajikan laporan finansial, tren penjualan harian, perbandingan produk terlaris vs lesu, dan alert stok kritis.
 * **Target Branch:** `feature/slice-8-dashboard-analytics`
-* **Spesifikasi UI:** [10-dashboard.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/10-dashboard.md)
+* **Spesifikasi UI:** [10-dashboard.md](../design/pages/10-dashboard.md)
 * **Tasks:**
   1. **Backend (`dashboard` module):**
      * `GET /api/dashboard/summary?period=daily|monthly|quarterly`: hitung total omset (Rp), total transaksi, top 5 produk terlaris, bottom 5 produk lesu (produk 0 penjualan diprioritaskan di atas), dan daftar produk aktif stok $< 5$.

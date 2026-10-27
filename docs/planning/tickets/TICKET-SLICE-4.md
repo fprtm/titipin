@@ -6,10 +6,10 @@
 | **Ticket ID** | `TICKET-SLICE-4` |
 | **Epic Terkait** | `EPIC-03: MANAJEMEN DATA PELANGGAN (MEMBER TOKO)` |
 | **Target Branch** | `feature/slice-4-customer-management` |
-| **Aturan Bisnis** | [BR-006](file:///Users/yuma/Workspace/lab/titipin/docs/product/PRD.md#L50-L55) |
-| **Dokumen Acuan** | [DATA-MODEL.md Section 3.3 & 4.3](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/DATA-MODEL.md#L172-L198), [openapi.yaml](file:///Users/yuma/Workspace/lab/titipin/docs/api/openapi.yaml#L418-L514) |
-| **Spesifikasi UI** | [05-customers.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/05-customers.md), [COMPONENTS.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/COMPONENTS.md) |
-| **Integration Test** | [ACCEPTANCE-CRITERIA.md Section 4 (AC-CST-01 s/d AC-CST-04)](file:///Users/yuma/Workspace/lab/titipin/docs/product/ACCEPTANCE-CRITERIA.md#L180-L240) |
+| **Aturan Bisnis** | [BR-006](../../product/PRD.md#L50-L55) |
+| **Dokumen Acuan** | [DATA-MODEL.md Section 3.3 & 4.3](../../architecture/DATA-MODEL.md#L172-L198), [openapi.yaml](../../api/openapi.yaml#L418-L514) |
+| **Spesifikasi UI** | [05-customers.md](../../design/pages/05-customers.md), [COMPONENTS.md](../../design/COMPONENTS.md) |
+| **Integration Test** | [ACCEPTANCE-CRITERIA.md Section 4 (AC-CST-01 s/d AC-CST-04)](../../product/ACCEPTANCE-CRITERIA.md#L180-L240) |
 
 ---
 
