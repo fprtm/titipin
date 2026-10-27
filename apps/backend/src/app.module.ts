@@ -4,8 +4,16 @@ import { AuditModule } from './modules/audit/audit.module';
 import { HealthModule } from './modules/health/health.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { ProductsModule } from './modules/products/products.module';
 
 @Module({
-  imports: [DatabaseModule, AuditModule, HealthModule, AuthModule, UsersModule],
+  imports: [
+    DatabaseModule,
+    AuditModule,
+    HealthModule,
+    AuthModule,
+    UsersModule,
+    ProductsModule,
+  ],
 })
 export class AppModule {}
