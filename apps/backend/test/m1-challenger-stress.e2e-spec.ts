@@ -6,7 +6,7 @@ import * as path from 'path';
 import { AppModule } from '../src/app.module';
 import { DRIZZLE_ORM, DrizzleDatabase } from '../src/database/database.module';
 import * as schema from '../src/database/schema';
-import { eq, inArray } from 'drizzle-orm';
+import { inArray } from 'drizzle-orm';
 import { ProductsService } from '../src/modules/products/products.service';
 import { ProductsRepository } from '../src/modules/products/repositories/products.repository';
 import { LockAndDeductStockUseCase } from '../src/modules/products/use-cases/lock-and-deduct-stock.use-case';
@@ -16,7 +16,7 @@ describe('Challenger M1: Clean Architecture & Concurrency Stress Test', () => {
   let db: DrizzleDatabase;
   let productsService: ProductsService;
   let productsRepository: ProductsRepository;
-  let lockAndDeductUseCase: LockAndDeductStockUseCase;
+  let _lockAndDeductUseCase: LockAndDeductStockUseCase;
 
   let testProduct1Id: number;
   let testProduct2Id: number;
@@ -33,7 +33,7 @@ describe('Challenger M1: Clean Architecture & Concurrency Stress Test', () => {
     db = moduleFixture.get<DrizzleDatabase>(DRIZZLE_ORM);
     productsService = moduleFixture.get<ProductsService>(ProductsService);
     productsRepository = moduleFixture.get<ProductsRepository>(ProductsRepository);
-    lockAndDeductUseCase = moduleFixture.get<LockAndDeductStockUseCase>(LockAndDeductStockUseCase);
+    _lockAndDeductUseCase = moduleFixture.get<LockAndDeductStockUseCase>(LockAndDeductStockUseCase);
 
     // Create 3 isolated test products
     const p1 = await productsRepository.create({
@@ -333,7 +333,7 @@ describe('Challenger M1: Clean Architecture & Concurrency Stress Test', () => {
       const beforeP1 = await productsRepository.findById(testProduct1Id);
       expect(beforeP1?.stock).toBe(7);
 
-      let caughtError: any = null;
+      let caughtError: unknown = null;
       try {
         await db.transaction(async (tx) => {
           await productsService.lockAndDeductStock(tx, [
@@ -346,7 +346,7 @@ describe('Challenger M1: Clean Architecture & Concurrency Stress Test', () => {
       }
 
       // Record what kind of error was thrown
-      console.log('Duplicate item cumulative stock exhaustion error:', caughtError?.message || caughtError);
+      console.log('Duplicate item cumulative stock exhaustion error:', (caughtError as Error)?.message || caughtError);
       
       // Stock must not have become negative!
       const afterP1 = await productsRepository.findById(testProduct1Id);
