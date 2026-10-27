@@ -1,0 +1,1120 @@
+openapi: 3.1.0
+info:
+  title: Titipin POS & Order Management API
+  version: 1.0.0
+  description: |
+    Spesifikasi RESTful API resmi untuk **Titipin**, sistem Point of Sale (POS) dan Order Management internal toko.
+    Mengikuti standar respons terpadu, autentikasi Dual-Token JWT, RBAC (ADMIN & CASHIER), dan kalkulasi harga mutlak di sisi server.
+servers:
+  - url: http://localhost:3001
+    description: Local Development Server
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: Auth
+    description: Manajemen sesi, login, refresh token, profil, dan ubah kata sandi
+  - name: Users
+    description: Manajemen staf/pengguna sistem internal (Khusus Admin)
+  - name: Products
+    description: Katalog barang, stok, harga, ekspor Excel, dan impor idempoten
+  - name: Customers
+    description: Direktori pelanggan terdaftar (member)
+  - name: Orders
+    description: Engine transaksi POS, Hold draft, finalisasi transaksi, dan riwayat
+  - name: Dashboard
+    description: Analitik performa bisnis (harian, bulanan, kuartalan), tren, dan produk lesu
+  - name: Audit
+    description: Rekam jejak audit trail seluruh aksi write sistem (Khusus Admin)
+
+paths:
+  # ==========================================================
+  # SYSTEM HEALTHCHECK
+  # ==========================================================
+  /api/health:
+    get:
+      tags: [System]
+      summary: Health check status sistem dan konektivitas database
+      security: []
+      responses:
+        '200':
+          description: Layanan dan database berjalan normal
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: 'ok' }
+                  timestamp: { type: string, format: date-time }
+                  database: { type: string, example: 'connected' }
+        '503':
+          description: Layanan atau konektivitas database terputus
+
+  # ==========================================================
+  # AUTH ENDPOINTS
+  # ==========================================================
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Login pengguna sistem (Admin / Kasir)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: admin@titipin.id
+                password:
+                  type: string
+                  example: password123
+      responses:
+        '200':
+          description: Login berhasil, access token dikembalikan dan cookie refresh token disetel
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: refresh_token=...; HttpOnly; SameSite=Strict; Path=/api/auth/refresh; Max-Age=604800
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Kredensial tidak valid atau akun dinonaktifkan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Silent token auto-refresh menggunakan cookie refresh_token
+      security: []
+      responses:
+        '200':
+          description: Token baru berhasil diterbitkan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshResponse'
+        '401':
+          description: Refresh token kadaluarsa atau hash di database tidak cocok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout pengguna, pencabutan sesi dan pengosongan cookie
+      responses:
+        '200':
+          description: Logout berhasil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /api/auth/me:
+    get:
+      tags: [Auth]
+      summary: Mengambil profil pengguna yang sedang aktif
+      responses:
+        '200':
+          description: Profil pengguna aktif
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    patch:
+      tags: [Auth]
+      summary: Memperbarui nama tampilan profil sendiri
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                  example: Admin Toko Utama
+      responses:
+        '200':
+          description: Profil berhasil diperbarui
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+
+  /api/auth/change-password:
+    patch:
+      tags: [Auth]
+      summary: Mengubah kata sandi mandiri
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [current_password, new_password, new_password_confirmation]
+              properties:
+                current_password:
+                  type: string
+                new_password:
+                  type: string
+                  minLength: 8
+                new_password_confirmation:
+                  type: string
+                  minLength: 8
+      responses:
+        '200':
+          description: Kata sandi berhasil diubah, sesi lain ter-revoke
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  # ==========================================================
+  # USERS ENDPOINTS (ADMIN ONLY)
+  # ==========================================================
+  /api/users:
+    get:
+      tags: [Users]
+      summary: Listing seluruh pengguna sistem beserta role & status (Admin Only)
+      responses:
+        '200':
+          description: Daftar pengguna
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserItem'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags: [Users]
+      summary: Menambahkan pengguna baru staf/kasir (Admin Only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserInput'
+      responses:
+        '201':
+          description: Pengguna baru berhasil didaftarkan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/users/{id}/reset-password:
+    patch:
+      tags: [Users]
+      summary: Reset kata sandi staf/kasir oleh Admin (Admin Only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [new_password, new_password_confirmation]
+              properties:
+                new_password: { type: string, minLength: 8 }
+                new_password_confirmation: { type: string, minLength: 8 }
+      responses:
+        '200':
+          description: Kata sandi berhasil direset dan sesi kasir ter-revoke
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '403':
+          description: Ditolak karena mencoba mereset password akun sendiri (Self-Guard)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/users/{id}:
+    delete:
+      tags: [Users]
+      summary: Penonaktifan akun staf/kasir (Soft Delete & Revocation) (Admin Only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Akun pengguna dinonaktifkan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '403':
+          description: Ditolak karena mencoba menonaktifkan akun sendiri (Self-Guard)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # ==========================================================
+  # PRODUCTS ENDPOINTS
+  # ==========================================================
+  /api/products:
+    get:
+      tags: [Products]
+      summary: Menampilkan katalog produk dengan pencarian, pengurutan, dan paginasi
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: per_page
+          in: query
+          schema: { type: integer, default: 10 }
+        - name: search
+          in: query
+          schema: { type: string }
+          description: Pencarian nama produk atau kode produk
+        - name: sort
+          in: query
+          schema: { type: string, enum: [name, price, stock], default: name }
+        - name: order
+          in: query
+          schema: { type: string, enum: [asc, desc], default: asc }
+      responses:
+        '200':
+          description: List produk aktif
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductListResponse'
+    post:
+      tags: [Products]
+      summary: Menambah produk baru (Admin Only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductInput'
+      responses:
+        '201':
+          description: Produk berhasil ditambahkan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetailResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/products/export:
+    get:
+      tags: [Products]
+      summary: Mengunduh katalog produk aktif ke format Excel (.xlsx)
+      responses:
+        '200':
+          description: Berkas spreadsheet Excel
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+
+  /api/products/import:
+    post:
+      tags: [Products]
+      summary: Mengunggah data produk massal idempoten (.xlsx / .csv) (Admin Only)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Hasil import idempoten
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportSummaryResponse'
+        '422':
+          description: Validasi baris gagal (total rollback)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+
+  /api/products/{id}:
+    get:
+      tags: [Products]
+      summary: Mengambil detail satu produk
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetailResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Products]
+      summary: Mengubah data produk (Admin Only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductInput'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetailResponse'
+    delete:
+      tags: [Products]
+      summary: Soft delete produk (Admin Only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  # ==========================================================
+  # CUSTOMERS ENDPOINTS (MEMBERS)
+  # ==========================================================
+  /api/customers:
+    get:
+      tags: [Customers]
+      summary: Menampilkan daftar pelanggan/member dengan pencarian nama dan paginasi
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: per_page
+          in: query
+          schema: { type: integer, default: 10 }
+        - name: search
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerListResponse'
+    post:
+      tags: [Customers]
+      summary: Mendaftarkan pelanggan baru sebagai member
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomerInput'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerDetailResponse'
+
+  /api/customers/{id}:
+    get:
+      tags: [Customers]
+      summary: Detail profil pelanggan
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerDetailResponse'
+    put:
+      tags: [Customers]
+      summary: Mengubah data pelanggan (Admin Only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomerInput'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerDetailResponse'
+    delete:
+      tags: [Customers]
+      summary: Soft delete pelanggan (Admin Only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  # ==========================================================
+  # ORDERS ENDPOINTS (POS CORE & HOLD)
+  # ==========================================================
+  /api/orders:
+    get:
+      tags: [Orders]
+      summary: Riwayat transaksi penjualan dengan filter rentang tanggal dan pelanggan
+      parameters:
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+          example: '2026-10-01'
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+          example: '2026-10-31'
+        - name: customer_id
+          in: query
+          schema: { type: string, format: uuid }
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: per_page
+          in: query
+          schema: { type: integer, default: 10 }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderListResponse'
+    post:
+      tags: [Orders]
+      summary: Membuat transaksi POS final langsung secara atomik (Walk-in atau Member)
+      description: |
+        Menjalankan Pessimistic Row Locking (.for('update')) di dalam database transaction.
+        Harga satuan dan total mutlak dihitung di backend.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderInput'
+      responses:
+        '201':
+          description: Transaksi berhasil diproses, stok terpotong, invoice terbit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDetailResponse'
+        '422':
+          description: Stok tidak mencukupi atau produk tidak valid (Rollback total)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+
+  /api/orders/hold:
+    post:
+      tags: [Orders]
+      summary: Menyimpan keranjang aktif ke tabel draft_orders (tanpa memotong stok)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderInput'
+      responses:
+        '201':
+          description: Keranjang berhasil di-hold
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '422':
+          description: Kasir sudah memiliki satu transaksi aktif yang di-hold
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/orders/held:
+    get:
+      tags: [Orders]
+      summary: Mengambil data held transaction milik kasir yang sedang login
+      responses:
+        '200':
+          description: Detail draft keranjang tertahan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  data:
+                    $ref: '#/components/schemas/DraftOrderData'
+        '404':
+          description: Kasir tidak memiliki transaksi yang sedang di-hold
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags: [Orders]
+      summary: Membuang (discard) held transaction dari draft_orders
+      responses:
+        '200':
+          description: Draft berhasil dibuang
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /api/orders/held/finalize:
+    post:
+      tags: [Orders]
+      summary: Melanjutkan dan memfinalisasi held transaction menjadi order selesai
+      description: |
+        Memfinalisasi transaksi held menjadi order final atomik.
+        Menerima requestBody opsional jika kasir mengubah kuantitas/item keranjang saat melanjutkan.
+        Jika requestBody tidak disertakan, menggunakan data items dari draft_orders yang tersimpan.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderInput'
+      responses:
+        '201':
+          description: Draft dipromosikan ke orders, stok terpotong atomik, draft dihapus
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDetailResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/orders/{id}:
+    get:
+      tags: [Orders]
+      summary: Menampilkan rincian transaksi belanja, snapshot harga, dan order activity log
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+          description: ID Order atau Nomor Order
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDetailResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ==========================================================
+  # DASHBOARD ENDPOINTS
+  # ==========================================================
+  /api/dashboard/summary:
+    get:
+      tags: [Dashboard]
+      summary: Ringkasan metrik omset, top 5 best seller, produk lesu, dan stok kritis
+      parameters:
+        - name: period
+          in: query
+          schema: { type: string, enum: [daily, monthly, quarterly], default: daily }
+          description: Filter periode kalkulasi (Harian, Bulanan, Kuartalan)
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardSummaryResponse'
+
+  /api/dashboard/trend:
+    get:
+      tags: [Dashboard]
+      summary: Grafik tren omset dan jumlah transaksi harian dalam periode yang dipilih
+      parameters:
+        - name: period
+          in: query
+          schema: { type: string, enum: [daily, monthly, quarterly], default: monthly }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardTrendResponse'
+
+  # ==========================================================
+  # AUDIT TRAIL ENDPOINTS (ADMIN ONLY)
+  # ==========================================================
+  /api/audit-logs:
+    get:
+      tags: [Audit]
+      summary: Menampilkan log audit sistem terpusat (Admin Only)
+      parameters:
+        - name: user_id
+          in: query
+          schema: { type: string, format: uuid }
+        - name: action
+          in: query
+          schema: { type: string }
+        - name: entity_type
+          in: query
+          schema: { type: string, enum: [PRODUCT, CUSTOMER, ORDER, USER, AUTH] }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: per_page
+          in: query
+          schema: { type: integer, default: 20 }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLogListResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+# ==========================================================
+# REUSABLE COMPONENTS & SCHEMAS
+# ==========================================================
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    Unauthorized:
+      description: Token tidak valid atau tidak disertakan
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Akses ditolak karena tidak memiliki izin peran yang sesuai
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Sumber daya tidak ditemukan
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ValidationError:
+      description: Validasi input gagal
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationErrorResponse'
+
+  schemas:
+    SuccessResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: 'Operasi berhasil diselesaikan' }
+
+    ErrorResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: false }
+        message: { type: string, example: 'Akses tidak diizinkan atau data tidak valid' }
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: false }
+        message: { type: string, example: 'Validasi gagal' }
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items: { type: string }
+          example:
+            items.1.quantity: ['Stok Hydrococo 150ml tersisa 3, diminta 5']
+
+    LoginResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: 'Login berhasil' }
+        data:
+          type: object
+          properties:
+            access_token: { type: string }
+            user:
+              $ref: '#/components/schemas/UserItem'
+
+    RefreshResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: 'Token diperpanjang' }
+        data:
+          type: object
+          properties:
+            access_token: { type: string }
+
+    UserItem:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string, example: 'Admin Titipin' }
+        email: { type: string, format: email, example: 'admin@titipin.id' }
+        role: { type: string, enum: [ADMIN, CASHIER], example: 'ADMIN' }
+        created_at: { type: string, format: date-time }
+        deleted_at: { type: string, format: date-time, nullable: true }
+
+    UserResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        data: { $ref: '#/components/schemas/UserItem' }
+
+    CreateUserInput:
+      type: object
+      required: [name, email, password, role]
+      properties:
+        name: { type: string, maxLength: 100, example: 'Kasir Cabang 1' }
+        email: { type: string, format: email, maxLength: 150, example: 'kasir1@titipin.id' }
+        password: { type: string, minLength: 8, example: 'password123' }
+        role: { type: string, enum: [ADMIN, CASHIER], example: 'CASHIER' }
+
+    CreateProductInput:
+      type: object
+      required: [product_code, product_name, stock, price]
+      properties:
+        product_code: { type: string, example: 'P0001' }
+        product_name: { type: string, example: 'Hydrococo 150ml' }
+        stock: { type: integer, minimum: 0, example: 10 }
+        price: { type: number, minimum: 0.01, example: 12000.00 }
+
+    UpdateProductInput:
+      type: object
+      properties:
+        product_name: { type: string }
+        stock: { type: integer, minimum: 0 }
+        price: { type: number, minimum: 0.01 }
+
+    ProductItem:
+      type: object
+      properties:
+        id: { type: integer, example: 1 }
+        product_code: { type: string, example: 'P0001' }
+        product_name: { type: string, example: 'Hydrococo 150ml' }
+        stock: { type: integer, example: 10 }
+        price: { type: string, example: '12000.00' }
+        created_at: { type: string, format: date-time }
+
+    ProductListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/ProductItem' }
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    ProductDetailResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        data: { $ref: '#/components/schemas/ProductItem' }
+
+    ImportSummaryResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: 'Import produk berhasil diselesaikan' }
+        data:
+          type: object
+          properties:
+            total_rows: { type: integer, example: 25 }
+            inserted: { type: integer, example: 5 }
+            updated: { type: integer, example: 20 }
+            failed: { type: integer, example: 0 }
+
+    CreateCustomerInput:
+      type: object
+      required: [customer_name, customer_address, gender, birth_date]
+      properties:
+        customer_name: { type: string, maxLength: 150, example: 'Budi Santoso' }
+        customer_address: { type: string, maxLength: 255, example: 'Jl. Sudirman No. 10 Jakarta' }
+        gender: { type: string, enum: [Pria, Wanita], example: 'Pria' }
+        birth_date: { type: string, format: date, example: '1995-02-10' }
+        phone: { type: string, maxLength: 20, nullable: true, example: '081234567890' }
+
+    CustomerItem:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        customer_name: { type: string }
+        customer_address: { type: string }
+        gender: { type: string, enum: [Pria, Wanita] }
+        birth_date: { type: string, format: date }
+        phone: { type: string, nullable: true }
+        created_at: { type: string, format: date-time }
+
+    CustomerListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/CustomerItem' }
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    CustomerDetailResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        data: { $ref: '#/components/schemas/CustomerItem' }
+
+    CreateOrderInput:
+      type: object
+      required: [items]
+      properties:
+        customer_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: Nullable untuk walk-in (Pelanggan Umum)
+          example: null
+        items:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [product_id, quantity]
+            properties:
+              product_id: { type: integer, example: 1 }
+              quantity: { type: integer, minimum: 1, example: 2 }
+
+    DraftOrderData:
+      type: object
+      properties:
+        id: { type: integer }
+        user_id: { type: string, format: uuid }
+        customer_id: { type: string, format: uuid, nullable: true }
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              product_id: { type: integer }
+              quantity: { type: integer }
+        created_at: { type: string, format: date-time }
+
+    OrderItemDetail:
+      type: object
+      properties:
+        id: { type: integer }
+        product_id: { type: integer }
+        product_name: { type: string }
+        product_code: { type: string }
+        quantity: { type: integer }
+        unit_price: { type: string, example: '12000.00' }
+        subtotal: { type: string, example: '24000.00' }
+
+    OrderActivityLogItem:
+      type: object
+      properties:
+        id: { type: integer }
+        action: { type: string, example: 'ORDER_FINALIZED' }
+        performed_by_name: { type: string, example: 'Kasir 1' }
+        created_at: { type: string, format: date-time }
+
+    OrderDetailData:
+      type: object
+      properties:
+        id: { type: integer, example: 1 }
+        order_number: { type: string, example: 'INV-20261027-0001' }
+        customer_id: { type: string, format: uuid, nullable: true }
+        customer_name: { type: string, example: 'Pelanggan Umum' }
+        created_by_name: { type: string, example: 'Kasir Utama' }
+        order_date: { type: string, format: date-time }
+        total_amount: { type: string, example: '44000.00' }
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/OrderItemDetail' }
+        activity_logs:
+          type: array
+          items: { $ref: '#/components/schemas/OrderActivityLogItem' }
+
+    OrderDetailResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        data: { $ref: '#/components/schemas/OrderDetailData' }
+
+    OrderListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/OrderDetailData' }
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    DashboardSummaryResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        data:
+          type: object
+          properties:
+            period: { type: string, example: 'monthly' }
+            total_transactions: { type: integer, example: 35 }
+            total_sales_amount: { type: string, example: '1250000.00' }
+            top_products:
+              type: array
+              items:
+                type: object
+                properties:
+                  product_id: { type: integer }
+                  product_name: { type: string }
+                  total_sold: { type: integer }
+                  revenue: { type: string }
+            slow_products:
+              type: array
+              items:
+                type: object
+                properties:
+                  product_id: { type: integer }
+                  product_name: { type: string }
+                  total_sold: { type: integer }
+            low_stock_products:
+              type: array
+              items:
+                type: object
+                properties:
+                  id: { type: integer }
+                  product_code: { type: string }
+                  product_name: { type: string }
+                  stock: { type: integer }
+
+    DashboardTrendResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              date: { type: string, format: date, example: '2026-10-01' }
+              transactions: { type: integer, example: 3 }
+              revenue: { type: string, example: '75000.00' }
+
+    AuditLogItem:
+      type: object
+      properties:
+        id: { type: integer }
+        user_name: { type: string, nullable: true, example: 'Admin Titipin' }
+        action: { type: string, example: 'PRODUCT_UPDATED' }
+        entity_type: { type: string, example: 'PRODUCT' }
+        entity_id: { type: string, example: '1' }
+        payload: { type: object }
+        ip_address: { type: string, nullable: true }
+        created_at: { type: string, format: date-time }
+
+    AuditLogListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/AuditLogItem' }
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    PaginationMeta:
+      type: object
+      properties:
+        page: { type: integer, example: 1 }
+        per_page: { type: integer, example: 10 }
+        total: { type: integer, example: 57 }
+        total_pages: { type: integer, example: 6 }

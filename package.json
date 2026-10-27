@@ -1,0 +1,26 @@
+{
+  "name": "titipin-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "test:cov": "turbo test:cov",
+    "db:generate": "turbo db:generate",
+    "db:migrate": "turbo db:migrate",
+    "db:seed": "turbo db:seed",
+    "db:studio": "turbo db:studio",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "audit:quality": "bash .agents/skills/titipin-dev/scripts/audit-code-quality.sh",
+    "audit:links": "python3 .agents/skills/titipin-dev/scripts/verify-links.py"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.9",
+    "turbo": "^2.4.2"
+  },
+  "packageManager": "pnpm@12.8.1"
+}

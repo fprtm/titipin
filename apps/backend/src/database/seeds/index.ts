@@ -1,0 +1,430 @@
+import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { eq, count } from 'drizzle-orm';
+import * as bcrypt from 'bcryptjs';
+import * as schema from '../schema';
+import { envConfig } from '../../config/env.config';
+import { Role, AuditAction, OrderActivityAction } from '@titipin/shared';
+
+async function seed() {
+  console.log('🌱 Starting database seeding...');
+
+  const pool = new Pool({
+    connectionString: envConfig.DATABASE_URL,
+  });
+
+  const database = drizzle(pool, { schema });
+
+  try {
+    const saltRounds = 10;
+
+    // 1. Seed Admin User
+    const existingAdmin = await database
+      .select()
+      .from(schema.users)
+      .where(eq(schema.users.email, 'admin@titipin.id'))
+      .limit(1);
+
+    let adminId = existingAdmin[0]?.id;
+
+    if (existingAdmin.length === 0) {
+      const adminPasswordHash = await bcrypt.hash('Admin123!', saltRounds);
+      const [adminUser] = await database
+        .insert(schema.users)
+        .values({
+          name: 'Super Admin',
+          email: 'admin@titipin.id',
+          password: adminPasswordHash,
+          role: Role.ADMIN,
+        })
+        .returning();
+
+      adminId = adminUser.id;
+
+      await database.insert(schema.auditLogs).values({
+        userId: adminUser.id,
+        action: AuditAction.USER_CREATED,
+        entityType: 'users',
+        entityId: adminUser.id,
+        payload: {
+          before: null,
+          after: { email: adminUser.email, role: adminUser.role },
+        },
+        ipAddress: '127.0.0.1',
+        userAgent: 'Seeder/CLI',
+      });
+
+      console.log(`✅ Seeded Admin User: ${adminUser.email} (${adminUser.id})`);
+    } else {
+      console.log('ℹ️ Admin user already exists, skipping.');
+    }
+
+    // 2. Seed Cashier User
+    const existingCashier = await database
+      .select()
+      .from(schema.users)
+      .where(eq(schema.users.email, 'kasir@titipin.id'))
+      .limit(1);
+
+    let cashierId = existingCashier[0]?.id;
+
+    if (existingCashier.length === 0) {
+      const cashierPasswordHash = await bcrypt.hash('Kasir123!', saltRounds);
+      const [cashierUser] = await database
+        .insert(schema.users)
+        .values({
+          name: 'Kasir Utama',
+          email: 'kasir@titipin.id',
+          password: cashierPasswordHash,
+          role: Role.CASHIER,
+        })
+        .returning();
+
+      cashierId = cashierUser.id;
+
+      await database.insert(schema.auditLogs).values({
+        userId: cashierUser.id,
+        action: AuditAction.USER_CREATED,
+        entityType: 'users',
+        entityId: cashierUser.id,
+        payload: {
+          before: null,
+          after: { email: cashierUser.email, role: cashierUser.role },
+        },
+        ipAddress: '127.0.0.1',
+        userAgent: 'Seeder/CLI',
+      });
+
+      console.log(`✅ Seeded Cashier User: ${cashierUser.email} (${cashierUser.id})`);
+    } else {
+      console.log('ℹ️ Cashier user already exists, skipping.');
+    }
+
+    const defaultUserId = cashierId || adminId || '00000000-0000-0000-0000-000000000000';
+
+    // 3. Seed Catalog Products (25 varied items, including low stock < 5)
+    const productCatalog = [
+      { productCode: 'P0001', productName: 'Kopi Susu Gula Aren', stock: 50, price: '18000.00' },
+      { productCode: 'P0002', productName: 'Teh Tarik Klasik', stock: 40, price: '12000.00' },
+      { productCode: 'P0003', productName: 'Roti Bakar Coklat Keju', stock: 25, price: '20000.00' },
+      { productCode: 'P0004', productName: 'Keripik Singkong Balado', stock: 3, price: '15000.00' }, // Low stock (<5)
+      { productCode: 'P0005', productName: 'Air Mineral 600ml', stock: 100, price: '5000.00' },
+      { productCode: 'P0006', productName: 'Matcha Latte Premium', stock: 2, price: '24000.00' }, // Low stock (<5)
+      { productCode: 'P0007', productName: 'Americano Dingin', stock: 60, price: '16000.00' },
+      { productCode: 'P0008', productName: 'Es Coklat Belgia', stock: 35, price: '22000.00' },
+      { productCode: 'P0009', productName: 'Donat Kampung Gula Halus', stock: 30, price: '8000.00' },
+      { productCode: 'P0010', productName: 'Croissant Butter Artisan', stock: 15, price: '25000.00' },
+      { productCode: 'P0011', productName: 'Pisang Goreng Crispy', stock: 4, price: '14000.00' }, // Low stock (<5)
+      { productCode: 'P0012', productName: 'Kentang Goreng Truffle', stock: 20, price: '28000.00' },
+      { productCode: 'P0013', productName: 'Singkong Goreng Keju', stock: 18, price: '16000.00' },
+      { productCode: 'P0014', productName: 'Nasi Goreng Spesial Titipin', stock: 45, price: '32000.00' },
+      { productCode: 'P0015', productName: 'Mie Goreng Aceh Rempah', stock: 30, price: '30000.00' },
+      { productCode: 'P0016', productName: 'Ayam Geprek Sambal Matah', stock: 40, price: '26000.00' },
+      { productCode: 'P0017', productName: 'Bakmie Ayam Jamur', stock: 25, price: '27000.00' },
+      { productCode: 'P0018', productName: 'Tumbler Stainless Titipin', stock: 1, price: '85000.00' }, // Low stock (<5)
+      { productCode: 'P0019', productName: 'Tote Bag Kanvas Titipin', stock: 12, price: '45000.00' },
+      { productCode: 'P0020', productName: 'Biji Kopi Arabika 250g', stock: 10, price: '75000.00' },
+      { productCode: 'P0021', productName: 'Kaos Polos Titipin Hitam (L)', stock: 8, price: '95000.00' },
+      { productCode: 'P0022', productName: 'Brownies Fudgy Panggang', stock: 16, price: '35000.00' },
+      { productCode: 'P0023', productName: 'Dimsum Ayam Udang (4 pcs)', stock: 22, price: '20000.00' },
+      { productCode: 'P0024', productName: 'Jus Jeruk Murni Peras', stock: 28, price: '15000.00' },
+      { productCode: 'P0025', productName: 'Earl Grey Milk Tea', stock: 32, price: '21000.00' },
+    ];
+
+    const seededProducts: (typeof schema.products.$inferSelect)[] = [];
+    for (const prod of productCatalog) {
+      const existing = await database
+        .select()
+        .from(schema.products)
+        .where(eq(schema.products.productCode, prod.productCode))
+        .limit(1);
+
+      if (existing.length === 0) {
+        const [inserted] = await database.insert(schema.products).values(prod).returning();
+        seededProducts.push(inserted);
+        if (adminId) {
+          await database.insert(schema.auditLogs).values({
+            userId: adminId,
+            action: AuditAction.PRODUCT_CREATED,
+            entityType: 'products',
+            entityId: String(inserted.id),
+            payload: { before: null, after: prod },
+            ipAddress: '127.0.0.1',
+            userAgent: 'Seeder/CLI',
+          });
+        }
+      } else {
+        seededProducts.push(existing[0]);
+      }
+    }
+    console.log(`✅ Verified/Seeded ${seededProducts.length} catalog products.`);
+
+    // 4. Seed Member Customers (16 customers with varied birthdates)
+    const todayIso = new Date().toISOString().split('T')[0];
+    const customerProfiles = [
+      {
+        customerName: 'Budi Santoso',
+        phone: '081234567890',
+        customerAddress: 'Jl. Sudirman No. 10 Jakarta Pusat',
+        gender: 'Pria' as const,
+        birthDate: todayIso, // Birthday today (tests BR-006)
+      },
+      {
+        customerName: 'Siti Aminah',
+        phone: '081298765432',
+        customerAddress: 'Jl. Thamrin No. 25 Jakarta Pusat',
+        gender: 'Wanita' as const,
+        birthDate: '1998-05-15',
+      },
+      {
+        customerName: 'Hendra Gunawan',
+        phone: '081311223344',
+        customerAddress: 'Jl. Gatot Subroto No. 40 Jakarta Selatan',
+        gender: 'Pria' as const,
+        birthDate: '1992-11-20',
+      },
+      {
+        customerName: 'Dewi Lestari',
+        phone: '081355667788',
+        customerAddress: 'Jl. Senopati No. 18 Jakarta Selatan',
+        gender: 'Wanita' as const,
+        birthDate: '1995-03-08',
+      },
+      {
+        customerName: 'Rizky Pratama',
+        phone: '081799887766',
+        customerAddress: 'Jl. Surya Kencana No. 5 Bogor',
+        gender: 'Pria' as const,
+        birthDate: '2000-08-17',
+      },
+      {
+        customerName: 'Maya Indah Sari',
+        phone: '081822334455',
+        customerAddress: 'Jl. Dago No. 102 Bandung',
+        gender: 'Wanita' as const,
+        birthDate: '1997-12-25',
+      },
+      {
+        customerName: 'Agus Setiawan',
+        phone: '081933445566',
+        customerAddress: 'Jl. Malioboro No. 50 Yogyakarta',
+        gender: 'Pria' as const,
+        birthDate: '1988-04-12',
+      },
+      {
+        customerName: 'Rina Wulandari',
+        phone: '082144556677',
+        customerAddress: 'Jl. Pemuda No. 88 Semarang',
+        gender: 'Wanita' as const,
+        birthDate: '1994-07-30',
+      },
+      {
+        customerName: 'Denny Caknan',
+        phone: '082255667788',
+        customerAddress: 'Jl. Basuki Rahmat No. 12 Surabaya',
+        gender: 'Pria' as const,
+        birthDate: '1993-10-10',
+      },
+      {
+        customerName: 'Gita Permata',
+        phone: '082366778899',
+        customerAddress: 'Jl. Gajah Mada No. 34 Denpasar',
+        gender: 'Wanita' as const,
+        birthDate: '1991-08-11',
+      },
+      {
+        customerName: 'Fajar Alfian',
+        phone: '085277889900',
+        customerAddress: 'Jl. Riau No. 45 Pekanbaru',
+        gender: 'Pria' as const,
+        birthDate: '1996-01-22',
+      },
+      {
+        customerName: 'Dian Paramita',
+        phone: '085388990011',
+        customerAddress: 'Jl. Diponegoro No. 15 Medan',
+        gender: 'Wanita' as const,
+        birthDate: '1982-03-16',
+      },
+      {
+        customerName: 'Nicholas Saputra',
+        phone: '085699001122',
+        customerAddress: 'Jl. Kemang Raya No. 7 Jakarta Selatan',
+        gender: 'Pria' as const,
+        birthDate: '1984-02-24',
+      },
+      {
+        customerName: 'Chelsea Elizabeth',
+        phone: '085711223344',
+        customerAddress: 'Jl. Panglima Polim No. 9 Jakarta Selatan',
+        gender: 'Wanita' as const,
+        birthDate: '1995-06-02',
+      },
+      {
+        customerName: 'Joe Taslim',
+        phone: '087822334455',
+        customerAddress: 'Jl. Palembang No. 20 Palembang',
+        gender: 'Pria' as const,
+        birthDate: '1981-06-23',
+      },
+      {
+        customerName: 'Iko Uwais',
+        phone: '089633445566',
+        customerAddress: 'Jl. Matraman No. 60 Jakarta Timur',
+        gender: 'Pria' as const,
+        birthDate: '1983-02-12',
+      },
+    ];
+
+    const seededCustomers: (typeof schema.customers.$inferSelect)[] = [];
+    for (const cust of customerProfiles) {
+      const existing = await database
+        .select()
+        .from(schema.customers)
+        .where(eq(schema.customers.phone, cust.phone))
+        .limit(1);
+
+      if (existing.length === 0) {
+        const [inserted] = await database.insert(schema.customers).values(cust).returning();
+        seededCustomers.push(inserted);
+        if (adminId) {
+          await database.insert(schema.auditLogs).values({
+            userId: adminId,
+            action: AuditAction.CUSTOMER_CREATED,
+            entityType: 'customers',
+            entityId: inserted.id,
+            payload: { before: null, after: cust },
+            ipAddress: '127.0.0.1',
+            userAgent: 'Seeder/CLI',
+          });
+        }
+      } else {
+        seededCustomers.push(existing[0]);
+      }
+    }
+    console.log(`✅ Verified/Seeded ${seededCustomers.length} customer members.`);
+
+    // 5. Seed Historical Sales Orders (at least 35 realistic orders over the past 30 days)
+    const [existingOrdersCount] = await database
+      .select({ count: count() })
+      .from(schema.orders);
+
+    const totalExistingOrders = Number(existingOrdersCount?.count || 0);
+
+    if (totalExistingOrders < 30) {
+      console.log(`⏳ Seeding historical orders (current: ${totalExistingOrders}, target: 35)...`);
+      const now = new Date();
+
+      for (let i = 1; i <= 35; i++) {
+        // Distribute dates over last 30 days
+        const daysAgo = Math.floor((35 - i) * (28 / 35));
+        const orderDate = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+        orderDate.setHours(9 + (i % 12), (i * 17) % 60, 0, 0);
+
+        const yyyy = orderDate.getFullYear().toString();
+        const mm = String(orderDate.getMonth() + 1).padStart(2, '0');
+        const dd = String(orderDate.getDate()).padStart(2, '0');
+        const invoiceNumber = `INV-${yyyy}${mm}${dd}-${String(i).padStart(4, '0')}`;
+
+        // Check if invoice already exists
+        const exists = await database
+          .select({ id: schema.orders.id })
+          .from(schema.orders)
+          .where(eq(schema.orders.orderNumber, invoiceNumber))
+          .limit(1);
+
+        if (exists.length > 0) continue;
+
+        // Alternate Walk-in and Member orders
+        const isMember = i % 3 !== 0;
+        const customer = isMember && seededCustomers.length > 0 ? seededCustomers[i % seededCustomers.length] : null;
+
+        // Pick 1 to 3 items
+        const numItems = (i % 3) + 1;
+        const orderItemsToInsert: {
+          productId: number;
+          quantity: number;
+          unitPrice: string;
+          subtotal: string;
+        }[] = [];
+
+        let subtotal = 0;
+        for (let j = 0; j < numItems; j++) {
+          const product = seededProducts[(i + j * 4) % seededProducts.length];
+          const qty = ((i + j) % 3) + 1;
+          const uPrice = Number(product.price);
+          const itemSubtotal = uPrice * qty;
+          subtotal += itemSubtotal;
+
+          orderItemsToInsert.push({
+            productId: product.id,
+            quantity: qty,
+            unitPrice: uPrice.toFixed(2),
+            subtotal: itemSubtotal.toFixed(2),
+          });
+        }
+
+        // Apply Birthday discount if member birth date matches order date MM-DD
+        let discount = 0;
+        if (customer && customer.birthDate) {
+          const custBday = new Date(customer.birthDate);
+          if (custBday.getMonth() === orderDate.getMonth() && custBday.getDate() === orderDate.getDate()) {
+            discount = Math.min(50000, Math.round(subtotal * 0.05));
+          }
+        }
+
+        const totalAmount = Math.max(0, subtotal - discount);
+
+        const [createdOrder] = await database
+          .insert(schema.orders)
+          .values({
+            orderNumber: invoiceNumber,
+            customerId: customer ? customer.id : null,
+            createdBy: defaultUserId,
+            totalAmount: totalAmount.toFixed(2),
+            orderDate,
+            createdAt: orderDate,
+            updatedAt: orderDate,
+          })
+          .returning();
+
+        for (const item of orderItemsToInsert) {
+          await database.insert(schema.orderItems).values({
+            orderId: createdOrder.id,
+            productId: item.productId,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            subtotal: item.subtotal,
+            createdAt: orderDate,
+          });
+        }
+
+        await database.insert(schema.orderActivityLogs).values({
+          orderId: createdOrder.id,
+          action: OrderActivityAction.ORDER_CREATED,
+          performedBy: defaultUserId,
+          details: {
+            subtotal,
+            discount,
+            isBirthdayDiscountApplied: discount > 0,
+            itemCount: orderItemsToInsert.length,
+            invoice: invoiceNumber,
+          },
+          createdAt: orderDate,
+        });
+      }
+      console.log('✅ Seeded historical sales transactions with order items and activity logs.');
+    } else {
+      console.log(`ℹ️ Sufficient historical orders already exist (${totalExistingOrders}), skipping.`);
+    }
+
+    console.log('🎉 Seeding completed successfully!');
+  } catch (error) {
+    console.error('❌ Seeding failed:', error);
+    process.exitCode = 1;
+  } finally {
+    await pool.end();
+  }
+}
+
+seed();

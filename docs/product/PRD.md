@@ -107,6 +107,7 @@ Operasional penjualan membutuhkan sistem POS yang tangguh, akurat, dan dapat dia
 
 9. **Modul Manajemen Pengguna Internal (`users`):**
    - Listing pengguna sistem beserta status aktif/nonaktif dan role (`GET /api/users`).
+   - Pendaftaran pengguna baru oleh Admin (`POST /api/users`): Admin dapat membuat akun staf baru (Kasir atau Admin) dengan validasi email unik dan password minimal 8 karakter (`BR-011`, `BR-015`).
    - Reset kata sandi staf/kasir oleh Admin (`PATCH /api/users/:id/reset-password`): Server meng-hash password baru, menyimpannya, dan mengosongkan `refresh_token_hash = NULL` pada akun target (instant session revocation di semua perangkat), tanpa ketergantungan SMTP.
    - Penonaktifan akun staf/kasir via *soft delete* (`DELETE /api/users/:id`): menyetel `deleted_at = NOW()` sekaligus mengosongkan `refresh_token_hash = NULL` secara atomik. Akun yang dinonaktifkan langsung diblokir dari login — pencegahan terjadi saat silent refresh berikutnya. Jejak transaksi lampau (`orders.created_by`) tetap utuh.
    - *Role pada Users:* Setiap user memiliki field `role` enum (`ADMIN` | `CASHIER`). Endpoint User Management dan Audit Trail hanya dapat diakses role `ADMIN`.
@@ -197,3 +198,4 @@ Operasional penjualan membutuhkan sistem POS yang tangguh, akurat, dan dapat dia
 | **FR-USR-01** | Users | Menampilkan daftar pengguna sistem beserta role dan status aktif/nonaktif (Admin only) | BR-011, BR-015 | `GET /api/users` |
 | **FR-USR-02** | Users | Mereset kata sandi staf/kasir oleh Admin beserta instant session revocation (Admin only) | BR-010, BR-011, BR-015 | `PATCH /api/users/:id/reset-password` |
 | **FR-USR-03** | Users | Menonaktifkan akun staf/kasir (soft delete + instant session revocation) (Admin only) | BR-010, BR-011, BR-015 | `DELETE /api/users/:id` |
+| **FR-USR-04** | Users | Menambahkan akun pengguna staf/kasir baru ke dalam sistem (Admin only) | BR-011, BR-015 | `POST /api/users` |
