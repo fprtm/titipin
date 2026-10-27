@@ -21,7 +21,7 @@ Mengelola katalog produk barang dagangan toko (kode produk unik, harga satuan, s
 ## 2. DETAIL TUGAS TEKNIS (TASK BREAKDOWN)
 
 ### 2.1 Database & Skema Drizzle
-* [ ] Buat skema `src/database/schema/products.schema.ts`:
+* [x] Buat skema `src/database/schema/products.schema.ts`:
   * `id`: bigint identity (mode number).
   * `product_code`: varchar(20) unique not null.
   * `product_name`: varchar(150) not null.
@@ -29,24 +29,24 @@ Mengelola katalog produk barang dagangan toko (kode produk unik, harga satuan, s
   * `price`: numeric(12,2) not null (check constraint `price > 0`).
   * `deleted_at`: timestamp with timezone nullable (soft delete).
   * Index: `idx_products_search` on `(product_name, product_code)`.
-* [ ] Jalankan migrasi Drizzle untuk membuat tabel `products`.
+* [x] Jalankan migrasi Drizzle untuk membuat tabel `products`.
 
 ### 2.2 Shared Contracts (`packages/shared`)
-* [ ] Buat Zod schema `createProductSchema` dan `updateProductSchema`.
-* [ ] Buat interface DTO `ProductItem`, `ProductListResponse`, `ImportSummaryResponse`.
+* [x] Buat Zod schema `createProductSchema` dan `updateProductSchema`.
+* [x] Buat interface DTO `ProductItem`, `ProductListResponse`, `ImportSummaryResponse`.
 
 ### 2.3 Backend API (`apps/backend/src/modules/products/`)
-* [ ] `GET /api/products`: listing produk aktif (`deleted_at IS NULL`) dengan query `search` (nama/kode), `sort` (name/price/stock), `order` (asc/desc), dan paginasi.
-* [ ] `POST /api/products`: tambah produk baru (Admin Only), tolak 422 jika kode produk sudah ada.
-* [ ] `GET /api/products/:id`: detail satu produk.
-* [ ] `PUT /api/products/:id`: ubah produk (Admin Only).
-* [ ] `DELETE /api/products/:id`: soft delete `deleted_at = NOW()` (Admin Only).
-* [ ] `GET /api/products/export`: generate file Excel `.xlsx` menggunakan `exceljs` dan stream ke response.
-* [ ] `POST /api/products/import`: terima multipart file spreadsheet, parse baris, eksekusi upsert idempoten di PostgreSQL (jika `product_code` ada: update nama, harga, stok; jika belum ada: insert baru). Kembalikan ringkasan baris.
-* [ ] Catat seluruh aksi mutasi ke `audit_logs` (`PRODUCT_CREATED`, `PRODUCT_UPDATED`, `PRODUCT_DELETED`).
+* [x] `GET /api/products`: listing produk aktif (`deleted_at IS NULL`) dengan query `search` (nama/kode), `sort` (name/price/stock), `order` (asc/desc), dan paginasi.
+* [x] `POST /api/products`: tambah produk baru (Admin Only), tolak 422 jika kode produk sudah ada.
+* [x] `GET /api/products/:id`: detail satu produk.
+* [x] `PUT /api/products/:id`: ubah produk (Admin Only).
+* [x] `DELETE /api/products/:id`: soft delete `deleted_at = NOW()` (Admin Only).
+* [x] `GET /api/products/export`: generate file Excel `.xlsx` menggunakan `exceljs` dan stream ke response.
+* [x] `POST /api/products/import`: terima multipart file spreadsheet, parse baris, eksekusi upsert idempoten di PostgreSQL (jika `product_code` ada: update nama, harga, stok; jika belum ada: insert baru). Kembalikan ringkasan baris.
+* [x] Catat seluruh aksi mutasi ke `audit_logs` (`PRODUCT_CREATED`, `PRODUCT_UPDATED`, `PRODUCT_DELETED`).
 
 ### 2.4 Frontend UI Mobile-First (`apps/frontend`)
-* [ ] Buat halaman `/products` mengacu pada `docs/design/pages/04-products.md`:
+* [x] Buat halaman `/products` mengacu pada `docs/design/pages/04-products.md`:
   * Toolbar: Search input (`rounded-xl`), dropdown urutan, tombol Export Excel, tombol Import Excel (Admin), tombol Tambah Produk (Admin).
   * Data Table Kaca (`rounded-2xl`): kolom Kode, Nama, Harga (Rupiah tabular), Sisa Stok (badge hijau/kuning/merah), Tanggal, Aksi.
   * Modal Tambah/Edit Produk (`rounded-3xl p-8`).

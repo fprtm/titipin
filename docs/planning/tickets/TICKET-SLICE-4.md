@@ -21,7 +21,7 @@ Mengelola data pelanggan toko yang mendaftar sebagai member (nama, alamat, gende
 ## 2. DETAIL TUGAS TEKNIS (TASK BREAKDOWN)
 
 ### 2.1 Database & Skema Drizzle
-* [ ] Buat skema `src/database/schema/customers.schema.ts`:
+* [x] Buat skema `src/database/schema/customers.schema.ts`:
   * `id`: uuid primary key (default random).
   * `customer_name`: varchar(150) not null.
   * `customer_address`: varchar(255) not null.
@@ -30,22 +30,22 @@ Mengelola data pelanggan toko yang mendaftar sebagai member (nama, alamat, gende
   * `phone`: varchar(20) nullable.
   * `deleted_at`: timestamp with timezone nullable.
   * Index: `idx_customers_name` on `(customer_name)`.
-* [ ] Jalankan migrasi Drizzle untuk membuat tabel `customers`.
+* [x] Jalankan migrasi Drizzle untuk membuat tabel `customers`.
 
 ### 2.2 Shared Contracts (`packages/shared`)
-* [ ] Buat Zod schema `createCustomerSchema` dan `updateCustomerSchema`.
-* [ ] Buat interface DTO `CustomerItem`, `CustomerListResponse`.
+* [x] Buat Zod schema `createCustomerSchema` dan `updateCustomerSchema`.
+* [x] Buat interface DTO `CustomerItem`, `CustomerListResponse`.
 
 ### 2.3 Backend API (`apps/backend/src/modules/customers/`)
-* [ ] `GET /api/customers`: listing pelanggan aktif (`deleted_at IS NULL`) dengan filter pencarian nama (`search`) dan paginasi.
-* [ ] `POST /api/customers`: pendaftaran pelanggan/member baru (Kasir & Admin).
-* [ ] `GET /api/customers/:id`: detail profil pelanggan.
-* [ ] `PUT /api/customers/:id`: update data pelanggan (Admin Only).
-* [ ] `DELETE /api/customers/:id`: soft delete pelanggan (Admin Only).
-* [ ] Catat seluruh mutasi data ke tabel `audit_logs` (`CUSTOMER_CREATED`, `CUSTOMER_UPDATED`, `CUSTOMER_DELETED`).
+* [x] `GET /api/customers`: listing pelanggan aktif (`deleted_at IS NULL`) dengan filter pencarian nama (`search`) dan paginasi.
+* [x] `POST /api/customers`: pendaftaran pelanggan/member baru (Kasir & Admin).
+* [x] `GET /api/customers/:id`: detail profil pelanggan.
+* [x] `PUT /api/customers/:id`: update data pelanggan (Admin Only).
+* [x] `DELETE /api/customers/:id`: soft delete pelanggan (Admin Only).
+* [x] Catat seluruh mutasi data ke tabel `audit_logs` (`CUSTOMER_CREATED`, `CUSTOMER_UPDATED`, `CUSTOMER_DELETED`).
 
 ### 2.4 Frontend UI Mobile-First (`apps/frontend`)
-* [ ] Buat halaman `/customers` mengacu pada `docs/design/pages/05-customers.md`:
+* [x] Buat halaman `/customers` mengacu pada `docs/design/pages/05-customers.md`:
   * Toolbar: Search input nama pelanggan instan (`rounded-xl`), tombol `+ Member Baru` (`rounded-xl h-11 bg-emerald-700`).
   * Data Table Member (`rounded-2xl glass-panel`): kolom ID Member, Nama, Gender, Tanggal Lahir, No. HP, Alamat, Aksi.
   * Modal Pendaftaran Member Baru (`rounded-3xl p-8`): form nama, alamat, radio gender pill, date picker, no HP.
