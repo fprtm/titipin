@@ -165,11 +165,11 @@ export class OrdersRepository {
       conditions.push(eq(schema.orders.customerId, query.customer_id));
     }
     if (query.from) {
-      conditions.push(gte(schema.orders.orderDate, new Date(query.from)));
+      const fromDate = query.from.includes('T') ? new Date(query.from) : new Date(`${query.from}T00:00:00.000Z`);
+      conditions.push(gte(schema.orders.orderDate, fromDate));
     }
     if (query.to) {
-      const toDate = new Date(query.to);
-      toDate.setHours(23, 59, 59, 999);
+      const toDate = query.to.includes('T') ? new Date(query.to) : new Date(`${query.to}T23:59:59.999Z`);
       conditions.push(lte(schema.orders.orderDate, toDate));
     }
 

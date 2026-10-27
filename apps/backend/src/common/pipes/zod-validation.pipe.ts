@@ -19,8 +19,9 @@ export class ZodValidationPipe implements PipeTransform {
     const result = targetSchema.safeParse(value);
     if (!result.success) {
       const formattedErrors = this.formatZodError(result.error);
+      const firstErrorMessage = result.error.issues[0]?.message;
       throw new UnprocessableEntityException({
-        message: 'Validasi gagal',
+        message: firstErrorMessage || 'Validasi gagal',
         errors: formattedErrors,
       });
     }
