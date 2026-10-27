@@ -6,9 +6,10 @@
 | **Ticket ID** | `TICKET-SLICE-7` |
 | **Epic Terkait** | `EPIC-05: RIWAYAT, AUDIT DETAIL TRANSAKSI & AUDIT TRAIL` |
 | **Target Branch** | `feature/slice-7-history-audit` |
-| **Aturan Bisnis** | `BR-002`, `BR-006`, `BR-014`, `BR-015`, `BR-017` |
-| **Spesifikasi UI** | [07-orders-history.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/07-orders-history.md), [08-order-detail.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/08-order-detail.md), [09-audit-logs.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/09-audit-logs.md) |
-| **Integration Test** | `TEST-09` (Akses audit logs oleh kasir ditolak 403 Forbidden) |
+| **Aturan Bisnis** | [BR-002, BR-006, BR-014, BR-015, BR-017](file:///Users/yuma/Workspace/lab/titipin/docs/product/PRD.md#L45-L75) |
+| **Dokumen Acuan** | [ADR-006](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/ADR/ADR-006-dual-logging-strategy.md), [DATA-MODEL.md Section 3.7 & 3.8](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/DATA-MODEL.md#L254-L289), [openapi.yaml](file:///Users/yuma/Workspace/lab/titipin/docs/api/openapi.yaml#L509-L650) |
+| **Spesifikasi UI** | [07-orders-history.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/07-orders-history.md), [08-order-detail.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/08-order-detail.md), [09-audit-logs.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/09-audit-logs.md), [COMPONENTS.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/COMPONENTS.md) |
+| **Integration Test** | [TEST-09 (Kasir ditolak 403 saat akses audit logs)](file:///Users/yuma/Workspace/lab/titipin/docs/product/ACCEPTANCE-CRITERIA.md#L474) |
 
 ---
 

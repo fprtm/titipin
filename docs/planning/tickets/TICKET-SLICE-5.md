@@ -6,9 +6,10 @@
 | **Ticket ID** | `TICKET-SLICE-5` |
 | **Epic Terkait** | `EPIC-04: TRANSAKSI PENJUALAN KASIR (POINT OF SALE)` |
 | **Target Branch** | `feature/slice-5-core-pos-engine` |
-| **Aturan Bisnis** | `BR-001`, `BR-002`, `BR-003`, `BR-004`, `BR-005`, `BR-013`, `BR-017` |
-| **Spesifikasi UI** | [03-pos-checkout.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/03-pos-checkout.md) |
-| **Integration Tests** | `TEST-01`, `TEST-02`, `TEST-03`, `TEST-05` (Core Concurrency & Ordering Tests) |
+| **Aturan Bisnis** | [BR-001 s/d BR-005, BR-013, BR-017](file:///Users/yuma/Workspace/lab/titipin/docs/product/PRD.md#L45-L75) |
+| **Dokumen Acuan** | [ARCHITECTURE.md Section 4.2](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/ARCHITECTURE.md#L182-L238), [DATA-MODEL.md Section 4.4](file:///Users/yuma/Workspace/lab/titipin/docs/architecture/DATA-MODEL.md#L384-L437), [openapi.yaml](file:///Users/yuma/Workspace/lab/titipin/docs/api/openapi.yaml#L516-L540) |
+| **Spesifikasi UI** | [03-pos-checkout.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/pages/03-pos-checkout.md), [COMPONENTS.md](file:///Users/yuma/Workspace/lab/titipin/docs/design/COMPONENTS.md) |
+| **Integration Tests** | [TEST-01, TEST-02, TEST-03, TEST-05](file:///Users/yuma/Workspace/lab/titipin/docs/product/ACCEPTANCE-CRITERIA.md#L466-L470) |
 
 ---
 
@@ -61,7 +62,7 @@ Mengimplementasikan **jantung operasional POS Titipin**: pemrosesan transaksi pe
     * Total Akhir format Rupiah tebal `text-2xl font-bold font-mono text-emerald-800`.
     * Tombol "Bayar Sekarang (Enter)" (`rounded-2xl h-13 bg-emerald-700 text-white font-bold`).
   * **Modal Pembayaran Tunai:**
-    * Tombol pecahan cepat (Uang Pas, Rp 50rb, Rp 100rb, dll), kalkulasi uang kembalian instan.
+    * Tombol pecahan cepat: `[Uang Pas]`, `[Rp 20.000]`, `[Rp 50.000]`, `[Rp 100.000]`, kalkulasi uang kembalian instan.
     * Feedback error stok: jika server merespon 422, modal memunculkan highlight merah pada item yang stoknya kurang.
   * **Modal Struk Nota Berhasil:**
     * Nomor invoice unik, rincian barang, total bayar, tombol "Cetak Struk" Lucide `Printer` dan tombol "Transaksi Baru".
