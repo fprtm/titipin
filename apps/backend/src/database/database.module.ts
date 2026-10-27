@@ -7,6 +7,8 @@ import { envConfig } from '../config/env.config';
 export const PG_POOL = 'PG_POOL';
 export const DRIZZLE_ORM = 'DRIZZLE_ORM';
 export type DrizzleDatabase = NodePgDatabase<typeof schema>;
+export type DrizzleTx = Parameters<Parameters<DrizzleDatabase['transaction']>[0]>[0];
+export type DrizzleClient = DrizzleDatabase | DrizzleTx;
 
 @Global()
 @Module({

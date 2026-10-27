@@ -6,3 +6,4 @@ export * from './product.types';
 export * from './customer.types';
 export * from './order.types';
 export * from './dashboard.types';
+export * from './audit.types';

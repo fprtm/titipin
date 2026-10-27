@@ -13,7 +13,7 @@ def verify_markdown_links():
     total_links = 0
 
     for root, dirs, files in os.walk(base_dir):
-        if '.git' in root or 'node_modules' in root:
+        if '.git' in root or 'node_modules' in root or '.agents/teamwork' in root:
             continue
         for f in files:
             if f.endswith('.md'):

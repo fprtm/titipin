@@ -1,5 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AuditService } from './audit.service';
+import { AuditRepository } from './repositories/audit.repository';
+import { RecordAuditLogUseCase } from './use-cases/record-audit-log.use-case';
+import { FindAuditLogsUseCase } from './use-cases/find-audit-logs.use-case';
 import type { DrizzleDatabase } from '../../database/database.module';
 
 describe('AuditService', () => {
@@ -27,7 +30,11 @@ describe('AuditService', () => {
       }),
     };
 
-    service = new AuditService(mockDb as unknown as DrizzleDatabase);
+    const repository = new AuditRepository(mockDb as unknown as DrizzleDatabase);
+    const recordUseCase = new RecordAuditLogUseCase(repository);
+    const findUseCase = new FindAuditLogsUseCase(repository);
+
+    service = new AuditService(recordUseCase, findUseCase);
   });
 
   it('should be defined', () => {
