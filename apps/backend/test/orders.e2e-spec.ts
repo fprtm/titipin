@@ -509,4 +509,24 @@ describe('OrdersController, POS Checkout & Draft Engine (E2E)', () => {
     const lineItem = detailRes.body.data.items[0];
     expect(Number(lineItem.unit_price || lineItem.unitPrice)).toBe(15000);
   });
+
+  it('Orders Export: GET /api/orders/export returns multi-sheet Excel file (.xlsx)', async (ctx) => {
+    if (!isOrdersModuleMounted) {
+      ctx.skip();
+      return;
+    }
+
+    const response = await request(app.getHttpServer())
+      .get('/api/orders/export')
+      .set('Authorization', `Bearer ${cashierAccessToken}`);
+
+    expect(response.status).toBe(200);
+    expect(response.headers['content-type']).toContain(
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    expect(response.headers['content-disposition']).toContain(
+      'attachment; filename="Laporan_Penjualan_Titipin_',
+    );
+    expect(response.body).toBeDefined();
+  });
 });

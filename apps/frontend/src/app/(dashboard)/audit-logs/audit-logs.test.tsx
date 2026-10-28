@@ -123,6 +123,38 @@ describe('AuditLogsPage Component', () => {
     });
   });
 
+  it('renders side-by-side diff table and switches to Raw JSON tab', async () => {
+    render(<AuditLogsPage />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Kasir Satu')).toBeDefined();
+    });
+
+    // Click "Lihat Diff" on the second log (PRODUCT_UPDATED with stock 10 -> 8)
+    const diffButtons = screen.getAllByText('Lihat Diff');
+    fireEvent.click(diffButtons[1]);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Inspeksi Diff Mutasi Log #2/)).toBeDefined();
+    });
+
+    // Check side-by-side diff headers
+    expect(screen.getByText('Field / Properti')).toBeDefined();
+    expect(screen.getByText('Sebelum (Nilai Lama)')).toBeDefined();
+    expect(screen.getByText('Sesudah (Nilai Baru)')).toBeDefined();
+
+    // Check property values: stock before = 10, after = 8
+    expect(screen.getByText('stock')).toBeDefined();
+    expect(screen.getByText('10')).toBeDefined();
+    expect(screen.getByText('8')).toBeDefined();
+
+    // Switch to Raw JSON tab
+    const rawJsonTab = screen.getByText('Raw JSON');
+    fireEvent.click(rawJsonTab);
+
+    expect(screen.getByText('Salin JSON')).toBeDefined();
+  });
+
   it('renders empty state when no audit records are found', async () => {
     vi.mocked(apiClient.get).mockImplementation((url: string) => {
       if (url.includes('/audit-logs')) {

@@ -23,6 +23,7 @@ export interface PosCartProps {
   totalItemsCount: number;
   isHolding?: boolean;
   hasHeldDraft?: boolean;
+  customerSearchInputRef?: React.RefObject<HTMLInputElement | null>;
   onSelectCustomerType: (type: 'WALK_IN' | 'MEMBER') => void;
   onSelectCustomer: (customer: CustomerItem | null) => void;
   onOpenNewMemberModal: () => void;
@@ -44,6 +45,7 @@ export function PosCart({
   totalItemsCount,
   isHolding = false,
   hasHeldDraft = false,
+  customerSearchInputRef,
   onSelectCustomerType,
   onSelectCustomer,
   onOpenNewMemberModal,
@@ -91,6 +93,7 @@ export function PosCart({
           onSelectCustomerType={onSelectCustomerType}
           onSelectCustomer={onSelectCustomer}
           onOpenNewMemberModal={onOpenNewMemberModal}
+          searchInputRef={customerSearchInputRef}
         />
       </div>
 
@@ -238,6 +241,7 @@ export function PosCart({
             >
               <Clock className="h-3.5 w-3.5" />
               <span>{isHolding ? 'Menahan...' : 'Tahan Transaksi'}</span>
+              <kbd className="hidden sm:inline-block text-[10px] font-mono bg-amber-100/90 text-amber-900 px-1 py-0.2 rounded border border-amber-300">F4</kbd>
             </button>
 
             <button
@@ -266,6 +270,7 @@ export function PosCart({
           >
             <Banknote className="h-4 w-4" />
             <span>Bayar Sekarang ({formatCurrency(totalAmount)})</span>
+            <kbd className="hidden sm:inline-block text-[10px] font-mono bg-emerald-800/80 text-emerald-100 px-1.5 py-0.5 rounded border border-emerald-600/50">F1</kbd>
           </button>
         </div>
       </div>

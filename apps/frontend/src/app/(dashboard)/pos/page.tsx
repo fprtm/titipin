@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   Banknote,
   Clock,
@@ -110,6 +110,32 @@ export default function PosPage() {
   // Receipt Modal
   const [completedOrder, setCompletedOrder] = useState<CompletedReceiptData | null>(null);
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+  const [receiptPaperSize, setReceiptPaperSize] = useState<'58mm' | '80mm'>('80mm');
+
+  // Keyboard Shortcuts Refs
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const customerSearchInputRef = useRef<HTMLInputElement>(null);
+
+  // Restore paper size preference from localStorage
+  useEffect(() => {
+    try {
+      const savedSize = localStorage.getItem('titipin_receipt_paper_size') as '58mm' | '80mm' | null;
+      if (savedSize === '58mm' || savedSize === '80mm') {
+        setReceiptPaperSize(savedSize);
+      }
+    } catch {
+      // Ignore localStorage errors
+    }
+  }, []);
+
+  const handlePaperSizeChange = (size: '58mm' | '80mm') => {
+    setReceiptPaperSize(size);
+    try {
+      localStorage.setItem('titipin_receipt_paper_size', size);
+    } catch {
+      // Ignore localStorage errors
+    }
+  };
 
   // 1. Fetch Products Catalog
   const fetchProducts = useCallback(async () => {
@@ -252,6 +278,62 @@ export default function PosPage() {
       setIsHoldingCart(false);
     }
   };
+
+  // Keyboard Shortcuts (F1: Pay, F2: Search, F3: Member, F4: Hold, Esc: Cancel/Close)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'F1') {
+        e.preventDefault();
+        if (cart.items.length > 0 && !isPaymentModalOpen && !isReceiptModalOpen && !isNewMemberModalOpen) {
+          handleOpenPayment();
+        }
+      } else if (e.key === 'F2') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+        searchInputRef.current?.select();
+      } else if (e.key === 'F3') {
+        e.preventDefault();
+        if (cart.customerType === 'WALK_IN') {
+          cart.setCustomerType('MEMBER');
+          setTimeout(() => {
+            customerSearchInputRef.current?.focus();
+          }, 50);
+        } else {
+          customerSearchInputRef.current?.focus();
+          customerSearchInputRef.current?.select();
+        }
+      } else if (e.key === 'F4') {
+        e.preventDefault();
+        if (cart.items.length > 0 && !isHoldingCart) {
+          handleHoldCart();
+        }
+      } else if (e.key === 'Escape') {
+        if (isPaymentModalOpen) {
+          e.preventDefault();
+          setIsPaymentModalOpen(false);
+        } else if (isReceiptModalOpen) {
+          e.preventDefault();
+          setIsReceiptModalOpen(false);
+        } else if (isNewMemberModalOpen) {
+          e.preventDefault();
+          setIsNewMemberModalOpen(false);
+        } else if (isHeldDrawerOpen) {
+          e.preventDefault();
+          setIsHeldDrawerOpen(false);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [
+    cart,
+    isPaymentModalOpen,
+    isReceiptModalOpen,
+    isNewMemberModalOpen,
+    isHeldDrawerOpen,
+    isHoldingCart,
+  ]);
 
   // Open Held Drafts Drawer
   const handleOpenHeldDrawer = async () => {
@@ -396,7 +478,7 @@ export default function PosPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-5.5rem)] gap-4">
+    <div className="flex flex-col h-[calc(100vh-5.5rem)] gap-3">
       {/* Top Banner / Error notice */}
       {productError && (
         <div className="flex items-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 px-4 py-2.5 text-xs font-medium text-rose-300">
@@ -404,6 +486,35 @@ export default function PosPage() {
           <span>{productError}</span>
         </div>
       )}
+
+      {/* POS Keyboard Shortcuts Bar */}
+      <div className="hidden sm:flex items-center justify-between px-3 py-1.5 rounded-xl bg-slate-100/90 border border-slate-200/80 text-[11px] text-slate-600 no-print">
+        <span className="font-semibold text-slate-700 flex items-center gap-1.5">
+          <kbd className="px-1.5 py-0.5 rounded bg-white shadow-xs border border-slate-300 font-mono text-[10px] text-slate-800 font-bold">Shortcut Kasir</kbd>
+        </span>
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 rounded bg-white shadow-xs border border-slate-300 font-mono text-[10px] font-bold text-slate-800">F1</kbd>
+            Bayar
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 rounded bg-white shadow-xs border border-slate-300 font-mono text-[10px] font-bold text-slate-800">F2</kbd>
+            Cari Produk
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 rounded bg-white shadow-xs border border-slate-300 font-mono text-[10px] font-bold text-slate-800">F3</kbd>
+            Pilih Member
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 rounded bg-white shadow-xs border border-slate-300 font-mono text-[10px] font-bold text-slate-800">F4</kbd>
+            Tahan
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 rounded bg-white shadow-xs border border-slate-300 font-mono text-[10px] font-bold text-slate-800">Esc</kbd>
+            Batal
+          </span>
+        </div>
+      </div>
 
       {/* Main Split Screen Interface */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 min-h-0">
@@ -415,6 +526,7 @@ export default function PosPage() {
             cartItems={cart.items}
             onAddToCart={cart.addItem}
             onRefresh={fetchProducts}
+            searchInputRef={searchInputRef}
           />
         </div>
 
@@ -430,6 +542,7 @@ export default function PosPage() {
             totalItemsCount={cart.totalItemsCount}
             isHolding={isHoldingCart}
             hasHeldDraft={hasHeldDraft}
+            customerSearchInputRef={customerSearchInputRef}
             onSelectCustomerType={cart.setCustomerType}
             onSelectCustomer={cart.setCustomer}
             onOpenNewMemberModal={() => setIsNewMemberModalOpen(true)}
@@ -701,8 +814,45 @@ export default function PosPage() {
               </button>
             </div>
 
-            {/* Thermal Receipt Simulation (80mm width look) */}
-            <div id="thermal-receipt" className="rounded-xl border border-slate-300 bg-slate-50 p-4 font-mono text-xs text-slate-800 space-y-2 shadow-inner print:p-0 print:border-none print:bg-white">
+            {/* Segmented Paper Size Toggle */}
+            <div className="flex items-center justify-between bg-slate-100 p-1.5 rounded-xl text-xs font-medium no-print">
+              <span className="text-slate-600 px-1 flex items-center gap-1.5 font-semibold">
+                <Printer className="h-3.5 w-3.5 text-slate-500" />
+                Format Kertas:
+              </span>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => handlePaperSizeChange('58mm')}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                    receiptPaperSize === '58mm'
+                      ? 'bg-white text-emerald-800 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  58mm (Kecil)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handlePaperSizeChange('80mm')}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                    receiptPaperSize === '80mm'
+                      ? 'bg-white text-emerald-800 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  80mm (Standar)
+                </button>
+              </div>
+            </div>
+
+            {/* Thermal Receipt Simulation (58mm or 80mm width look) */}
+            <div
+              id="thermal-receipt"
+              className={`mx-auto rounded-xl border border-slate-300 bg-slate-50 p-4 font-mono text-slate-800 space-y-2 shadow-inner print:p-0 print:border-none print:bg-white transition-all ${
+                receiptPaperSize === '58mm' ? 'max-w-[280px] text-[10px]' : 'max-w-[360px] text-xs'
+              }`}
+            >
               <div className="text-center pb-2 border-b border-dashed border-slate-300">
                 <h4 className="font-extrabold text-sm tracking-wider">TITIPIN POS</h4>
                 <p className="text-[10px] text-slate-500">Jl. Pajajaran No. 128, Bogor</p>
@@ -808,7 +958,7 @@ export default function PosPage() {
                         totalAmount: completedOrder.totalAmount || completedOrder.total_amount || cart.totalAmount,
                         total_paid: completedOrder.total_paid,
                         change_amount: completedOrder.change_amount,
-                      });
+                      }, { paperSize: receiptPaperSize });
                     }
                   }}
                   className="flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
@@ -836,7 +986,7 @@ export default function PosPage() {
                         totalAmount: completedOrder.totalAmount || completedOrder.total_amount || cart.totalAmount,
                         total_paid: completedOrder.total_paid,
                         change_amount: completedOrder.change_amount,
-                      });
+                      }, { paperSize: receiptPaperSize });
                     }
                   }}
                   className="flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
@@ -851,7 +1001,7 @@ export default function PosPage() {
                   className="flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
                 >
                   <Printer className="h-4 w-4 text-slate-600" />
-                  <span>Cetak Struk (80mm)</span>
+                  <span>Cetak Struk ({receiptPaperSize})</span>
                 </button>
               </div>
 

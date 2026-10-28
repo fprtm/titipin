@@ -10,6 +10,7 @@ export interface PosCatalogProps {
   cartItems: CartItem[];
   onAddToCart: (product: ProductItem) => void;
   onRefresh?: () => void;
+  searchInputRef?: React.RefObject<HTMLInputElement | null>;
 }
 
 export function PosCatalog({
@@ -18,6 +19,7 @@ export function PosCatalog({
   cartItems,
   onAddToCart,
   onRefresh,
+  searchInputRef,
 }: PosCatalogProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterMode, setFilterMode] = useState<'ALL' | 'IN_STOCK' | 'LOW_STOCK'>('ALL');
@@ -63,10 +65,11 @@ export function PosCatalog({
           <div className="relative flex-1">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input
+              ref={searchInputRef}
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari nama produk atau kode barang..."
+              placeholder="Cari nama produk atau kode barang... [F2]"
               className="glass-input w-full pl-10 pr-9 py-2 text-sm rounded-xl"
             />
             {searchQuery && (
