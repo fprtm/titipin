@@ -1,18 +1,37 @@
 # Titipin — Point of Sale (POS) & Order Management System
+### Solusi Technical Test — Medior Fullstack Developer (Azatech)
 
-Sistem Point of Sale (POS) dan Order Management modern berbasis **Turborepo** dan **pnpm workspaces** yang memisahkan aplikasi menjadi dua service terpisah: Backend REST API (NestJS 11+ & Drizzle ORM) dan Frontend Web Client (Next.js 15 App Router & React 19).
+Aplikasi Point of Sale (POS) dan Order Management modern berskala produksi berbasis **Turborepo** dan **pnpm workspaces**. Proyek ini memisahkan arsitektur menjadi dua service terpisah: **Backend REST API** (NestJS 11+, Drizzle ORM, PostgreSQL 16) dan **Frontend Web Client** (Next.js 15 App Router, React 19, Tailwind CSS).
 
 ---
 
-## ⚡ Panduan Quickstart ($\le 6$ Perintah)
+## 1. Pilihan Tech Stack & Alasan Pemilihan
 
-Jalankan seluruh sistem dari kondisi nol (fresh database) dengan maksimal 6 langkah berikut:
+Sesuai ketentuan **Track A (JavaScript / TypeScript)**, tech stack dipilih dengan mempertimbangkan keandalan bisnis, integritas data, dan performa tinggi:
+
+| Lapisan | Teknologi Terpilih | Alasan Pemilihan & Nilai Tambah |
+| :--- | :--- | :--- |
+| **Runtime** | **Node.js 24 LTS** | Runtime JavaScript modern dengan kestabilan performa I/O tinggi dan dukungan native V8 engine terbaru. |
+| **Backend Framework** | **NestJS 11+** | Menyediakan arsitektur modular enterprise (*Clean Architecture*), Dependency Injection terstruktur, *Validation Pipes* deklaratif, serta *Guards* dan *Interceptors* terpusat. |
+| **Bahasa** | **TypeScript (Strict Mode)** | Menjamin keamanan tipe (*type safety*) 100% dari backend, shared DTO contracts, hingga frontend UI tanpa celah `any`. |
+| **ORM & Database** | **Drizzle ORM & PostgreSQL 16** | *Zero-overhead query builder* dengan kontrol eksplisit atas SQL primitives, sangat esensial untuk mengeksekusi *pessimistic row locking* (`SELECT ... FOR UPDATE`), check constraints (`stock >= 0`), dan rollback transaksi atomik. |
+| **Autentikasi** | **JWT (Access + Refresh Token)** | Token access berumur pendek (15 menit) disimpan di memori/header, dilengkapi silent refresh token rotasi (7 hari) via HTTP-only cookie untuk keamanan dari XSS. |
+| **Frontend Framework** | **Next.js 15 (App Router) & React 19** | Rendering cepat berbasis komponen modular, layout shell terpadu, dan navigasi client-side instan tanpa reload. |
+| **Data Fetching & State** | **TanStack Query v5 & Axios Interceptors** | Manajemen server state otomatis, caching data produk, dan mutex queue saat refresh token expired. |
+| **Styling & UI Tokens** | **Tailwind CSS & Lucide React** | Desain responsif (*mobile-first*) dengan efek *frosted glassmorphism*, kepatuhan 100% *zero inline raw SVG* (seluruh ikon resmi `lucide-react`). |
+| **Monorepo Tooling** | **Turborepo & pnpm Workspaces** | Eksekusi task pipeline paralel (lint, build, test, typecheck) dengan shared package `@titipin/shared`. |
+
+---
+
+## 2. ⚡ Panduan Quickstart ($\le 6$ Perintah)
+
+Aplikasi dapat dijalankan dari kondisi nol (*fresh clone*) sampai siap digunakan dengan 6 perintah berikut:
 
 ```bash
 # 1. Clone repository
 git clone https://github.com/fprtm/titipin.git && cd titipin
 
-# 2. Inisialisasi berkas konfigurasi environment
+# 2. Inisialisasi berkas konfigurasi environment (.env)
 cp .env.example .env && cp apps/backend/.env.example apps/backend/.env && cp apps/frontend/.env.example apps/frontend/.env
 
 # 3. Pasang seluruh dependensi monorepo
@@ -21,94 +40,149 @@ pnpm install
 # 4. Jalankan kontainer database PostgreSQL 16 lokal
 docker compose up -d db
 
-# 5. Jalankan migrasi skema dan suntikkan data seeder deterministik
+# 5. Jalankan migrasi skema database dan injeksikan data seeder
 pnpm db:migrate && pnpm db:seed
 
 # 6. Jalankan service Backend (:3001) dan Frontend (:3000) secara serentak
 pnpm dev
 ```
 
-Aplikasi web dapat diakses di:
-
-- **Frontend**: [http://localhost:3000](http://localhost:3000)
+Aplikasi dan dokumentasi siap diakses di:
+- **Frontend App**: [http://localhost:3000](http://localhost:3000)
 - **Backend API**: [http://localhost:3001/api](http://localhost:3001/api)
-- **Healthcheck**: [http://localhost:3001/api/health](http://localhost:3001/api/health)
+- **API Health Check**: [http://localhost:3001/api/health](http://localhost:3001/api/health)
 
 ---
 
-## 🔑 Kredensial Akun Default (Seeder)
+## 3. 🔑 Kredensial Akun Seeder
 
-Setelah menjalankan `pnpm db:seed`, akun uji coba berikut siap digunakan:
+Data seeder deterministik (`pnpm db:seed`) menyediakan akun siap pakai:
 
-| Peran (Role) | Email              | Password    | Hak Akses                                                              |
-| :----------- | :----------------- | :---------- | :--------------------------------------------------------------------- |
-| **Admin**    | `admin@titipin.id` | `Admin123!` | Akses penuh seluruh modul (Katalog, Pengguna, Audit Trail, Dashboard)  |
-| **Kasir**    | `kasir@titipin.id` | `Kasir123!` | Akses terminal POS, hold order, riwayat transaksi, katalog & pelanggan |
+| Peran (Role) | Email | Kata Sandi | Hak Akses Fitur |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@titipin.id` | `Admin123!` | Akses penuh: Dashboard Analytics, Manajemen Produk, Pengguna, Audit Trail, & Riwayat Transaksi. |
+| **Kasir** | `kasir@titipin.id` | `Kasir123!` | Akses operasional: Terminal Kasir POS, Tahan Transaksi, Pelanggan Member, & Riwayat Transaksi. |
+
+> [!NOTE]
+> Seeder juga menginjeksi **25 produk katalog** (termasuk produk dengan stok menipis < 5), **16 pelanggan member**, dan **70 transaksi historis** tersebar sepanjang tahun untuk kelengkapan visual grafik dashboard dan filter riwayat.
 
 ---
 
-## 🏗️ Arsitektur Monorepo
+## 4. 🧠 Logika Bisnis: Pembuatan Order & Anti-Overselling
 
+Alur pembuatan order (`POST /api/orders`) dibangun dengan prinsip **Integritas Finansial & Zero-Overselling**:
+
+```mermaid
+flowchart TD
+    A[Client Request: POST /api/orders] --> B[Otorisasi JWT & Validasi DTO Zod]
+    B --> C[Mulai Database Transaction: BEGIN]
+    C --> D[Kunci Baris Produk Terurut: SELECT ... FOR UPDATE ORDER BY id ASC]
+    D --> E{Apakah Seluruh Stok Produk Mencukupi?}
+    E -- Tidak --> F[Batalkan Transaksi: ROLLBACK]
+    F --> G[Kembalikan HTTP 422: Stok tidak mencukupi & detail item]
+    E -- Ya --> H[Kurangi Stok Fisik: UPDATE products SET stock = stock - qty]
+    H --> I[Ambil Snapshot unit_price & Hitung Subtotal]
+    I --> J{Apakah Pelanggan Ulang Tahun Hari Ini?}
+    J -- Ya --> K[Terapkan Diskon Ultah 5% Maks. Rp 50.000]
+    J -- Tidak --> L[Diskon = 0]
+    K --> M[Simpan Record Order: INV-YYYYMMDD-XXXX]
+    L --> M
+    M --> N[Simpan Seluruh Order Items]
+    N --> O[Catat Mutasi ke Append-Only Audit Log]
+    O --> P[Selesaikan Transaksi: COMMIT]
+    P --> Q[Kembalikan HTTP 201 Created & Payload Lengkap]
 ```
-titipin/
-├── apps/
-│   ├── backend/             # Service 1: NestJS 11+, Drizzle ORM, Node.js 24 LTS REST API (:3001)
-│   └── frontend/            # Service 2: Next.js 15 App Router, React 19, Tailwind CSS (:3000)
-├── packages/
-│   ├── shared/              # Shared contracts, enums, DTOs (@titipin/shared)
-│   ├── eslint-config/       # Centralized ESLint 9 Flat Configs (@titipin/eslint-config)
-│   └── typescript-config/   # Shared TypeScript configurations (@titipin/typescript-config)
-├── .agents/                 # Workspace Agent Customizations & Skills (titipin-dev)
-├── docs/                    # Dokumentasi lengkap: api, architecture, design, planning, product
-├── AGENTS.md                # AI Agent Playbook & discoverability
-├── docker-compose.yml       # Local PostgreSQL 16 container definition
-└── turbo.json               # Turborepo task pipeline
-```
+
+### Keunggulan Desain Logika:
+1. **Harga & Total Dihitung di Server**: Backend tidak pernah menerima nilai `price`, `subtotal`, atau `total_amount` dari client untuk mencegah manipulasi harga (Price Tampering).
+2. **Pessimistic Locking Terurut**: Baris produk dikunci menggunakan `SELECT ... FOR UPDATE` dengan pengurutan ID produk menaik (`ORDER BY id ASC`). Ini menjamin **resistensi deadlock (40P01)** saat terjadi lonjakan transaksi konkuren di kasir berbeda.
+3. **Snapshot `unit_price` Abadi**: Harga saat transaksi dibekukan ke tabel `order_items.unit_price`, sehingga jika harga produk di katalog berubah di kemudian hari, laporan keuangan historis tetap 100% akurat.
+4. **Resistensi Overselling & Atomik**: Jika salah satu produk dalam keranjang memiliki stok kurang dari yang diminta, seluruh transaksi dibatalkan seketika (`ROLLBACK`), tidak ada stok barang lain yang terpotong, dan response mengembalikan HTTP 422 berformat:
+   ```json
+   {
+     "success": false,
+     "message": "Stok tidak mencukupi",
+     "errors": {
+       "items.0.quantity": ["Stok Aqua Air Mineral 600ml tersisa 2, diminta 5"]
+     }
+   }
+   ```
+5. **Pemisahan Tahan Transaksi (Hold Cart)**: Penahanan keranjang kasir dialokasikan ke tabel khusus `draft_orders` (bukan tabel `orders`) tanpa memotong stok fisik gudang, sehingga kasir lain tetap dapat menjual produk tersebut.
 
 ---
 
-## 🧪 Perintah Pengujian & Tooling
+## 5. 🧪 Panduan Menjalankan Automated Tests
+
+Aplikasi dilengkapi dengan **266 skenario pengujian otomatis** (183 Backend Integration & Stress Tests + 83 Frontend Unit & Component Tests):
 
 ```bash
-# Menjalankan seluruh test suite otomatis (Vitest / Supertest)
+# Menjalankan seluruh test suite monorepo
 pnpm test
 
-# Menjalankan test coverage report
-pnpm test:cov
+# Menjalankan test suite backend saja (NestJS + Supertest)
+pnpm --filter @titipin/backend test
 
-# Menjalankan linter di seluruh workspace
+# Menjalankan test suite frontend saja (Vitest + React Testing Library)
+pnpm --filter @titipin/frontend test
+
+# Menjalankan linting standar ESLint 9 Flat Config
 pnpm lint
 
-# Menjalankan static typecheck TypeScript
+# Menjalankan validasi TypeScript tanpa kompilasi
 pnpm typecheck
 
-# Membuka Drizzle Studio Web GUI
-pnpm db:studio
-
-# Audit otomatis kualitas kode & zero-hardcoded icon
+# Menjalankan audit kepatuhan monorepo (Zero raw SVG, Lint, Typecheck, Test)
 pnpm audit:quality
 
-# Menjalankan orkestrasi produksi via Docker Compose
-docker compose -f docker-compose.prod.yml up --build
+# Menjalankan verifikasi keutuhan seluruh tautan dokumentasi markdown
+pnpm audit:links
 ```
 
 ---
 
-## 🏛️ Pola Desain & Clean Architecture (Repositories & Use-Cases)
+## 6. 🎁 Pemenuhan Fitur Bonus (Menambah Nilai)
 
-Sistem mengadopsi prinsip pemisahan tanggung jawab yang ketat:
-- **Dedicated Repositories (`repositories/*.repository.ts`)**: Seluruh interaksi database Drizzle ORM, query, transaksi atomik, dan lock concurrency terisolasi penuh di lapisan repositori (`UsersRepository`, `ProductsRepository`, `CustomersRepository`, `OrdersRepository`, `AuditRepository`, `DashboardRepository`). Tidak ada pemanggilan query Drizzle langsung dari controller atau use-case.
-- **Single-Responsibility Use-Cases (`use-cases/*.use-case.ts`)**: Logika bisnis domain dipecah menjadi kelas use-case terfokus (misal: `ProcessCheckoutUseCase`, `HoldDraftOrderUseCase`, `ResumeDraftOrderUseCase`, `FindOrdersUseCase`, `RecordAuditLogUseCase`).
-- **Pessimistic Concurrency & Stock Locking**: Checkout kasir mengunci baris stok produk (`SELECT ... FOR UPDATE`) secara terurut untuk mencegah race condition, deadlocks, dan overselling (`TEST-01` s/d `TEST-03`).
-- **Isolated Cart Holding (ADR-005)**: Penahanan keranjang POS dialokasikan ke tabel khusus `draft_orders` dengan penegakan unik per kasir (`UNIQUE user_id`), sehingga stok fisik tidak terpotong dan tabel `orders` tetap murni mencatat transaksi final lunas (`TEST-04`).
+Seluruh poin bonus opsional dari lembar penilaian telah diimplementasikan:
+
+- [x] **Docker Compose Multi-Container Orchestration**: Tersedia berkas `docker-compose.prod.yml` untuk menjalankan backend, frontend, dan database sekaligus via `docker compose -f docker-compose.prod.yml up --build`.
+- [x] **Continuous Integration (GitHub Actions)**: Disediakan pipeline CI otomatis di `.github/workflows/ci.yml` yang memverifikasi lint, typecheck, migrasi, dan automated test suites pada setiap push/PR.
+- [x] **Grafik Penjualan Harian**: Visualisasi tren penjualan harian di modul `/dashboard` dengan interaktivitas tooltip, filter rentang tanggal, dan kartu metrik analitik.
+- [x] **Ekspor Riwayat Order ke Multi-Sheet Excel**: Tombol "Ekspor Excel" di `/orders` menghasilkan file `.xlsx` biner (Sheet 1: Rekap Transaksi & Omset berformat IDR, Sheet 2: Rincian Produk Terjual).
+- [x] **Automated Tests di Sisi Frontend**: 83 pengujian Vitest + React Testing Library mencakup alur kasir POS, keyboard shortcuts (F1-F4, Esc), toggle ukuran struk thermal 58mm/80mm, Global Toast Provider, dan modal diff viewer.
 
 ---
 
-## 📚 Tautan Dokumentasi Terkait
+## 7. 🔮 Asumsi, Keterbatasan, & Rencana Pengembangan Lanjutan
 
-- [Spesifikasi Fondasi Sistem](docs/architecture/FOUNDATION.md)
-- [Arsitektur Sistem Lengkap](docs/architecture/ARCHITECTURE.md)
-- [Model Data Relasional](docs/architecture/DATA-MODEL.md)
-- [Kontrak OpenAPI 3.1](docs/api/openapi.yaml)
-- [Design Tokens & Glassmorphism](docs/design/TOKENS.md)
-- [Sprint Plan & Tickets](docs/planning/SPRINT-PLAN.md)
+### Asumsi Sistem Saat Ini:
+- Sistem diasumsikan beroperasi pada model toko tunggal (*single-outlet retail / standalone store*).
+- Metode pembayaran utama adalah tunai (*Cash*) dengan kalkulasi kembalian otomatis dan konfirmasi nominal pembayaran.
+
+### Keterbatasan & Rencana Peningkatan:
+1. **Multi-Outlet & Multi-Warehouse**: Mendukung pencatatan stok per cabang/gudang dan transfer stok antar cabang (*stock transfer order*).
+2. **Integrasi Payment Gateway Digital**: Menambahkan integrasi dinamis QRIS (Midtrans / Xendit) dengan webhook listener terverifikasi signature HMAC.
+3. **Hardware Direct ESC/POS Driver**: Menghubungkan printer thermal kasir via Web Bluetooth / WebUSB API untuk cetak instan tanpa membuka dialog print bawaan browser.
+4. **Asynchronous Background Processing**: Mengadopsi Redis dan BullMQ untuk pemrosesan ekspor dataset masif (ribuan transaksi) dan pengiriman email receipt otomatis.
+
+---
+
+## 8. 🤖 AI Usage Disclosure
+
+Sesuai ketentuan pengerjaan pada Halaman 6 dokumen Technical Test:
+
+- **Tools yang Digunakan**: Google Antigravity & Gemini CLI.
+- **Bagian Penggunaan**:
+  1. *Perancangan Skema Monorepo & Kontrak Tipe*: Membantu penataan struktur pnpm workspaces dan `@titipin/shared` DTO schemas.
+  2. *Pembuatan Dataset Seeder*: Membantu merumuskan variasi 25 produk retail Indonesia dan 70 transaksi historis realistis.
+  3. *Generasi Test Cases Concurrency & Stress*: Membantu menyusun skenario kompetisi race condition paralel 5 concurrent checkout requests pada unit test.
+- **Tanggung Jawab Teknis**: Seluruh arsitektur, implementasi transaksi atomik, isolasi repositori, validasi, dan styling antarmuka dipahami, dikontrol, serta siap dijelaskan secara mendalam oleh kandidat dalam sesi technical review.
+
+---
+
+## 9. 📖 Dokumentasi API & Postman Collection
+
+- **Spesifikasi OpenAPI 3.1**: Tersedia di [docs/api/openapi.yaml](docs/api/openapi.yaml).
+- **Postman Collection**: Berkas koleksi JSON siap impor tersedia di [docs/api/titipin_postman_collection.json](docs/api/titipin_postman_collection.json).
+- **Model Data Relasional**: [docs/architecture/DATA-MODEL.md](docs/architecture/DATA-MODEL.md).
+- **Spesifikasi Fondasi Sistem**: [docs/architecture/FOUNDATION.md](docs/architecture/FOUNDATION.md).
+- **Arsitektur Sistem**: [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md).

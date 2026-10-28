@@ -1,0 +1,85 @@
+name: CI Quality & Automated Test Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit-and-test:
+    name: Lint, Typecheck, Test & Compliance Audit
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: titipin_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js 24 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Shared Package
+        run: pnpm --filter @titipin/shared build
+
+      - name: Run ESLint 9 Flat Config (Workspace)
+        run: pnpm turbo lint
+
+      - name: Run TypeScript Strict Typecheck (Workspace)
+        run: pnpm turbo typecheck
+
+      - name: Run Database Migrations & Deterministic Seed
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/titipin_db
+          JWT_SECRET: super-secret-jwt-key-for-test-32bytes-min
+          JWT_REFRESH_SECRET: super-secret-refresh-jwt-key-for-test-32bytes
+        run: |
+          pnpm db:migrate
+          pnpm db:seed
+
+      - name: Run Frontend Tests (Vitest + Testing Library)
+        run: pnpm --filter @titipin/frontend test
+
+      - name: Run Backend Integration Tests (Vitest + Supertest)
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/titipin_db
+          JWT_SECRET: super-secret-jwt-key-for-test-32bytes-min
+          JWT_REFRESH_SECRET: super-secret-refresh-jwt-key-for-test-32bytes
+          NODE_ENV: test
+        run: pnpm --filter @titipin/backend test
+
+      - name: Verify Documentation Markdown Links
+        run: pnpm audit:links

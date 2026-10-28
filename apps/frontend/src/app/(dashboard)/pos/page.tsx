@@ -72,6 +72,7 @@ interface ApiErrorResponse {
   response?: {
     data?: {
       message?: string;
+      errors?: Record<string, string[]>;
     };
   };
 }
@@ -238,9 +239,14 @@ export default function PosPage() {
       window.dispatchEvent(new CustomEvent('held-draft-changed', { detail: null }));
     } catch (err: unknown) {
       const apiErr = err as ApiErrorResponse;
-      const msg =
-        apiErr.response?.data?.message ||
-        'Gagal memproses transaksi checkout. Stok barang mungkin tidak mencukupi.';
+      const resData = apiErr.response?.data;
+      let msg = resData?.message || 'Gagal memproses transaksi checkout. Stok barang mungkin tidak mencukupi.';
+      if (resData?.errors && typeof resData.errors === 'object') {
+        const errorDetails = Object.values(resData.errors).flat();
+        if (errorDetails.length > 0) {
+          msg = `${msg}: ${errorDetails.join('; ')}`;
+        }
+      }
       setCheckoutError(msg);
     } finally {
       setIsSubmittingOrder(false);
