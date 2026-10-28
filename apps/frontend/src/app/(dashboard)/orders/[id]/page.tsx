@@ -11,12 +11,16 @@ import {
   ShoppingBag,
   Clock,
   AlertCircle,
-  Download,
+  FileText,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { apiClient } from '../../../../lib/api-client';
 import { formatCurrency, formatDate } from '../../../../lib/utils';
 import { Badge } from '../../../../components/ui/badge';
-import { downloadReceiptAsText } from '../../../../lib/receipt-download';
+import {
+  downloadReceiptAsPdf,
+  downloadReceiptAsImage,
+} from '../../../../lib/receipt-download';
 import type { OrderDetailData } from '@titipin/shared';
 
 interface OrderDetailPageProps {
@@ -107,12 +111,12 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
           <span>Kembali ke Riwayat Transaksi</span>
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => {
               if (order) {
-                downloadReceiptAsText({
+                downloadReceiptAsPdf({
                   orderNumber: orderNum,
                   orderDate: orderDt,
                   cashierName: cashier,
@@ -129,10 +133,37 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
                 });
               }
             }}
-            className="glass-button flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:text-slate-900 active:scale-95 transition-all"
+            className="glass-button flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-slate-900 active:scale-95 transition-all"
           >
-            <Download className="h-4 w-4 text-emerald-700" />
-            <span>Unduh Struk</span>
+            <FileText className="h-4 w-4 text-rose-600" />
+            <span>Unduh PDF</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (order) {
+                downloadReceiptAsImage({
+                  orderNumber: orderNum,
+                  orderDate: orderDt,
+                  cashierName: cashier,
+                  customerName: custName,
+                  items: items.map((it) => ({
+                    productName: it.productName || it.product_name,
+                    quantity: it.quantity,
+                    unitPrice: it.unitPrice || it.unit_price,
+                    subtotal: it.subtotal,
+                  })),
+                  subtotal,
+                  discount,
+                  totalAmount: total,
+                });
+              }
+            }}
+            className="glass-button flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-slate-900 active:scale-95 transition-all"
+          >
+            <ImageIcon className="h-4 w-4 text-emerald-700" />
+            <span>Unduh Gambar</span>
           </button>
 
           <button
