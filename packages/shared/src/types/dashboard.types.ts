@@ -64,6 +64,7 @@ export interface DashboardTrendItem {
   date: string;
   transactions: number;
   revenue: string | number;
+  label?: string;
 }
 
 export interface DashboardTrendResponse {

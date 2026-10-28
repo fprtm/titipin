@@ -76,7 +76,7 @@ describe('DashboardPage Component', () => {
     });
   });
 
-  it('allows switching period between Hari Ini, Bulan Ini, Kuartal Ini, and Tahun Ini', async () => {
+  it('allows switching period between Hari Ini, Bulan Ini, Kuartal Ini, and Tahun Ini and updates trend chart', async () => {
     render(<DashboardPage />);
 
     await waitFor(() => {
@@ -84,6 +84,7 @@ describe('DashboardPage Component', () => {
         '/dashboard/summary',
         expect.objectContaining({ params: { period: 'daily' } }),
       );
+      expect(screen.getByText('Tren Penjualan Hari Ini (Per Jam)')).toBeDefined();
     });
 
     const monthButton = screen.getByText('Bulan Ini');
@@ -94,6 +95,18 @@ describe('DashboardPage Component', () => {
         '/dashboard/summary',
         expect.objectContaining({ params: { period: 'monthly' } }),
       );
+      expect(screen.getByText('Tren Penjualan Bulan Ini (Harian)')).toBeDefined();
+    });
+
+    const quarterButton = screen.getByText('Kuartal Ini');
+    fireEvent.click(quarterButton);
+
+    await waitFor(() => {
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/dashboard/summary',
+        expect.objectContaining({ params: { period: 'quarterly' } }),
+      );
+      expect(screen.getByText('Tren Penjualan Kuartal Ini (Mingguan)')).toBeDefined();
     });
 
     const yearButton = screen.getByText('Tahun Ini');
@@ -104,6 +117,7 @@ describe('DashboardPage Component', () => {
         '/dashboard/summary',
         expect.objectContaining({ params: { period: 'yearly' } }),
       );
+      expect(screen.getByText('Tren Penjualan Tahun Ini (Bulanan)')).toBeDefined();
     });
   });
 

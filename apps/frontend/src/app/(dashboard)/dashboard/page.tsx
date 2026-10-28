@@ -47,6 +47,36 @@ function getPeriodLabel(period: DashboardPeriod): string {
   }
 }
 
+function getTrendInfo(period: DashboardPeriod): { title: string; subtitle: string } {
+  switch (period) {
+    case 'daily':
+      return {
+        title: 'Tren Penjualan Hari Ini (Per Jam)',
+        subtitle: 'Volume Transaksi & Omset Sepanjang Hari Ini',
+      };
+    case 'monthly':
+      return {
+        title: 'Tren Penjualan Bulan Ini (Harian)',
+        subtitle: 'Grafik Omset Harian Kalender Bulan Ini',
+      };
+    case 'quarterly':
+      return {
+        title: 'Tren Penjualan Kuartal Ini (Mingguan)',
+        subtitle: 'Grafik Omset Mingguan Kuartal Berjalan',
+      };
+    case 'yearly':
+      return {
+        title: 'Tren Penjualan Tahun Ini (Bulanan)',
+        subtitle: 'Grafik Omset Bulanan Sepanjang Tahun Ini',
+      };
+    default:
+      return {
+        title: 'Tren Penjualan',
+        subtitle: 'Nominal Omset & Volume Transaksi',
+      };
+  }
+}
+
 export default function DashboardPage() {
   const [period, setPeriod] = useState<DashboardPeriod>('daily');
   const [summary, setSummary] = useState<DashboardSummaryData | null>(null);
@@ -281,10 +311,10 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-emerald-700" />
             <h2 className="text-sm font-bold text-slate-900">
-              Tren Penjualan Harian
+              {getTrendInfo(period).title}
             </h2>
           </div>
-          <span className="text-xs text-slate-500">Nominal Omset & Volume Transaksi</span>
+          <span className="text-xs text-slate-500">{getTrendInfo(period).subtitle}</span>
         </div>
 
         {trend.length === 0 ? (
@@ -298,6 +328,16 @@ export default function DashboardPage() {
               {trend.map((item, idx) => {
                 const rev = Number(item.revenue || 0);
                 const heightPercent = Math.max(10, Math.round((rev / maxRevenue) * 100));
+                const displayLabel = item.label || (item.date?.length > 5 ? item.date.slice(-5) : item.date) || String(idx + 1);
+
+                let periodDetail = item.label || item.date;
+                if (period === 'daily') {
+                  periodDetail = `Pukul ${item.label || item.date}`;
+                } else if (period === 'quarterly') {
+                  periodDetail = `Minggu ke-${item.label?.replace(/[^0-9]/g, '') || item.date}`;
+                } else if (period === 'yearly') {
+                  periodDetail = `Bulan ${item.label || item.date}`;
+                }
 
                 return (
                   <div
@@ -305,9 +345,11 @@ export default function DashboardPage() {
                     className="flex-1 min-w-[32px] sm:min-w-[48px] flex flex-col items-center gap-1 group relative"
                   >
                     {/* Tooltip on hover */}
-                    <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 glass-card px-2.5 py-1 rounded-lg text-center whitespace-nowrap shadow-md">
+                    <div className="absolute -top-14 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 glass-card px-2.5 py-1.5 rounded-lg text-center whitespace-nowrap shadow-md">
                       <p className="text-[10px] font-bold text-slate-900">{formatCurrency(rev)}</p>
-                      <p className="text-[9px] text-slate-500">{item.transactions} Transaksi</p>
+                      <p className="text-[9px] text-slate-500 font-medium">
+                        {item.transactions} Transaksi • {periodDetail}
+                      </p>
                     </div>
 
                     {/* Bar */}
@@ -316,9 +358,12 @@ export default function DashboardPage() {
                       className="w-full rounded-t-lg bg-linear-to-t from-emerald-600 to-teal-400 transition-all duration-300 group-hover:brightness-110 shadow-xs"
                     />
 
-                    {/* Date label */}
-                    <span className="text-[10px] text-slate-500 font-mono truncate w-full text-center">
-                      {item.date?.slice(-5) || idx + 1}
+                    {/* Date/period label */}
+                    <span
+                      className="text-[10px] text-slate-500 font-mono truncate w-full text-center"
+                      title={item.label || item.date}
+                    >
+                      {displayLabel}
                     </span>
                   </div>
                 );
