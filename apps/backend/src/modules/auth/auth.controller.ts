@@ -19,7 +19,6 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { envConfig } from '../../config/env.config';
 import type { UserItem } from '@titipin/shared';
 
 @Controller('auth')
@@ -38,7 +37,7 @@ export class AuthController {
 
     response.cookie('refresh_token', result.refreshToken, {
       httpOnly: true,
-      secure: envConfig.NODE_ENV === 'production',
+      secure: process.env.COOKIE_SECURE === 'true',
       sameSite: 'lax',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
@@ -71,7 +70,7 @@ export class AuthController {
 
       response.cookie('refresh_token', result.refreshToken, {
         httpOnly: true,
-        secure: envConfig.NODE_ENV === 'production',
+        secure: process.env.COOKIE_SECURE === 'true',
         sameSite: 'lax',
         path: '/',
         maxAge: 7 * 24 * 60 * 60 * 1000,
