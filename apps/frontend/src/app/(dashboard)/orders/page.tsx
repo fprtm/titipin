@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import {
   Receipt,
@@ -11,6 +11,9 @@ import {
   ChevronRight,
   Eye,
   RefreshCw,
+  ChevronDown,
+  X,
+  Check,
 } from 'lucide-react';
 import { apiClient } from '../../../lib/api-client';
 import { formatCurrency, formatDate } from '../../../lib/utils';
@@ -25,6 +28,20 @@ export default function OrdersHistoryPage() {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
+  const [isCustomerDropdownOpen, setIsCustomerDropdownOpen] = useState(false);
+  const [customerSearchInput, setCustomerSearchInput] = useState('');
+  const customerDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close customer dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (customerDropdownRef.current && !customerDropdownRef.current.contains(event.target as Node)) {
+        setIsCustomerDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -93,8 +110,20 @@ export default function OrdersHistoryPage() {
     setFromDate('');
     setToDate('');
     setSelectedCustomerId('');
+    setCustomerSearchInput('');
+    setIsCustomerDropdownOpen(false);
     setCurrentPage(1);
   };
+
+  const selectedCustomer = customers.find((c) => c.id === selectedCustomerId);
+
+  const filteredCustomerList = customers.filter((c) => {
+    if (!customerSearchInput.trim()) return true;
+    const q = customerSearchInput.toLowerCase();
+    const name = (c.customerName || c.customer_name || '').toLowerCase();
+    const phone = (c.phone || '').toLowerCase();
+    return name.includes(q) || phone.includes(q);
+  });
 
   return (
     <div className="space-y-6">
@@ -161,21 +190,115 @@ export default function OrdersHistoryPage() {
           </div>
 
           {/* Customer filter */}
-          <div className="relative">
-            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-            <select
+          <div className="relative" ref={customerDropdownRef}>
+            <button
+              type="button"
               aria-label="Filter Pelanggan"
-              value={selectedCustomerId}
-              onChange={(e) => handleFilterChange(setSelectedCustomerId, e.target.value)}
-              className="glass-input pl-9 pr-3 py-2 text-xs w-full appearance-none bg-white"
+              onClick={() => setIsCustomerDropdownOpen(!isCustomerDropdownOpen)}
+              className="glass-input pl-9 pr-8 py-2 text-xs w-full text-left flex items-center justify-between font-normal text-slate-800 focus:outline-none"
             >
-              <option value="">Semua Pelanggan</option>
-              {customers.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.customerName || c.customer_name} ({c.phone})
-                </option>
-              ))}
-            </select>
+              <div className="flex items-center gap-2 truncate">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                <span className="truncate">
+                  {selectedCustomer
+                    ? `${selectedCustomer.customerName || selectedCustomer.customer_name} (${selectedCustomer.phone || '-'})`
+                    : 'Semua Pelanggan'}
+                </span>
+              </div>
+              <ChevronDown className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+            </button>
+
+            {selectedCustomerId && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleFilterChange(setSelectedCustomerId, '');
+                  setCustomerSearchInput('');
+                }}
+                className="absolute right-7 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100"
+                title="Hapus filter pelanggan"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            )}
+
+            {isCustomerDropdownOpen && (
+              <div className="absolute left-0 right-0 top-full mt-1.5 z-30 glass-panel p-2 rounded-2xl shadow-xl border border-slate-200/90 bg-white max-h-64 flex flex-col animate-in fade-in zoom-in-95 duration-150">
+                <div className="relative mb-2 shrink-0">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                  <input
+                    type="text"
+                    autoFocus
+                    placeholder="Cari nama atau no. telp..."
+                    value={customerSearchInput}
+                    onChange={(e) => setCustomerSearchInput(e.target.value)}
+                    className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:border-emerald-600"
+                  />
+                  {customerSearchInput && (
+                    <button
+                      type="button"
+                      onClick={() => setCustomerSearchInput('')}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  )}
+                </div>
+
+                <div className="overflow-y-auto space-y-1 pr-1 flex-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleFilterChange(setSelectedCustomerId, '');
+                      setIsCustomerDropdownOpen(false);
+                      setCustomerSearchInput('');
+                    }}
+                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs flex items-center justify-between transition-colors ${
+                      !selectedCustomerId
+                        ? 'bg-emerald-50 text-emerald-800 font-semibold'
+                        : 'text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    <span>Semua Pelanggan</span>
+                    {!selectedCustomerId && <Check className="h-3.5 w-3.5 text-emerald-700" />}
+                  </button>
+
+                  {filteredCustomerList.map((c) => {
+                    const isSelected = selectedCustomerId === c.id;
+                    const name = c.customerName || c.customer_name;
+                    return (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => {
+                          handleFilterChange(setSelectedCustomerId, c.id);
+                          setIsCustomerDropdownOpen(false);
+                          setCustomerSearchInput('');
+                        }}
+                        className={`w-full text-left px-3 py-1.5 rounded-lg text-xs flex items-center justify-between transition-colors ${
+                          isSelected
+                            ? 'bg-emerald-50 text-emerald-800 font-semibold'
+                            : 'text-slate-700 hover:bg-slate-100'
+                        }`}
+                      >
+                        <div className="truncate pr-2">
+                          <div className="font-medium truncate">{name}</div>
+                          {c.phone && <div className="text-[10px] text-slate-400">{c.phone}</div>}
+                        </div>
+                        {isSelected && <Check className="h-3.5 w-3.5 text-emerald-700 shrink-0" />}
+                      </button>
+                    );
+                  })}
+
+                  {filteredCustomerList.length === 0 && (
+                    <div className="py-3 text-center text-xs text-slate-400">
+                      Tidak ada pelanggan yang cocok
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

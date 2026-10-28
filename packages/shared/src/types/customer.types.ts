@@ -6,7 +6,7 @@ export interface CustomerItem {
   customerName: string;
   customerAddress: string;
   gender: Gender;
-  birthDate: string;
+  birthDate: string | null;
   phone: string | null;
   createdAt: string;
   updatedAt: string;
@@ -14,7 +14,7 @@ export interface CustomerItem {
   // snake_case aliases for OpenAPI/client compatibility
   customer_name?: string;
   customer_address?: string;
-  birth_date?: string;
+  birth_date?: string | null;
   created_at?: string;
   updated_at?: string;
   deleted_at?: string | null;
@@ -26,24 +26,24 @@ export interface CreateCustomerInput {
   customer_name: string;
   customer_address: string;
   gender: Gender;
-  birth_date: string;
+  birth_date?: string | null;
   phone?: string | null;
   // camelCase aliases
   customerName?: string;
   customerAddress?: string;
-  birthDate?: string;
+  birthDate?: string | null;
 }
 
 export interface UpdateCustomerInput {
   customer_name?: string;
   customer_address?: string;
   gender?: Gender;
-  birth_date?: string;
+  birth_date?: string | null;
   phone?: string | null;
   // camelCase aliases
   customerName?: string;
   customerAddress?: string;
-  birthDate?: string;
+  birthDate?: string | null;
 }
 
 export interface CustomerListResponse {

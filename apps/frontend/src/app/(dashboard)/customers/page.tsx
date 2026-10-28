@@ -27,7 +27,7 @@ import { apiClient } from '../../../lib/api-client';
 import type { CustomerItem, CreateCustomerInput, UpdateCustomerInput } from '@titipin/shared';
 import { Gender } from '@titipin/shared';
 
-function isBirthdayToday(birthDateStr?: string): boolean {
+function isBirthdayToday(birthDateStr?: string | null): boolean {
   if (!birthDateStr) return false;
   try {
     const today = new Date();
@@ -238,10 +238,10 @@ export default function CustomersPage() {
       {/* Header Section */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
             Data Pelanggan & Member
           </h1>
-          <p className="mt-1 text-sm text-zinc-400">
+          <p className="mt-1 text-sm text-slate-500">
             Kelola direktori pelanggan, keanggotaan loyalty, dan diskon ulang tahun (BR-006).
           </p>
         </div>
@@ -250,7 +250,7 @@ export default function CustomersPage() {
           <button
             onClick={() => fetchCustomers()}
             disabled={isLoading}
-            className="glass-button flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-200 transition-colors hover:bg-white/10 disabled:opacity-50"
+            className="glass-button flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 hover:text-slate-900 disabled:opacity-50 transition-colors"
           >
             <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
             Segarkan
@@ -258,7 +258,7 @@ export default function CustomersPage() {
 
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-emerald-950/40 transition-colors hover:bg-emerald-800"
+            className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-bold text-white shadow-md hover:bg-emerald-800 transition-colors"
           >
             <UserPlus className="h-4 w-4" />
             + Tambah Pelanggan
@@ -271,83 +271,83 @@ export default function CustomersPage() {
         {/* Total Member */}
         <div className="glass-card rounded-2xl p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium uppercase tracking-wider text-zinc-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Total Member
             </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800">
               <Users2 className="h-5 w-5" />
             </div>
           </div>
-          <div className="mt-3 text-2xl font-bold text-white">
+          <div className="mt-3 text-2xl font-bold text-slate-900">
             {kpiStats.total}
           </div>
-          <p className="mt-1 text-xs text-zinc-400">Terdaftar aktif di sistem</p>
+          <p className="mt-1 text-xs text-slate-500">Terdaftar aktif di sistem</p>
         </div>
 
         {/* Member Pria */}
         <div className="glass-card rounded-2xl p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium uppercase tracking-wider text-zinc-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Member Pria
             </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-500/10 text-sky-400">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-100 text-sky-800">
               <User className="h-5 w-5" />
             </div>
           </div>
-          <div className="mt-3 text-2xl font-bold text-white">
+          <div className="mt-3 text-2xl font-bold text-slate-900">
             {kpiStats.priaCount}
           </div>
-          <p className="mt-1 text-xs text-zinc-400">Pelanggan laki-laki</p>
+          <p className="mt-1 text-xs text-slate-500">Pelanggan laki-laki</p>
         </div>
 
         {/* Member Wanita */}
         <div className="glass-card rounded-2xl p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium uppercase tracking-wider text-zinc-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Member Wanita
             </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-500/10 text-rose-400">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-100 text-rose-800">
               <User className="h-5 w-5" />
             </div>
           </div>
-          <div className="mt-3 text-2xl font-bold text-white">
+          <div className="mt-3 text-2xl font-bold text-slate-900">
             {kpiStats.wanitaCount}
           </div>
-          <p className="mt-1 text-xs text-zinc-400">Pelanggan perempuan</p>
+          <p className="mt-1 text-xs text-slate-500">Pelanggan perempuan</p>
         </div>
 
         {/* Ultah Hari Ini (BR-006) */}
-        <div className="glass-card rounded-2xl p-5 border border-amber-500/20 bg-amber-500/5">
+        <div className="glass-card rounded-2xl p-5 border border-amber-200 bg-amber-50/70">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium uppercase tracking-wider text-amber-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-amber-800">
               Ultah Hari Ini
             </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-200/80 text-amber-800">
               <Cake className="h-5 w-5" />
             </div>
           </div>
-          <div className="mt-3 text-2xl font-bold text-amber-300">
+          <div className="mt-3 text-2xl font-bold text-amber-900">
             {kpiStats.birthdayTodayCount}
           </div>
-          <p className="mt-1 text-xs text-amber-400/80">Klaim diskon 5% BR-006</p>
+          <p className="mt-1 text-xs text-amber-700 font-medium">Klaim diskon 5% BR-006</p>
         </div>
       </div>
 
       {/* Search & Filter Toolbar */}
       <div className="glass-panel flex flex-col gap-4 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative flex-1">
-          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari nama atau nomor telepon pelanggan..."
-            className="glass-input w-full rounded-xl py-2 pl-10 pr-4 text-sm text-white placeholder-zinc-500 focus:outline-none"
+            className="glass-input w-full rounded-xl py-2 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:outline-none"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
             >
               <X className="h-4 w-4" />
             </button>
@@ -356,40 +356,40 @@ export default function CustomersPage() {
 
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-zinc-400" />
+            <Filter className="h-4 w-4 text-slate-400" />
             <select
               value={genderFilter}
               onChange={(e) => setGenderFilter(e.target.value as 'ALL' | 'Pria' | 'Wanita')}
-              className="glass-input rounded-xl px-3 py-2 text-sm text-zinc-200 focus:outline-none"
+              className="glass-input rounded-xl px-3 py-2 text-sm text-slate-800 bg-white focus:outline-none"
               aria-label="Filter Gender"
             >
-              <option value="ALL" className="bg-zinc-900 text-white">Semua Gender</option>
-              <option value="Pria" className="bg-zinc-900 text-white">Pria</option>
-              <option value="Wanita" className="bg-zinc-900 text-white">Wanita</option>
+              <option value="ALL">Semua Gender</option>
+              <option value="Pria">Pria</option>
+              <option value="Wanita">Wanita</option>
             </select>
           </div>
 
           <select
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value as typeof sortOption)}
-            className="glass-input rounded-xl px-3 py-2 text-sm text-zinc-200 focus:outline-none"
+            className="glass-input rounded-xl px-3 py-2 text-sm text-slate-800 bg-white focus:outline-none"
             aria-label="Urutkan"
           >
-            <option value="name_asc" className="bg-zinc-900 text-white">Nama (A - Z)</option>
-            <option value="name_desc" className="bg-zinc-900 text-white">Nama (Z - A)</option>
-            <option value="birth_asc" className="bg-zinc-900 text-white">Tgl Lahir (Muda - Tua)</option>
-            <option value="birth_desc" className="bg-zinc-900 text-white">Tgl Lahir (Tua - Muda)</option>
-            <option value="created_desc" className="bg-zinc-900 text-white">Terbaru</option>
-            <option value="created_asc" className="bg-zinc-900 text-white">Terlama</option>
+            <option value="name_asc">Nama (A - Z)</option>
+            <option value="name_desc">Nama (Z - A)</option>
+            <option value="birth_asc">Tgl Lahir (Muda - Tua)</option>
+            <option value="birth_desc">Tgl Lahir (Tua - Muda)</option>
+            <option value="created_desc">Terbaru</option>
+            <option value="created_asc">Terlama</option>
           </select>
         </div>
       </div>
 
       {/* Customer Data Table */}
-      <div className="glass-panel overflow-hidden rounded-3xl border border-white/10">
+      <div className="glass-panel overflow-hidden rounded-3xl border border-slate-200/80">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-zinc-300">
-            <thead className="border-b border-white/10 bg-white/5 text-xs uppercase tracking-wider text-zinc-400">
+          <table className="w-full text-left text-sm text-slate-700">
+            <thead className="border-b border-slate-200/80 bg-slate-50/75 text-xs uppercase tracking-wider text-slate-600">
               <tr>
                 <th className="px-6 py-4 font-semibold">Pelanggan</th>
                 <th className="px-6 py-4 font-semibold">Gender</th>
@@ -400,12 +400,12 @@ export default function CustomersPage() {
                 {isAdmin && <th className="px-6 py-4 text-right font-semibold">Aksi</th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-slate-100 font-normal">
               {isLoading ? (
                 <tr>
                   <td colSpan={isAdmin ? 7 : 6} className="py-12 text-center">
-                    <div className="flex flex-col items-center justify-center gap-3 text-zinc-400">
-                      <Loader2 className="h-7 w-7 animate-spin text-emerald-500" />
+                    <div className="flex flex-col items-center justify-center gap-3 text-slate-500">
+                      <Loader2 className="h-7 w-7 animate-spin text-emerald-600" />
                       <p className="text-sm">Memuat data pelanggan...</p>
                     </div>
                   </td>
@@ -413,19 +413,19 @@ export default function CustomersPage() {
               ) : displayedCustomers.length === 0 ? (
                 <tr>
                   <td colSpan={isAdmin ? 7 : 6} className="py-12 text-center">
-                    <div className="flex flex-col items-center justify-center gap-3 text-zinc-400">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 text-zinc-500">
+                    <div className="flex flex-col items-center justify-center gap-3 text-slate-500">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
                         <Users2 className="h-6 w-6" />
                       </div>
-                      <p className="text-base font-medium text-white">Tidak ada data pelanggan ditemukan</p>
-                      <p className="text-sm text-zinc-500 max-w-sm">
+                      <p className="text-base font-semibold text-slate-900">Tidak ada data pelanggan ditemukan</p>
+                      <p className="text-sm text-slate-500 max-w-sm">
                         {debouncedSearch
                           ? 'Coba gunakan kata kunci pencarian yang berbeda.'
                           : 'Belum ada anggota loyalty yang terdaftar di sistem.'}
                       </p>
                       <button
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="mt-2 flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800"
+                        className="mt-2 flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-md hover:bg-emerald-800"
                       >
                         <UserPlus className="h-4 w-4" />
                         Tambah Pelanggan Sekarang
@@ -444,17 +444,17 @@ export default function CustomersPage() {
                   return (
                     <tr
                       key={customer.id}
-                      className="transition-colors hover:bg-white/[0.03]"
+                      className="transition-colors hover:bg-slate-50/60"
                     >
                       {/* Name & Initials */}
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 font-bold text-emerald-400">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 font-bold text-emerald-800">
                             {getInitials(name)}
                           </div>
                           <div>
-                            <div className="font-medium text-white">{name}</div>
-                            <div className="text-xs text-zinc-500 font-mono">
+                            <div className="font-semibold text-slate-900">{name}</div>
+                            <div className="text-xs text-slate-400 font-mono">
                               #{customer.id.slice(0, 8)}
                             </div>
                           </div>
@@ -464,10 +464,10 @@ export default function CustomersPage() {
                       {/* Gender Badge */}
                       <td className="px-6 py-4">
                         <span
-                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
+                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
                             isMale
-                              ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20'
-                              : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                              ? 'bg-sky-50 text-sky-700 border border-sky-200'
+                              : 'bg-rose-50 text-rose-700 border border-rose-200'
                           }`}
                         >
                           <User className="h-3 w-3" />
@@ -478,24 +478,24 @@ export default function CustomersPage() {
                       {/* Phone */}
                       <td className="px-6 py-4">
                         {customer.phone ? (
-                          <div className="flex items-center gap-1.5 text-zinc-300">
-                            <Phone className="h-3.5 w-3.5 text-zinc-500" />
+                          <div className="flex items-center gap-1.5 text-slate-700">
+                            <Phone className="h-3.5 w-3.5 text-slate-400" />
                             <span>{customer.phone}</span>
                           </div>
                         ) : (
-                          <span className="text-zinc-500">-</span>
+                          <span className="text-slate-400">-</span>
                         )}
                       </td>
 
                       {/* Birth Date & Birthday Badge */}
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <div className="flex items-center gap-1.5 text-zinc-300">
-                            <Calendar className="h-3.5 w-3.5 text-zinc-500" />
+                          <div className="flex items-center gap-1.5 text-slate-700">
+                            <Calendar className="h-3.5 w-3.5 text-slate-400" />
                             <span>{birthDate}</span>
                           </div>
                           {isBirthday && (
-                            <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/20 px-2 py-0.5 text-[11px] font-semibold text-amber-300 animate-pulse">
+                            <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-800 animate-pulse">
                               <Cake className="h-3 w-3" />
                               Ultah!
                             </span>
@@ -506,16 +506,16 @@ export default function CustomersPage() {
                       {/* Address */}
                       <td className="px-6 py-4">
                         <div
-                          className="flex max-w-[200px] items-center gap-1.5 truncate text-zinc-300"
+                          className="flex max-w-[200px] items-center gap-1.5 truncate text-slate-600"
                           title={address}
                         >
-                          <MapPin className="h-3.5 w-3.5 shrink-0 text-zinc-500" />
+                          <MapPin className="h-3.5 w-3.5 shrink-0 text-slate-400" />
                           <span className="truncate">{address}</span>
                         </div>
                       </td>
 
                       {/* Created At */}
-                      <td className="px-6 py-4 text-xs text-zinc-400">
+                      <td className="px-6 py-4 text-xs text-slate-500">
                         {formatDate(customer.createdAt || customer.created_at)}
                       </td>
 
@@ -525,7 +525,7 @@ export default function CustomersPage() {
                           <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => setEditingCustomer(customer)}
-                              className="glass-button flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-zinc-300 hover:text-white"
+                              className="glass-button flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900"
                               title="Ubah data pelanggan"
                             >
                               <Edit3 className="h-3.5 w-3.5" />
@@ -533,7 +533,7 @@ export default function CustomersPage() {
                             </button>
                             <button
                               onClick={() => setDeleteTargetCustomer(customer)}
-                              className="flex items-center gap-1 rounded-lg border border-rose-500/20 bg-rose-500/10 px-2.5 py-1.5 text-xs font-medium text-rose-400 hover:bg-rose-500/20 transition-colors"
+                              className="flex items-center gap-1 rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-100 transition-colors"
                               title="Hapus pelanggan"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
@@ -551,12 +551,12 @@ export default function CustomersPage() {
         </div>
 
         {/* Pagination Bar */}
-        <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 px-6 py-4 sm:flex-row">
-          <p className="text-xs text-zinc-400">
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-slate-200/80 px-6 py-4 sm:flex-row">
+          <p className="text-xs text-slate-600">
             Menampilkan{' '}
-            <span className="font-medium text-white">{displayedCustomers.length}</span>{' '}
+            <span className="font-semibold text-slate-900">{displayedCustomers.length}</span>{' '}
             dari{' '}
-            <span className="font-medium text-white">{paginationMeta.total_items}</span>{' '}
+            <span className="font-semibold text-slate-900">{paginationMeta.total_items}</span>{' '}
             data pelanggan aktif
           </p>
 
@@ -564,20 +564,20 @@ export default function CustomersPage() {
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage <= 1 || isLoading}
-              className="glass-button flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium text-zinc-300 disabled:opacity-40"
+              className="glass-button flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 disabled:opacity-40"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
               Sebelumnya
             </button>
 
-            <span className="text-xs text-zinc-400">
+            <span className="text-xs text-slate-600">
               Halaman {paginationMeta.page} / {paginationMeta.total_pages || 1}
             </span>
 
             <button
               onClick={() => setCurrentPage((p) => Math.min(paginationMeta.total_pages, p + 1))}
               disabled={currentPage >= paginationMeta.total_pages || isLoading}
-              className="glass-button flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium text-zinc-300 disabled:opacity-40"
+              className="glass-button flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 disabled:opacity-40"
             >
               Selanjutnya
               <ChevronRight className="h-3.5 w-3.5" />
@@ -662,9 +662,7 @@ function CreateCustomerModal({
       errs.customer_address = 'Alamat maksimal 255 karakter';
     }
 
-    if (!formData.birth_date) {
-      errs.birth_date = 'Tanggal lahir harus diisi';
-    } else if (!/^\d{4}-\d{2}-\d{2}$/.test(formData.birth_date)) {
+    if (formData.birth_date && !/^\d{4}-\d{2}-\d{2}$/.test(formData.birth_date)) {
       errs.birth_date = 'Format tanggal lahir harus YYYY-MM-DD';
     }
 
@@ -687,7 +685,7 @@ function CreateCustomerModal({
       const payload: CreateCustomerInput = {
         customer_name: formData.customer_name.trim(),
         gender: formData.gender as Gender,
-        birth_date: formData.birth_date,
+        birth_date: formData.birth_date ? formData.birth_date : null,
         phone: formData.phone.trim() || null,
         customer_address: formData.customer_address.trim(),
       };
@@ -705,28 +703,28 @@ function CreateCustomerModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="glass-panel relative w-full max-w-lg rounded-3xl border border-white/20 p-6 shadow-2xl">
-        <div className="flex items-center justify-between border-b border-white/10 pb-4">
+      <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="glass-panel relative w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-2xl">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800">
               <UserPlus className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Daftar Pelanggan Baru</h2>
-              <p className="text-xs text-zinc-400">Tambahkan pelanggan ke direktori member Titipin</p>
+              <h2 className="text-lg font-bold text-slate-900">Daftar Pelanggan Baru</h2>
+              <p className="text-xs text-slate-500">Tambahkan pelanggan ke direktori member Titipin</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-zinc-400 hover:bg-white/10 hover:text-white"
+            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {submitError && (
-          <div className="mt-4 flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-400">
+          <div className="mt-4 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{submitError}</span>
           </div>
@@ -735,8 +733,8 @@ function CreateCustomerModal({
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           {/* Customer Name */}
           <div>
-            <label htmlFor="create-customer-name" className="block text-xs font-medium text-zinc-300">
-              Nama Lengkap <span className="text-rose-400">*</span>
+            <label htmlFor="create-customer-name" className="block text-xs font-semibold text-slate-700">
+              Nama Lengkap <span className="text-rose-500">*</span>
             </label>
             <input
               id="create-customer-name"
@@ -744,28 +742,28 @@ function CreateCustomerModal({
               value={formData.customer_name}
               onChange={(e) => setFormData({ ...formData, customer_name: e.target.value })}
               placeholder="Contoh: Budi Santoso"
-              className={`glass-input mt-1.5 w-full rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none ${
+              className={`glass-input mt-1.5 w-full rounded-xl px-3.5 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none ${
                 errors.customer_name ? 'border-rose-500' : ''
               }`}
             />
             {errors.customer_name && (
-              <p className="mt-1 text-xs text-rose-400">{errors.customer_name}</p>
+              <p className="mt-1 text-xs text-rose-500">{errors.customer_name}</p>
             )}
           </div>
 
           {/* Gender Pills */}
           <div>
-            <label className="block text-xs font-medium text-zinc-300">
-              Jenis Kelamin (Gender) <span className="text-rose-400">*</span>
+            <label className="block text-xs font-semibold text-slate-700">
+              Jenis Kelamin (Gender) <span className="text-rose-500">*</span>
             </label>
             <div className="mt-1.5 grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, gender: 'Pria' })}
-                className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition-colors ${
+                className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-colors ${
                   formData.gender === 'Pria'
-                    ? 'border border-sky-500 bg-sky-500/20 text-sky-300'
-                    : 'glass-button text-zinc-400 hover:text-white'
+                    ? 'border border-sky-300 bg-sky-50 text-sky-800'
+                    : 'glass-button text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <User className="h-4 w-4" />
@@ -775,10 +773,10 @@ function CreateCustomerModal({
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, gender: 'Wanita' })}
-                className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition-colors ${
+                className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-colors ${
                   formData.gender === 'Wanita'
-                    ? 'border border-rose-500 bg-rose-500/20 text-rose-300'
-                    : 'glass-button text-zinc-400 hover:text-white'
+                    ? 'border border-rose-300 bg-rose-50 text-rose-800'
+                    : 'glass-button text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <User className="h-4 w-4" />
@@ -790,26 +788,26 @@ function CreateCustomerModal({
           {/* Birth Date & Phone Grid */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label htmlFor="create-birth-date" className="block text-xs font-medium text-zinc-300">
-                Tanggal Lahir <span className="text-rose-400">*</span>
+              <label htmlFor="create-birth-date" className="block text-xs font-semibold text-slate-700">
+                Tanggal Lahir <span className="text-slate-400 font-normal lowercase">(opsional)</span>
               </label>
               <input
                 id="create-birth-date"
                 type="date"
                 value={formData.birth_date}
                 onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
-                className={`glass-input mt-1.5 w-full rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none ${
+                className={`glass-input mt-1.5 w-full rounded-xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none ${
                   errors.birth_date ? 'border-rose-500' : ''
                 }`}
               />
-              <p className="mt-1 text-[11px] text-zinc-500">Kunci diskon ultah BR-006</p>
+              <p className="mt-1 text-[11px] text-slate-400">Kunci diskon ultah BR-006</p>
               {errors.birth_date && (
-                <p className="mt-1 text-xs text-rose-400">{errors.birth_date}</p>
+                <p className="mt-1 text-xs text-rose-500">{errors.birth_date}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="create-phone" className="block text-xs font-medium text-zinc-300">
+              <label htmlFor="create-phone" className="block text-xs font-semibold text-slate-700">
                 Nomor Telepon
               </label>
               <input
@@ -818,18 +816,18 @@ function CreateCustomerModal({
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 placeholder="081234567890"
-                className={`glass-input mt-1.5 w-full rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none ${
+                className={`glass-input mt-1.5 w-full rounded-xl px-3.5 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none ${
                   errors.phone ? 'border-rose-500' : ''
                 }`}
               />
-              {errors.phone && <p className="mt-1 text-xs text-rose-400">{errors.phone}</p>}
+              {errors.phone && <p className="mt-1 text-xs text-rose-500">{errors.phone}</p>}
             </div>
           </div>
 
           {/* Address */}
           <div>
-            <label htmlFor="create-customer-address" className="block text-xs font-medium text-zinc-300">
-              Alamat Lengkap <span className="text-rose-400">*</span>
+            <label htmlFor="create-customer-address" className="block text-xs font-semibold text-slate-700">
+              Alamat Lengkap <span className="text-rose-500">*</span>
             </label>
             <textarea
               id="create-customer-address"
@@ -837,29 +835,29 @@ function CreateCustomerModal({
               value={formData.customer_address}
               onChange={(e) => setFormData({ ...formData, customer_address: e.target.value })}
               placeholder="Contoh: Jl. Surya Kencana No. 42 Bogor"
-              className={`glass-input mt-1.5 w-full rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none resize-none ${
+              className={`glass-input mt-1.5 w-full rounded-xl px-3.5 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none resize-none ${
                 errors.customer_address ? 'border-rose-500' : ''
               }`}
             />
             {errors.customer_address && (
-              <p className="mt-1 text-xs text-rose-400">{errors.customer_address}</p>
+              <p className="mt-1 text-xs text-rose-500">{errors.customer_address}</p>
             )}
           </div>
 
           {/* Form Actions */}
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="glass-button rounded-xl px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white"
+              className="glass-button rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 hover:text-slate-900"
             >
               Batal
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-2 text-sm font-medium text-white shadow-lg shadow-emerald-950/40 hover:bg-emerald-800 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-2 text-sm font-bold text-white shadow-md hover:bg-emerald-800 disabled:opacity-50"
             >
               {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
               Daftar Pelanggan
@@ -916,9 +914,7 @@ function EditCustomerModal({
       errs.customer_address = 'Alamat maksimal 255 karakter';
     }
 
-    if (!formData.birth_date) {
-      errs.birth_date = 'Tanggal lahir harus diisi';
-    } else if (!/^\d{4}-\d{2}-\d{2}$/.test(formData.birth_date)) {
+    if (formData.birth_date && !/^\d{4}-\d{2}-\d{2}$/.test(formData.birth_date)) {
       errs.birth_date = 'Format tanggal lahir harus YYYY-MM-DD';
     }
 
@@ -941,7 +937,7 @@ function EditCustomerModal({
       const payload: UpdateCustomerInput = {
         customer_name: formData.customer_name.trim(),
         gender: formData.gender as Gender,
-        birth_date: formData.birth_date,
+        birth_date: formData.birth_date ? formData.birth_date : null,
         phone: formData.phone.trim() || null,
         customer_address: formData.customer_address.trim(),
       };
@@ -959,28 +955,28 @@ function EditCustomerModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="glass-panel relative w-full max-w-lg rounded-3xl border border-white/20 p-6 shadow-2xl">
-        <div className="flex items-center justify-between border-b border-white/10 pb-4">
+      <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="glass-panel relative w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-2xl">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800">
               <Edit3 className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Ubah Data Pelanggan</h2>
-              <p className="text-xs text-zinc-400">ID: #{customer.id.slice(0, 8)}</p>
+              <h2 className="text-lg font-bold text-slate-900">Ubah Data Pelanggan</h2>
+              <p className="text-xs text-slate-500">ID: #{customer.id.slice(0, 8)}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-zinc-400 hover:bg-white/10 hover:text-white"
+            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {submitError && (
-          <div className="mt-4 flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-400">
+          <div className="mt-4 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{submitError}</span>
           </div>
@@ -989,36 +985,36 @@ function EditCustomerModal({
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           {/* Customer Name */}
           <div>
-            <label htmlFor="edit-customer-name" className="block text-xs font-medium text-zinc-300">
-              Nama Lengkap <span className="text-rose-400">*</span>
+            <label htmlFor="edit-customer-name" className="block text-xs font-semibold text-slate-700">
+              Nama Lengkap <span className="text-rose-500">*</span>
             </label>
             <input
               id="edit-customer-name"
               type="text"
               value={formData.customer_name}
               onChange={(e) => setFormData({ ...formData, customer_name: e.target.value })}
-              className={`glass-input mt-1.5 w-full rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none ${
+              className={`glass-input mt-1.5 w-full rounded-xl px-3.5 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none ${
                 errors.customer_name ? 'border-rose-500' : ''
               }`}
             />
             {errors.customer_name && (
-              <p className="mt-1 text-xs text-rose-400">{errors.customer_name}</p>
+              <p className="mt-1 text-xs text-rose-500">{errors.customer_name}</p>
             )}
           </div>
 
           {/* Gender Pills */}
           <div>
-            <label className="block text-xs font-medium text-zinc-300">
-              Jenis Kelamin (Gender) <span className="text-rose-400">*</span>
+            <label className="block text-xs font-semibold text-slate-700">
+              Jenis Kelamin (Gender) <span className="text-rose-500">*</span>
             </label>
             <div className="mt-1.5 grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, gender: 'Pria' })}
-                className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition-colors ${
+                className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-colors ${
                   formData.gender === 'Pria'
-                    ? 'border border-sky-500 bg-sky-500/20 text-sky-300'
-                    : 'glass-button text-zinc-400 hover:text-white'
+                    ? 'border border-sky-300 bg-sky-50 text-sky-800'
+                    : 'glass-button text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <User className="h-4 w-4" />
@@ -1028,10 +1024,10 @@ function EditCustomerModal({
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, gender: 'Wanita' })}
-                className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition-colors ${
+                className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-colors ${
                   formData.gender === 'Wanita'
-                    ? 'border border-rose-500 bg-rose-500/20 text-rose-300'
-                    : 'glass-button text-zinc-400 hover:text-white'
+                    ? 'border border-rose-300 bg-rose-50 text-rose-800'
+                    : 'glass-button text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <User className="h-4 w-4" />
@@ -1043,25 +1039,25 @@ function EditCustomerModal({
           {/* Birth Date & Phone Grid */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label htmlFor="edit-birth-date" className="block text-xs font-medium text-zinc-300">
-                Tanggal Lahir <span className="text-rose-400">*</span>
+              <label htmlFor="edit-birth-date" className="block text-xs font-semibold text-slate-700">
+                Tanggal Lahir <span className="text-slate-400 font-normal lowercase">(opsional)</span>
               </label>
               <input
                 id="edit-birth-date"
                 type="date"
                 value={formData.birth_date}
                 onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
-                className={`glass-input mt-1.5 w-full rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none ${
+                className={`glass-input mt-1.5 w-full rounded-xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none ${
                   errors.birth_date ? 'border-rose-500' : ''
                 }`}
               />
               {errors.birth_date && (
-                <p className="mt-1 text-xs text-rose-400">{errors.birth_date}</p>
+                <p className="mt-1 text-xs text-rose-500">{errors.birth_date}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="edit-phone" className="block text-xs font-medium text-zinc-300">
+              <label htmlFor="edit-phone" className="block text-xs font-semibold text-slate-700">
                 Nomor Telepon
               </label>
               <input
@@ -1069,47 +1065,47 @@ function EditCustomerModal({
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className={`glass-input mt-1.5 w-full rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none ${
+                className={`glass-input mt-1.5 w-full rounded-xl px-3.5 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none ${
                   errors.phone ? 'border-rose-500' : ''
                 }`}
               />
-              {errors.phone && <p className="mt-1 text-xs text-rose-400">{errors.phone}</p>}
+              {errors.phone && <p className="mt-1 text-xs text-rose-500">{errors.phone}</p>}
             </div>
           </div>
 
           {/* Address */}
           <div>
-            <label htmlFor="edit-customer-address" className="block text-xs font-medium text-zinc-300">
-              Alamat Lengkap <span className="text-rose-400">*</span>
+            <label htmlFor="edit-customer-address" className="block text-xs font-semibold text-slate-700">
+              Alamat Lengkap <span className="text-rose-500">*</span>
             </label>
             <textarea
               id="edit-customer-address"
               rows={3}
               value={formData.customer_address}
               onChange={(e) => setFormData({ ...formData, customer_address: e.target.value })}
-              className={`glass-input mt-1.5 w-full rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none resize-none ${
+              className={`glass-input mt-1.5 w-full rounded-xl px-3.5 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none resize-none ${
                 errors.customer_address ? 'border-rose-500' : ''
               }`}
             />
             {errors.customer_address && (
-              <p className="mt-1 text-xs text-rose-400">{errors.customer_address}</p>
+              <p className="mt-1 text-xs text-rose-500">{errors.customer_address}</p>
             )}
           </div>
 
           {/* Form Actions */}
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="glass-button rounded-xl px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white"
+              className="glass-button rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 hover:text-slate-900"
             >
               Batal
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-2 text-sm font-medium text-white shadow-lg shadow-emerald-950/40 hover:bg-emerald-800 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-2 text-sm font-bold text-white shadow-md hover:bg-emerald-800 disabled:opacity-50"
             >
               {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
               Simpan Perubahan
@@ -1154,28 +1150,28 @@ function DeleteCustomerDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="glass-panel relative w-full max-w-md rounded-3xl border border-rose-500/20 p-6 shadow-2xl">
+      <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="glass-panel relative w-full max-w-md rounded-3xl border border-rose-200 bg-white p-6 shadow-2xl">
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-400">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 text-rose-700 border border-rose-200">
             <AlertTriangle className="h-6 w-6" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white">Hapus Pelanggan?</h2>
-            <p className="text-xs text-zinc-400">Tindakan ini akan menonaktifkan member</p>
+            <h2 className="text-lg font-bold text-slate-900">Hapus Pelanggan?</h2>
+            <p className="text-xs text-slate-500">Tindakan ini akan menonaktifkan member</p>
           </div>
         </div>
 
-        <div className="mt-4 rounded-xl border border-white/5 bg-white/[0.02] p-3 text-sm text-zinc-300">
-          <p className="font-semibold text-white">{name}</p>
-          {customer.phone && <p className="text-xs text-zinc-400 mt-0.5">Tel: {customer.phone}</p>}
-          <p className="mt-2 text-xs text-zinc-400">
+        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3.5 text-sm text-slate-700">
+          <p className="font-bold text-slate-900">{name}</p>
+          {customer.phone && <p className="text-xs text-slate-500 mt-0.5">Tel: {customer.phone}</p>}
+          <p className="mt-2 text-xs text-slate-600">
             Pelanggan akan di-soft delete dan tidak muncul lagi di pencarian kasir, namun riwayat transaksi pesanan masa lalu tetap aman tersimpan.
           </p>
         </div>
 
         {deleteError && (
-          <div className="mt-3 flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-400">
+          <div className="mt-3 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{deleteError}</span>
           </div>
@@ -1186,7 +1182,7 @@ function DeleteCustomerDialog({
             type="button"
             onClick={onClose}
             disabled={isDeleting}
-            className="glass-button rounded-xl px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white"
+            className="glass-button rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 hover:text-slate-900"
           >
             Batal
           </button>
@@ -1194,7 +1190,7 @@ function DeleteCustomerDialog({
             type="button"
             onClick={handleDelete}
             disabled={isDeleting}
-            className="flex items-center gap-2 rounded-xl bg-rose-600 px-5 py-2 text-sm font-medium text-white shadow-lg shadow-rose-950/40 hover:bg-rose-700 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-xl bg-rose-600 px-5 py-2 text-sm font-bold text-white shadow-md hover:bg-rose-700 disabled:opacity-50"
           >
             {isDeleting && <Loader2 className="h-4 w-4 animate-spin" />}
             Hapus Pelanggan
