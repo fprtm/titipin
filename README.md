@@ -52,6 +52,8 @@ Aplikasi dan dokumentasi siap diakses di:
 - **Backend API**: [http://localhost:3001/api](http://localhost:3001/api)
 - **Swagger OpenAPI Docs**: [http://localhost:3001/api/docs](http://localhost:3001/api/docs)
 - **Prometheus Metrics**: [http://localhost:3001/api/metrics](http://localhost:3001/api/metrics)
+- **Prometheus Server**: [http://localhost:9090](http://localhost:9090)
+- **Grafana Dashboard UI**: [http://localhost:3002](http://localhost:3002) (Login: `admin` / `Admin123!`)
 - **API Health Check**: [http://localhost:3001/api/health](http://localhost:3001/api/health)
 
 ---
@@ -195,6 +197,8 @@ Sesuai ketentuan pengerjaan pada Halaman 6 dokumen Technical Test:
 - **Interactive Swagger UI**: Dapat langsung dijelajahi dan diuji di peramban web pada [http://localhost:3001/api/docs](http://localhost:3001/api/docs) lengkap dengan fitur *Authorize* JWT Bearer Token.
 - **Spesifikasi OpenAPI 3.0 / 3.1**: Tersedia via endpoint JSON di [http://localhost:3001/api/docs-json](http://localhost:3001/api/docs-json) serta berkas statis di [docs/api/openapi.yaml](docs/api/openapi.yaml).
 - **Prometheus Metrics Scraper Endpoint**: Tersedia di [http://localhost:3001/api/metrics](http://localhost:3001/api/metrics).
+- **Prometheus Server UI**: Tersedia di [http://localhost:9090](http://localhost:9090) untuk inspeksi query TSDB dan status target scrape.
+- **Grafana Observability Dashboard**: Tersedia di [http://localhost:3002](http://localhost:3002) (Login: `admin` / `Admin123!`) dengan dashboard visualisasi performa real-time.
 - **Postman Collection**: Berkas koleksi JSON siap impor tersedia di [docs/api/titipin_postman_collection.json](docs/api/titipin_postman_collection.json).
 - **Arsitektur Sistem**: [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md).
 - **Model Data Relasional**: [docs/architecture/DATA-MODEL.md](docs/architecture/DATA-MODEL.md).
