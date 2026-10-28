@@ -1,11 +1,15 @@
 import { defineConfig } from 'drizzle-kit';
-import { envConfig } from './src/config/env.config';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+dotenv.config({ path: path.resolve(process.cwd(), '../../.env') });
 
 export default defineConfig({
   schema: './src/database/schema/index.ts',
   out: './drizzle',
   dialect: 'postgresql',
   dbCredentials: {
-    url: envConfig.DATABASE_URL,
+    url: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/titipin_db',
   },
 });
