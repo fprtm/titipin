@@ -153,7 +153,12 @@ Seluruh poin bonus opsional dari lembar penilaian telah diimplementasikan:
 - [x] **Continuous Integration (GitHub Actions)**: Disediakan pipeline CI otomatis di `.github/workflows/ci.yml` yang memverifikasi lint, typecheck, migrasi, dan automated test suites pada setiap push/PR.
 - [x] **Grafik Penjualan Harian**: Visualisasi tren penjualan harian di modul `/dashboard` dengan interaktivitas tooltip, filter rentang tanggal, dan kartu metrik analitik.
 - [x] **Ekspor Riwayat Order ke Multi-Sheet Excel**: Tombol "Ekspor Excel" di `/orders` menghasilkan file `.xlsx` biner (Sheet 1: Rekap Transaksi & Omset berformat IDR, Sheet 2: Rincian Produk Terjual).
-- [x] **Automated Tests di Sisi Frontend**: 83 pengujian Vitest + React Testing Library mencakup alur kasir POS, keyboard shortcuts (F1-F4, Esc), toggle ukuran struk thermal 58mm/80mm, Global Toast Provider, dan modal diff viewer.
+- [x] **Automated Tests di Sisi Frontend**: 89 pengujian Vitest + React Testing Library mencakup alur kasir POS, keyboard shortcuts (F2, F8, F9, Esc), toggle ukuran struk thermal 58mm/80mm, Global Toast Provider, dan modal diff viewer.
+- [x] **Sales Analytics & Business Intelligence Dashboard**: Halaman khusus `/analytics` dengan visualisasi tren penjualan dual-axis Recharts (area omset Rupiah dan garis volume pesanan), Market Basket Analysis untuk rekomendasi bundling kombo produk, analisis jam belanja sibuk 24 jam (*peak shopping hours*), dan segmentasi kontribusi omset member vs *walk-in*.
+- [x] **Akselerasi Query GIN Trigram (`pg_trgm`)**: Mengaktifkan ekstensi PostgreSQL `pg_trgm` dan 5 indeks GIN Trigram pada produk, pelanggan, dan pesanan, mengubah pencarian parsial dari sequential scan lambat menjadi index bitmap scan instan.
+- [x] **Observabilitas Produksi & Prometheus Scraper**: Endpoint Prometheus di `/api/metrics` (`prom-client`), latency tracker interceptor (`X-Response-Time` header & slow request alert $>100\text{ms}$), dan endpoint status kesehatan sistem `/api/health`.
+- [x] **Dokumentasi Interaktif OpenAPI (Swagger)**: Swagger UI interaktif di `/api/docs` dengan otorisasi JWT Bearer langsung dari browser, JSON spec di `/api/docs-json`, file OpenAPI YAML, dan Postman Collection.
+- [x] **Stress Testing Concurrency & Zero-Overselling**: Skrip benchmark otomatis (`pnpm benchmark`) yang menguji 30 checkout bersamaan pada stok terbatas dengan 0 overselling, tanpa deadlock connection pool, dan throughput $\approx 278\text{ req/sec}$.
 
 ---
 
@@ -175,21 +180,37 @@ Seluruh poin bonus opsional dari lembar penilaian telah diimplementasikan:
 
 Sesuai ketentuan pengerjaan pada Halaman 6 dokumen Technical Test:
 
-- **Tools yang Digunakan**: Google Antigravity & Gemini CLI.
+- **Tools yang Digunakan**: Google Antigravity & Google Gemini.
 - **Bagian Penggunaan**:
-  1. *Perancangan Skema Monorepo & Kontrak Tipe*: Membantu penataan struktur pnpm workspaces dan `@titipin/shared` DTO schemas.
-  2. *Pembuatan Dataset Seeder*: Membantu merumuskan variasi 25 produk retail Indonesia dan 70 transaksi historis realistis.
-  3. *Generasi Test Cases Concurrency & Stress*: Membantu menyusun skenario kompetisi race condition paralel 5 concurrent checkout requests pada unit test.
+  1. *Brainstorming & Eksplorasi Tahap Awal*: Menggunakan Google Gemini untuk brainstorming ide fitur, pemetaan kebutuhan sistem POS ritel, perumusan alur bisnis anti-overselling, serta eksplorasi skenario pengujian edge-case.
+  2. *Perancangan Skema Monorepo & Kontrak Tipe*: Membantu penataan struktur pnpm workspaces dan `@titipin/shared` DTO schemas.
+  3. *Pembuatan Dataset Seeder*: Membantu merumuskan variasi 25 produk retail Indonesia dan 70 transaksi historis realistis.
+  4. *Generasi Test Cases Concurrency & Stress*: Membantu menyusun skenario kompetisi race condition paralel concurrent checkout requests pada unit test dan stress benchmark.
 - **Tanggung Jawab Teknis**: Seluruh arsitektur, implementasi transaksi atomik, isolasi repositori, validasi, dan styling antarmuka dipahami, dikontrol, serta siap dijelaskan secara mendalam oleh kandidat dalam sesi technical review.
 
 ---
 
-## 9. 📖 Dokumentasi API & Postman Collection
+## 9. 📖 Dokumentasi Arsitektur, Desain, & Spesifikasi Produk
 
 - **Interactive Swagger UI**: Dapat langsung dijelajahi dan diuji di peramban web pada [http://localhost:3001/api/docs](http://localhost:3001/api/docs) lengkap dengan fitur *Authorize* JWT Bearer Token.
 - **Spesifikasi OpenAPI 3.0 / 3.1**: Tersedia via endpoint JSON di [http://localhost:3001/api/docs-json](http://localhost:3001/api/docs-json) serta berkas statis di [docs/api/openapi.yaml](docs/api/openapi.yaml).
 - **Prometheus Metrics Scraper Endpoint**: Tersedia di [http://localhost:3001/api/metrics](http://localhost:3001/api/metrics).
 - **Postman Collection**: Berkas koleksi JSON siap impor tersedia di [docs/api/titipin_postman_collection.json](docs/api/titipin_postman_collection.json).
+- **Arsitektur Sistem**: [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md).
 - **Model Data Relasional**: [docs/architecture/DATA-MODEL.md](docs/architecture/DATA-MODEL.md).
 - **Spesifikasi Fondasi Sistem**: [docs/architecture/FOUNDATION.md](docs/architecture/FOUNDATION.md).
-- **Arsitektur Sistem**: [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md).
+- **Architecture Decision Records (ADRs)**:
+  - [ADR-001: Modular Monolith Architecture](docs/architecture/ADR/ADR-001-modular-monolith.md)
+  - [ADR-002: Drizzle ORM Engine](docs/architecture/ADR/ADR-002-drizzle-orm.md)
+  - [ADR-003: pnpm Workspaces & Turborepo](docs/architecture/ADR/ADR-003-pnpm-monorepo.md)
+  - [ADR-004: Dual-Token Custom Auth](docs/architecture/ADR/ADR-004-dual-token-custom-auth.md)
+  - [ADR-005: POS Draft Orders Isolation](docs/architecture/ADR/ADR-005-pos-draft-orders-isolation.md)
+  - [ADR-006: Dual Logging Strategy](docs/architecture/ADR/ADR-006-dual-logging-strategy.md)
+  - [ADR-007: Sales Analytics & Business Intelligence](docs/architecture/ADR/ADR-007-sales-analytics-and-business-intelligence.md)
+  - [ADR-008: PostgreSQL Trigram & Prometheus Observability](docs/architecture/ADR/ADR-008-postgresql-trigram-and-prometheus-observability.md)
+- **Product Requirements Document (PRD)**: [docs/product/PRD.md](docs/product/PRD.md).
+- **Kriteria Keberterimaan (Acceptance Criteria)**: [docs/product/ACCEPTANCE-CRITERIA.md](docs/product/ACCEPTANCE-CRITERIA.md).
+- **Skenario & User Stories**: [docs/product/USER-STORIES.md](docs/product/USER-STORIES.md).
+- **Master Sprint Tickets**: [docs/planning/TICKETS.md](docs/planning/TICKETS.md).
+- **Sprint Implementation Roadmap**: [docs/planning/SPRINT-PLAN.md](docs/planning/SPRINT-PLAN.md).
+- **Spesifikasi Halaman Analitik UI**: [docs/design/pages/11-analytics.md](docs/design/pages/11-analytics.md).
