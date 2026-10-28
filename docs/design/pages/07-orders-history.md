@@ -37,10 +37,15 @@
 
 ## 2. SPESIFIKASI FILTER TOOLBAR
 
-1. **Date Range Picker (`from` & `to`):**
+1. **Pencarian Cepat Debounced (`search`):**
+   * Input teks pencarian nomor invoice (`INV-...`) atau nama pelanggan dengan debounce 300ms.
+   * Query dipercepat oleh indeks GIN Trigram PostgreSQL `idx_orders_number_trgm`.
+2. **Date Range Picker (`from` & `to`):**
    * Dua input tanggal kalender terintegrasi format Indonesia `YYYY-MM-DD`.
    * Memfilter transaksi berdasarkan `orders.order_date`.
-2. **Combobox Filter Pelanggan (`customer_id`):**
+3. **Combobox Filter Pelanggan (`customer_id`):**
    * Pilihan dropdown: "Semua Pelanggan (Default)", "Khusus Pelanggan Umum (Walk-in)", atau pilih member tertentu.
-3. **Tombol "Buka Nota" (Action):**
+4. **Tombol "Ekspor Excel":**
+   * Mengunduh rekap riwayat transaksi ke berkas `.xlsx` biner multi-sheet (Sheet 1: Rekap Transaksi & Sheet 2: Rincian Produk).
+5. **Tombol "Buka Nota" (Action):**
    * Navigasi langsung ke `/orders/[id]` untuk memeriksa invoice detail dan timeline log aktivitas transaksi.

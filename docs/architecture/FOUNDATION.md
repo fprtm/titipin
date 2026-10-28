@@ -289,6 +289,20 @@ export function validateEnv(config: Record<string, unknown>): EnvConfig {
    - **15+ Data Pelanggan**: Data member terdaftar dengan nama, nomor telepon unik, email, dan gender.
    - **30+ Transaksi Historis**: Kombinasi transaksi selesai, held/draft, variasi pelanggan umum (*walk-in*) dan member, serta item snapshot.
 
+### 4.3 Ekstensi Database & Akselerasi Indeks GIN Trigram (`pg_trgm`)
+Untuk memastikan query pencarian katalog POS dan riwayat transaksi tidak mengalami degradasi saat data bertumbuh:
+- **Ekstensi `pg_trgm`**: Diinisialisasi secara otomatis oleh `DatabaseModule` pada siklus bootstrap aplikasi:
+  ```sql
+  CREATE EXTENSION IF NOT EXISTS pg_trgm;
+  ```
+- **Indeks GIN Trigram (`gin_trgm_ops`)**: Diterapkan pada kolom teks bebas:
+  - `idx_products_name_trgm` pada `products(product_name)`
+  - `idx_products_code_trgm` pada `products(product_code)`
+  - `idx_customers_name_trgm` pada `customers(customer_name)`
+  - `idx_customers_phone_trgm` pada `customers(phone)`
+  - `idx_orders_number_trgm` pada `orders(order_number)`
+- **Efisiensi Eksekusi**: Mengubah pencarian parsial `ILIKE '%query%'` dari *Sequential Table Scan* ($O(N)$) menjadi *Bitmap Index Scan* ($O(\log N)$).
+
 ---
 
 ## 5. LOGGING, AUDITING & GLOBAL ERROR HANDLING
@@ -330,6 +344,24 @@ Sistem mengadopsi 2 tingkat pencatatan:
     }
   }
   ```
+
+### 5.3 Monitoring, Observability & Latency Tracking
+
+Sistem mengimplementasikan observability level produksi untuk memastikan kestabilan performa dan deteksi dini bottleneck:
+
+1. **Latency Tracking Interceptor (`ResponseTimeInterceptor`)**:
+   - Menghitung durasi eksekusi setiap HTTP request secara presisi via `process.hrtime()`.
+   - Menginjeksi response header `X-Response-Time: <duration>ms` pada semua respons client.
+   - Mengeluarkan peringatan log level WARN otomatis jika waktu pemrosesan melebihi ambang batas toleransi 100ms (`Slow Request Alert`).
+
+2. **Prometheus Metrics Scraper Endpoint (`GET /api/metrics`)**:
+   - Dikelola oleh `MetricsService` (`prom-client`) tanpa mengekspos data sensitif.
+   - **Metrik Sistem**: Penggunaan CPU proses (`process_cpu_user_seconds_total`, `process_cpu_system_seconds_total`), alokasi memori heap V8 (`nodejs_heap_size_used_bytes`, `nodejs_heap_size_total_bytes`).
+   - **Metrik HTTP**: Penghitung request per rute dan status code (`http_requests_total`), histogram latensi HTTP (`http_request_duration_seconds_bucket`).
+   - **Metrik Connection Pool PostgreSQL**: Gauge pemantauan koneksi pool aktif (`database_connections_active`), koneksi menganggur (`database_connections_idle`), dan request menunggu slot antrean (`database_connections_waiting`).
+
+3. **Production Health Check Endpoint (`GET /api/health`)**:
+   - Mengembalikan status kesehatan service (`UP`), konektivitas aktif ke database PostgreSQL (via `SELECT 1`), rincian koneksi pool (`total`, `idle`, `waiting`), penggunaan RAM, dan uptime sistem.
 
 ---
 
@@ -422,6 +454,12 @@ pnpm dev
   - `methods`: `GET, POST, PUT, PATCH, DELETE, OPTIONS`.
 * **Rate Limiting Guard**:
   - `@nestjs/throttler` diaktifkan secara global (default: 60 detik / 10 request untuk endpoint mutasi dan autentikasi; dapat dikonfigurasi via env).
+
+### 7.2 Dokumentasi Interaktif OpenAPI / Swagger UI
+Backend NestJS mengekspos dokumentasi API interaktif menggunakan `@nestjs/swagger`:
+- **Interactive UI**: Diakses di `/api/docs` dengan konfigurasi JWT Bearer Authentication (`bearerAuth`). Penguji dapat langsung mencoba endpoint dan menguji respons data secara real-time.
+- **OpenAPI Schema JSON**: Diekspos di `/api/docs-json` untuk kebutuhan konsumsi tooling automated, code generation, atau inspeksi skema programmatic.
+- **Koleksi Postman Siap Pakai**: Disediakan berkas `docs/api/titipin_postman_collection.json` untuk pengujian endpoint manual via aplikasi desktop Postman.
 
 ---
 

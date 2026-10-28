@@ -55,6 +55,9 @@ flowchart TD
 | **Slice 7** | Order History & Audit Viewer | `orders`, `audit` | `orders`, `audit_logs` | `GET /api/orders/*`, `/api/audit-logs` | [07-orders-history.md](../design/pages/07-orders-history.md), [08-order-detail.md](../design/pages/08-order-detail.md), [09-audit-logs.md](../design/pages/09-audit-logs.md) | `TEST-09` (Audit RBAC) | BR-002, BR-014, BR-017 |
 | **Slice 8** | Dashboard & Analytics | `dashboard` | Agregasi `orders`, `products` | `/api/dashboard/*` | [10-dashboard.md](../design/pages/10-dashboard.md) | `TEST-10` | BR-018, BR-019 |
 | **Slice 9** | Seeder, Polish & Production Docker | Seluruh Sistem | 8 Tabel | Seluruh 23 Endpoint | Seluruh UI Pages | `TEST-01` s/d `TEST-09` (100% Pass) | NFR-DEV-01, Seluruh BR |
+| **Slice 10** | Hardware POS, Excel & UI Polish | `orders`, `ui` | `orders`, `order_items` | `GET /api/orders/export` | [03-pos-checkout.md](../design/pages/03-pos-checkout.md), [07-orders-history.md](../design/pages/07-orders-history.md) | Frontend & Backend Vitest Suites | BR-002, BR-014, BR-017 |
+| **Slice 11** | Sales Analytics & Business Intelligence | `analytics` | Agregasi `orders`, `order_items` | `/api/analytics/*` | [11-analytics.md](../design/pages/11-analytics.md), [02-app-shell.md](../design/pages/02-app-shell.md) | Analytics Unit & Integration Tests | BR-019, BR-020 |
+| **Slice 12** | GIN Trigram, Observability & Benchmark | `database`, `monitoring` | `products`, `customers`, `orders` | `/api/metrics`, `/api/health`, `/api/docs` | [03-pos-checkout.md](../design/pages/03-pos-checkout.md) | 287 Monorepo Tests, `pnpm benchmark` | BR-021, BR-022, NFR-PRF-01, NFR-MON-01 |
 
 ---
 
@@ -275,3 +278,41 @@ flowchart TD
   * `pnpm test` menghasilkan 9/9 test PASS tanpa error.
   * `docker compose -f docker-compose.prod.yml up --build` berjalan lancar.
   * Branch di-merge ke `develop`, lalu `develop` di-merge ke `main`, dan ditandai Git Tag `v1.0.0`.
+
+---
+
+### SLICE 10: POS Hardware Shortcuts, Multi-Sheet Excel Export & UI Quality Upgrade
+* **Tujuan:** Akselerasi produktivitas kasir melalui pintasan keyboard standar, ekspor laporan penjualan multi-sheet Excel, sistem notifikasi toast mengambang terpusat, dan visual diff viewer pada audit trail.
+* **Target Branch:** `feature/slice-10-quality-and-performance-upgrade`
+* **Dokumen Tiket:** [TICKET-SLICE-10.md](./tickets/TICKET-SLICE-10.md)
+* **Tasks:**
+  1. Ekspor laporan transaksi multi-sheet `.xlsx` via `GET /api/orders/export` (Sheet 1: Rekap Omset IDR, Sheet 2: Rincian Produk).
+  2. Integrasi pintasan keyboard kasir dan switch ukuran struk thermal (58mm / 80mm).
+  3. Sistem notifikasi `ToastProvider` terpusat dan side-by-side visual diff viewer pada `/audit-logs`.
+* **Definition of Done (DoD):** Seluruh fitur terintegrasi; zero raw SVG; branch di-merge ke `develop` dan dihapus.
+
+---
+
+### SLICE 11: Analitik Penjualan & Business Intelligence (BI) Dashboard
+* **Tujuan:** Menyediakan eksplorasi data komprehensif untuk pemilik toko via visualisasi dual-axis Recharts, rekomendasi bundling cerdas (Market Basket Analysis), analisis jam sibuk 24 jam, dan segmentasi kontribusi omset member vs walk-in.
+* **Target Branch:** `feature/slice-11-sales-analytics-and-business-intelligence`
+* **Dokumen Tiket:** [TICKET-SLICE-11.md](./tickets/TICKET-SLICE-11.md)
+* **Tasks:**
+  1. Modul backend `AnalyticsModule` (`/api/analytics/overview`, `basket-analysis`, `peak-hours`, `customer-segments`).
+  2. Halaman frontend `/analytics` dengan filter 4 periode, 4 kartu KPI, grafik dual-axis, kartu kombo diskon, dan progress bar kontribusi.
+  3. Eliminasi pill status terminal di navbar dan penambahan menu analitik di sidebar.
+* **Definition of Done (DoD):** Dashboard analitik berfungsi interaktif; kalkulasi market basket akurat; branch di-merge ke `develop` dan dihapus.
+
+---
+
+### SLICE 12: Akselerasi Query GIN Trigram, Observabilitas Prometheus & Stress Benchmark
+* **Tujuan:** Memaksimalkan kecepatan query teks parsial, menyediakan pemantauan metrik standar industri, mendokumentasikan API via Swagger OpenAPI, dan membuktikan resistensi race condition di bawah beban checkout tinggi.
+* **Target Branch:** `feature/slice-12-perf-monitoring-openapi-and-benchmark`
+* **Dokumen Tiket:** [TICKET-SLICE-12.md](./tickets/TICKET-SLICE-12.md)
+* **Tasks:**
+  1. Ekstensi `pg_trgm` dan 5 indeks GIN Trigram pada produk, pelanggan, dan invoice.
+  2. Latency header `X-Response-Time` dan Prometheus metrics scraper di `GET /api/metrics`.
+  3. Interactive Swagger UI di `/api/docs` dan Postman Collection.
+  4. Ergonomi kasir POS: tombol pintas `F2`, `F8`, `F9`, `Esc` dengan badge `<kbd>` dan debouncing 300ms.
+  5. Perbaikan connection pool deadlock pada atomic checkout dan verifikasi otomatis via `pnpm benchmark` (30 checkout konkuren, 0 overselling).
+* **Definition of Done (DoD):** 287 automated tests lulus 100%; benchmark 30 checkout lolos dengan 0 error; Swagger UI aktif; branch di-merge ke `develop` dan dihapus.

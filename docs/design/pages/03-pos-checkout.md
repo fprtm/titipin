@@ -45,7 +45,7 @@
 
 ### 2.1 Toolbar Pencarian
 * **Komponen:** `<SearchInput />` (`rounded-xl h-12`).
-* **Shortcut:** Menekan tombol keyboard `/` otomatis memindahkan kursor ke kolom pencarian.
+* **Shortcut:** Menekan tombol keyboard `F2` (atau `/`) otomatis memindahkan kursor ke kolom pencarian, dilengkapi badge visual `<kbd>F2</kbd>`.
 * **Debounced Query:** Pencarian nama atau barcode SKU dengan debounce 300ms ke `GET /api/products?search=...`.
 
 ### 2.2 Grid Kartu Produk (`glass-card`)
@@ -80,14 +80,18 @@
   * Tombol Hapus Baris (`[TrashIcon]` merah lembut).
   * Subtotal baris ($quantity \times unit\_price$).
 
-### 3.3 Baris Tombol Aksi Kasir
-1. **Tombol "Tahan Keranjang (Hold)":**
+### 3.3 Baris Tombol Aksi Kasir & Pintasan Keyboard Retail
+1. **Tombol "Tahan Keranjang [F8]":**
    * Varian: `<Button variant="outline" className="rounded-xl h-13 flex-1 font-semibold border-amber-300 text-amber-900 bg-amber-50/70 hover:bg-amber-100">`.
+   * Dilengkapi badge visual `<kbd>F8</kbd>`.
    * Memanggil `POST /api/orders/hold`.
    * Jika kasir sudah memiliki 1 transaksi tertahan: tombol otomatis `disabled` dengan tooltip "Anda sudah memiliki 1 transaksi tertahan. Selesaikan atau buang draft tersebut terlebih dahulu."
-2. **Tombol "Proses Bayar (Enter)":**
+2. **Tombol "Proses Bayar [F9]":**
    * Varian: `<Button variant="default" size="lg" className="rounded-2xl h-13 flex-[2] font-bold text-base bg-emerald-700 hover:bg-emerald-800 text-white shadow-lg shadow-emerald-900/20">`.
+   * Dilengkapi badge visual `<kbd>F9</kbd>`.
    * Membuka Modal Konfirmasi Pembayaran.
+3. **Pintasan Pembatalan [Esc]:**
+   * Menekan tombol `Esc` secara global menutup dialog konfirmasi pembayaran atau dialog struk tanpa mengeksekusi mutasi.
 
 ---
 
