@@ -10,6 +10,7 @@ import {
   Receipt,
   UserCog,
   ShieldAlert,
+  BarChart3,
   X,
   Store,
 } from 'lucide-react';
@@ -29,6 +30,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Katalog Produk', href: '/products', icon: Package },
   { label: 'Data Pelanggan', href: '/customers', icon: Users2 },
   { label: 'Riwayat Transaksi', href: '/orders', icon: Receipt },
+  { label: 'Analisis Penjualan', href: '/analytics', icon: BarChart3, adminOnly: true },
   { label: 'Manajemen Pengguna', href: '/users', icon: UserCog, adminOnly: true },
   { label: 'Audit Trail', href: '/audit-logs', icon: ShieldAlert, adminOnly: true },
 ];

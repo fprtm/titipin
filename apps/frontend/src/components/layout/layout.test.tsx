@@ -50,11 +50,11 @@ const sampleHeldDraft: HeldDraftData = {
 };
 
 describe('App Shell Layout Components', () => {
-  it('TopNavbar renders brand title and terminal status badge without held draft', () => {
+  it('TopNavbar renders brand title and user info without held draft', () => {
     render(<TopNavbar initialHeldDraft={null} />);
 
     expect(screen.getByText('Titipin POS')).toBeDefined();
-    expect(screen.getByText(/Terminal 01 • Aktif/i)).toBeDefined();
+    expect(screen.queryByText(/Terminal 01 • Aktif/i)).toBeNull();
     expect(screen.queryByText(/1 Transaksi Tertahan/i)).toBeNull();
     expect(screen.getByText('Admin Utama')).toBeDefined();
   });
