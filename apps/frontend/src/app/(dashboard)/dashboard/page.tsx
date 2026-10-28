@@ -13,6 +13,7 @@ import {
   Snowflake,
   Package,
   ArrowRight,
+  CheckCircle2,
 } from 'lucide-react';
 import { apiClient } from '../../../lib/api-client';
 import { formatCurrency } from '../../../lib/utils';
@@ -34,21 +35,35 @@ export default function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummaryData | null>(null);
   const [trend, setTrend] = useState<DashboardTrendItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [refreshSuccess, setRefreshSuccess] = useState(false);
 
-  const fetchDashboardData = useCallback(async () => {
-    setIsLoading(true);
+  const fetchDashboardData = useCallback(async (isManual = false) => {
+    if (isManual) {
+      setIsRefreshing(true);
+    } else {
+      setIsLoading(true);
+    }
+
     try {
+      const params = isManual ? { period, _t: Date.now() } : { period };
       const [summaryRes, trendRes] = await Promise.all([
-        apiClient.get('/dashboard/summary', { params: { period } }),
-        apiClient.get('/dashboard/trend', { params: { period } }),
+        apiClient.get('/dashboard/summary', { params }),
+        apiClient.get('/dashboard/trend', { params }),
       ]);
 
       setSummary(summaryRes.data?.data || null);
       setTrend(Array.isArray(trendRes.data?.data) ? trendRes.data.data : []);
+
+      if (isManual) {
+        setRefreshSuccess(true);
+        setTimeout(() => setRefreshSuccess(false), 3000);
+      }
     } catch (err) {
       console.error('Failed to load dashboard data', err);
     } finally {
       setIsLoading(false);
+      setIsRefreshing(false);
     }
   }, [period]);
 
@@ -109,15 +124,23 @@ export default function DashboardPage() {
 
           <button
             type="button"
-            onClick={fetchDashboardData}
-            disabled={isLoading}
-            className="glass-button p-2 text-slate-700 hover:text-slate-900"
+            onClick={() => fetchDashboardData(true)}
+            disabled={isLoading || isRefreshing}
+            className="glass-button flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 active:scale-95 transition-all"
             aria-label="Segarkan Dashboard"
           >
-            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? 'animate-spin text-emerald-700' : ''}`} />
+            <span>{isRefreshing ? 'Memperbarui...' : 'Segarkan'}</span>
           </button>
         </div>
       </div>
+
+      {refreshSuccess && (
+        <div className="flex items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-semibold text-emerald-800 animate-in fade-in slide-in-from-top-1">
+          <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+          <span>Data dashboard berhasil diperbarui!</span>
+        </div>
+      )}
 
       {/* 4 Stat Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

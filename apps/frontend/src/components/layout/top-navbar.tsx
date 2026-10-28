@@ -6,6 +6,7 @@ import { Store, Clock, LogOut, KeyRound, Menu, ChevronDown, X, Trash2, Play } fr
 import { useAuth } from '../../hooks/use-auth';
 import { Badge } from '../ui/badge';
 import { apiClient } from '../../lib/api-client';
+import { ChangePasswordModal } from './change-password-modal';
 
 export interface HeldDraftItem {
   productId?: number;
@@ -43,6 +44,7 @@ export function TopNavbar({ onToggleSidebar, initialHeldDraft = null }: TopNavba
   const router = useRouter();
   const { user, logout } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Held Draft State
@@ -233,6 +235,7 @@ export function TopNavbar({ onToggleSidebar, initialHeldDraft = null }: TopNavba
                     type="button"
                     onClick={() => {
                       setIsDropdownOpen(false);
+                      setIsChangePasswordOpen(true);
                     }}
                     className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-900"
                   >
@@ -338,6 +341,12 @@ export function TopNavbar({ onToggleSidebar, initialHeldDraft = null }: TopNavba
           </div>
         </div>
       )}
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        isOpen={isChangePasswordOpen}
+        onClose={() => setIsChangePasswordOpen(false)}
+      />
     </>
   );
 }

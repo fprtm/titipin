@@ -90,6 +90,19 @@ describe('App Shell Layout Components', () => {
     expect(mockLogout).toHaveBeenCalled();
   });
 
+  it('TopNavbar opens change password modal when Ubah Kata Sandi is clicked', () => {
+    render(<TopNavbar />);
+
+    const userDropdownTrigger = screen.getByRole('button', { name: /admin utama/i });
+    fireEvent.click(userDropdownTrigger);
+
+    const changePasswordMenuItem = screen.getByText('Ubah Kata Sandi');
+    fireEvent.click(changePasswordMenuItem);
+
+    expect(screen.getByRole('dialog')).toBeDefined();
+    expect(screen.getByLabelText(/Kata Sandi Saat Ini/i)).toBeDefined();
+  });
+
   it('Sidebar renders operational items for all roles', () => {
     mockUser = {
       id: 'cashier-1',
