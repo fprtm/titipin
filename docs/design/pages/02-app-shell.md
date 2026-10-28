@@ -14,7 +14,7 @@
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
 │ STICKY FROSTED NAVBAR (glass-panel rounded-2xl m-4 h-16 px-6)          │
-│ [Titipin POS Logo] [Terminal 01 • Hijau]  [Held Badge!] [User Profile] │
+│ [Titipin POS Logo]                        [Held Badge!] [User Profile] │
 ├──────────────┬─────────────────────────────────────────────────────────┤
 │ SIDEBAR      │ MAIN CONTENT VIEWPORT (bg-canvas-pattern p-6 lg:p-8)    │
 │ (rounded-3xl)│                                                         │
@@ -24,6 +24,7 @@
 │ • Pelanggan  │                                                         │
 │ • Riwayat    │                                                         │
 │ ──────────── │                                                         │
+│ • Analitik*  │ (* Khusus Role ADMIN)                                   │
 │ • Pengguna*  │ (* Khusus Role ADMIN)                                   │
 │ • Audit*     │ (* Khusus Role ADMIN)                                   │
 └──────────────┴─────────────────────────────────────────────────────────┘
@@ -36,7 +37,7 @@
 * **Gaya Visual:** `glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 h-16 px-6 rounded-2xl flex items-center justify-between shadow-md`.
 * **Elemen Sisi Kiri:**
   * Logo Titipin: Icon belanja emerald dengan tipografi tebal `text-slate-900 font-bold`.
-  * Status Terminal: Badge kapsul hijau lembut `Terminal 01 • Aktif`.
+  * Catatan: Badge status terminal sebelumnya telah dieliminasi demi kerapian layout header.
 * **Elemen Sisi Tengah / Kanan (Held Transaction Quick Pill):**
   * Terhubung secara reaktif ke endpoint `GET /api/orders/held`.
   * Jika kasir memiliki transaksi tertahan:
@@ -61,6 +62,7 @@
   * `Riwayat Transaksi`: Icon `Receipt`, navigasi ke `/orders`.
 * **Menu Khusus Admin (Dihilangkan jika `role === 'CASHIER'`):**
   * Garis pemisah label: `text-xs uppercase font-semibold text-slate-400 px-3 my-3`.
+  * `Analitik Penjualan`: Icon `BarChart3`, navigasi ke `/analytics` (Business Intelligence, Basket Analysis & Peak Hours).
   * `Manajemen Pengguna`: Icon `UserCog`, navigasi ke `/users`.
   * `Audit Trail`: Icon `ShieldAlert`, navigasi ke `/audit-logs`.
 * **Active State Link:**

@@ -114,6 +114,23 @@ Operasional penjualan membutuhkan sistem POS yang tangguh, akurat, dan dapat dia
    - *Proteksi Diri (Self-Guard):* Admin tidak dapat menonaktifkan atau mereset password akun miliknya sendiri.
    - *Catatan Entitas:* Pelanggan (`customers`) adalah pembeli eksternal tanpa akun login, sedangkan `users` adalah operator internal dengan hak login. Keduanya memiliki `deleted_at` namun hanya `users` yang memiliki mekanisme autentikasi.
 
+10. **Modul Analitik Penjualan Lanjutan & Business Intelligence (`analytics`):**
+    - Rute khusus `/analytics` terpisah dari ringkasan dashboard, menyajikan eksplorasi analitik komprehensif untuk pengambil keputusan bisnis.
+    - **Visualisasi Dual-Axis Interaktif:** Grafik Recharts yang menggabungkan Bar Chart omset (skala Rupiah) dan Line Chart volume transaksi (skala frekuensi) per hari/minggu/bulan.
+    - **Rekomendasi Bundling (Market Basket Analysis):** Algoritma afinitas frekuensi pasangan produk dalam satu transaksi untuk mendeteksi barang yang sering dibeli bersamaan (*Co-occurrence Frequency*) sebagai rujukan diskon kombo/bundling.
+    - **Analisis Jam Sibuk Toko (Peak Shopping Hours):** Heatmap/histogram distribusi 24 jam untuk identifikasi jam puncak traffic toko dan optimasi penjadwalan shift kasir.
+    - **Segmentasi Kontribusi Pelanggan:** Perbandingan performa kontribusi omset dan volume antara Pelanggan Terdaftar (Member) dan Pelanggan Umum (*Walk-in*).
+
+11. **Ergonomi Kasir POS (Pintasan Keyboard & Input Debounce):**
+    - **Hotkeys Retail Cepat:** Mendukung tombol pintas keyboard industri POS: `F2` (fokus kolom pencarian katalog), `F8` (tahan keranjang / hold cart), `F9` (buka dialog pembayaran / checkout), dan `Esc` (tutup modal aktif / batalkan).
+    - **Debounced Search:** Query pencarian katalog kasir POS dan riwayat transaksi diredam dengan *debounce delay 300ms* untuk mencegah pemborosan beban query ke database.
+
+12. **Observability, Monitoring & Concurrency Stress Test:**
+    - Prometheus Scraper Endpoint di `GET /api/metrics` untuk integrasi Grafana / alerting stack.
+    - Endpoint Health Check mendalam di `GET /api/health` yang menginspeksi konektivitas database pool dan memory footprint.
+    - Header latensi `X-Response-Time: [ms]` pada setiap response HTTP.
+    - Automated Concurrency Stress Benchmark (`pnpm benchmark`) untuk membuktikan ketahanan sistem dari race conditions, kebuntuan connection pool, dan *zero-overselling*.
+
 ### 3.2 Di Luar Ruang Lingkup MVP (Out-of-Scope / Future Enhancements)
 * Sistem Kredit & Cicilan: pembayaran parsial, tracking piutang, aging report.
 * Sistem Loyalty Points / Reward Member (pengembangan di atas fondasi member MVP).
@@ -146,6 +163,9 @@ Operasional penjualan membutuhkan sistem POS yang tangguh, akurat, dan dapat dia
 * **BR-017 (Dual Logging — Audit vs Order Activity):** Sistem menggunakan DUA jenis log yang terpisah: (1) `audit_logs` — log system-wide untuk seluruh aksi write pengguna, bersifat immutable dan dapat diakses Admin; (2) `order_activity_logs` — log khusus per transaksi yang mencatat lifecycle kejadian sebuah order (dibuat, di-hold, dilanjutkan, selesai). Data `order_activity_logs` disertakan dalam response detail order (`GET /api/orders/:id`).
 * **BR-018 (Slow Product Definition):** Produk lesu (*slow products*) didefinisikan sebagai **bottom 5 produk aktif** berdasarkan total kuantitas terjual dalam periode yang dipilih. Produk aktif yang tidak memiliki satu pun transaksi dalam periode tersebut diprioritaskan paling atas dalam daftar. Jika terdapat kurang dari 5 produk aktif, seluruhnya ditampilkan.
 * **BR-019 (Dashboard Period Definitions):** Filter periode `period` pada dashboard mengacu pada: `daily` = hari ini (00:00–23:59 waktu lokal server), `monthly` = bulan kalender berjalan (misal Oktober 2026: 1–31 Oktober), `quarterly` = kuartal kalender berjalan berdasarkan tanggal server (Q1: Jan–Mar, Q2: Apr–Jun, Q3: Jul–Sep, Q4: Okt–Des).
+* **BR-020 (Market Basket Co-occurrence & Minimum Support):** Rekomendasi bundling pada analitik mendeteksi pasangan produk yang dibeli bersamaan dalam satu pesanan (`order_id`) dengan frekuensi kemunculan bersama minimal 2 kali (`pairCount >= 2`). Pasangan diurutkan berdasarkan frekuensi tertinggi sebagai rujukan promosi paket kombo hemat.
+* **BR-021 (Retail POS Hotkeys Ergonomics):** Antarmuka kasir mendukung navigasi papan ketik cepat: `F2` mengalihkan fokus kursor ke kolom pencarian produk katalog, `F8` mengeksekusi penahanan keranjang (*hold cart*), `F9` membuka modal konfirmasi pembayaran/checkout, dan `Esc` membatalkan/menutup modal yang sedang terbuka.
+* **BR-022 (Debounced Catalog Query Execution):** Input pencarian katalog kasir POS dan riwayat transaksi menerapkan teknik debounce dengan ambang waktu 300ms untuk mencegah pemborosan eksekusi query ke backend saat kasir sedang mengetik secara aktif.
 
 ---
 
@@ -157,6 +177,8 @@ Operasional penjualan membutuhkan sistem POS yang tangguh, akurat, dan dapat dia
 * **NFR-UX-01 (Responsiveness & Localization):** Tampilan responsif (desktop, tablet, mobile), format mata uang standar Indonesia (`Rp 12.000`), dan format tanggal terstandarisasi waktu lokal Indonesia.
 * **NFR-DEV-01 (Developer Experience & Setup):** Aplikasi dapat dijalankan dari *scratch* (database kosong) hingga siap digunakan dalam maksimal 6 perintah CLI menggunakan Docker Compose.
 * **NFR-AUD-01 (Audit Log Immutability):** Record di tabel `audit_logs` bersifat append-only — tidak ada mekanisme update atau delete pada tabel ini.
+* **NFR-PRF-01 (Query Acceleration & Response Latency):** Seluruh pencarian teks parsial dipercepat dengan indeks GIN Trigram (`pg_trgm`). Setiap respon HTTP wajib menyertakan header `X-Response-Time` dan memicu peringatan log otomatis jika latensi pemrosesan $> 100\text{ms}$.
+* **NFR-MON-01 (Observability & Production Monitoring):** Backend mengekspos endpoint Prometheus metrics di `/api/metrics` (CPU, heap memory, request counter & latency histogram, PostgreSQL connection pool state) dan endpoint kesehatan komprehensif di `/api/health`.
 
 ---
 
@@ -199,3 +221,9 @@ Operasional penjualan membutuhkan sistem POS yang tangguh, akurat, dan dapat dia
 | **FR-USR-02** | Users | Mereset kata sandi staf/kasir oleh Admin beserta instant session revocation (Admin only) | BR-010, BR-011, BR-015 | `PATCH /api/users/:id/reset-password` |
 | **FR-USR-03** | Users | Menonaktifkan akun staf/kasir (soft delete + instant session revocation) (Admin only) | BR-010, BR-011, BR-015 | `DELETE /api/users/:id` |
 | **FR-USR-04** | Users | Menambahkan akun pengguna staf/kasir baru ke dalam sistem (Admin only) | BR-011, BR-015 | `POST /api/users` |
+| **FR-ANL-01** | Analytics | Menyajikan metrik overview penjualan komprehensif (revenue, volume, AOV, unit terjual) | - | `GET /api/analytics/overview` |
+| **FR-ANL-02** | Analytics | Menghasilkan rekomendasi bundling kombo produk via Market Basket Co-occurrence | BR-020 | `GET /api/analytics/basket-analysis` |
+| **FR-ANL-03** | Analytics | Menganalisis distribusi jam belanja sibuk 24 jam untuk perencanaan operasional toko | - | `GET /api/analytics/peak-hours` |
+| **FR-ANL-04** | Analytics | Mengkalkulasi segmentasi kontribusi omset dan transaksi member vs pelanggan umum | - | `GET /api/analytics/customer-segments` |
+| **FR-POS-01** | POS | Navigasi cepat retail kasir via keyboard shortcuts (F2, F8, F9, Esc) dan debounce search | BR-021, BR-022 | Antarmuka Kasir `/pos` |
+| **FR-MON-01** | Observability | Scraping metrik performa aplikasi Prometheus dan health check koneksi database | NFR-PRF-01, NFR-MON-01 | `GET /api/metrics`, `GET /api/health` |

@@ -33,25 +33,31 @@ graph TD
 
     subgraph BackendService ["Backend Service: NestJS Modular Monolith (Port 3001)"]
         direction TB
-        GW["Global Filters / Interceptors / Guards"]
+        GW["Global Filters / Interceptors (ResponseTime, Transform) / Guards"]
         AUTH["Auth & Users Module (Passport JWT + RBAC)"]
-        PRD["Products Module (Catalog, Excel Import/Export)"]
-        CST["Customers Module (Member Directory)"]
-        ORD["Orders Module (POS Engine, Concurrency, Draft Hold)"]
-        DSH["Dashboard Module (Metrics, Trends, Slow Products)"]
+        PRD["Products Module (Catalog, GIN Trigram Search, Excel)"]
+        CST["Customers Module (Member Directory, Trigram Search)"]
+        ORD["Orders Module (POS Engine, Concurrency Locking, Draft Hold)"]
+        DSH["Dashboard Module (Metrics, Trends, Low Stock)"]
+        ANL["Analytics Module (BI, Recharts Dual-Axis, Basket Intelligence)"]
         AUD["Audit Module (Append-Only Write Audit Trail)"]
+        HLT["Health & Metrics Module (Prometheus prom-client)"]
+        SWG["OpenAPI / Swagger Engine (/api/docs)"]
 
         GW --> AUTH
         GW --> PRD
         GW --> CST
         GW --> ORD
         GW --> DSH
+        GW --> ANL
         GW --> AUD
+        GW --> HLT
+        GW --> SWG
     end
 
     subgraph DataStore ["Persistence Layer"]
-        PG[("PostgreSQL 16 Database")]
-        DRZ["Drizzle ORM Engine (node-postgres / pg pool)"]
+        PG[("PostgreSQL 16 Database + pg_trgm Extension")]
+        DRZ["Drizzle ORM Engine (node-postgres / pg pool max:20)"]
     end
 
     AX -- "REST API / Bearer JWT + HttpOnly Cookie" --> GW
@@ -60,7 +66,9 @@ graph TD
     CST --> DRZ
     ORD --> DRZ
     DSH --> DRZ
+    ANL --> DRZ
     AUD --> DRZ
+    HLT --> DRZ
     DRZ --> PG
 ```
 
@@ -88,14 +96,17 @@ titipin/
 │   │   │   ├── modules/             # Modular Monolith Bounded Contexts
 │   │   │   │   ├── auth/            # Login, Refresh, Logout, Change Password
 │   │   │   │   ├── users/           # User listing, Admin Reset Password, Soft Delete
-│   │   │   │   ├── products/        # Product CRUD, Soft Delete, Excel Export & Idempotent Import
-│   │   │   │   ├── customers/       # Customer/Member CRUD & Soft Delete
-│   │   │   │   ├── orders/          # POS Engine, Row Locking, Hold Draft, History
-│   │   │   │   ├── dashboard/       # Daily/Monthly/Quarterly Summary, Trends, Slow Products
-│   │   │   │   └── audit/           # Write Audit Trail Interceptor & Admin Query
+│   │   │   │   ├── products/        # Product CRUD, Soft Delete, GIN Trigram Search, Excel Export
+│   │   │   │   ├── customers/       # Customer/Member CRUD & Soft Delete, Trigram Search
+│   │   │   │   ├── orders/          # POS Engine, Row Locking, Hold Draft, History, Atomic Audit
+│   │   │   │   ├── dashboard/       # Daily/Monthly/Quarterly Summary, Trends, Low Stock
+│   │   │   │   ├── analytics/       # Business Intelligence, Recharts Dual-Axis, Basket Affinity
+│   │   │   │   ├── audit/           # Write Audit Trail Interceptor & Admin Query
+│   │   │   │   └── health/          # Health Check (/api/health) & Prometheus (/api/metrics)
+│   │   │   ├── scripts/             # CLI Scripts (benchmark-concurrency, generate-openapi)
 │   │   │   ├── app.module.ts        # Root Module
-│   │   │   └── main.ts              # Entry point bootstrap
-│   │   ├── test/                    # Automated Integration Tests (Vitest/Jest + Supertest)
+│   │   │   └── main.ts              # Entry point bootstrap (Swagger UI, ResponseTimeInterceptor)
+│   │   ├── test/                    # Automated Integration Tests (Vitest + Supertest)
 │   │   ├── drizzle.config.ts        # Drizzle Kit configuration
 │   │   ├── Dockerfile               # Multi-stage Docker build backend
 │   │   └── package.json
@@ -106,9 +117,11 @@ titipin/
 │       │   │   ├── (auth)/login/    # Page login
 │       │   │   ├── (dashboard)/     # Authenticated shell layout (Navbar, Sidebar)
 │       │   │   │   ├── dashboard/   # Dashboard analytics view
+│       │   │   │   ├── analytics/   # Full-page Sales BI Analytics (Admin only)
+│       │   │   │   ├── pos/         # Cashier POS Interface & Keyboard Shortcuts
 │       │   │   │   ├── products/    # Product catalog, import, export
 │       │   │   │   ├── customers/   # Member management
-│       │   │   │   ├── orders/      # POS Transaction form, hold list, history & detail
+│       │   │   │   ├── orders/      # POS Transaction history & detail
 │       │   │   │   ├── users/       # User management (Admin only)
 │       │   │   │   └── audit-logs/  # Audit trail viewer (Admin only)
 │       │   │   └── layout.tsx       # Root layout (QueryClientProvider + Toasters)
@@ -154,7 +167,9 @@ Setiap modul di `apps/backend/src/modules/` mengisolasi tanggung jawabnya secara
 | **`customers`** | `customers` | Read & Create: Kasir & Admin; Update/Delete: Admin | Profil pelanggan/member toko. |
 | **`orders`** | `orders`, `order_items`, `draft_orders`, `order_activity_logs` | Kasir & Admin | Engine POS, row locking concurrency, hold draft, invoice detail. |
 | **`dashboard`** | Agregasi `orders`, `order_items`, `products` | Kasir & Admin | Metrik omset harian/bulanan/kuartalan, grafik tren, produk terlaris & lesu. |
+| **`analytics`** | Agregasi `orders`, `order_items`, `customers` | `ADMIN` Only | Business Intelligence, Recharts multi-axis, Market Basket Analysis, dan rekomendasi kombo bundling. |
 | **`audit`** | `audit_logs` | Write: System Hook; Read: `ADMIN` Only | Pencatatan append-only seluruh mutasi data write sistem. |
+| **`health`** | Status DB connection pool & Node process | Public & Prometheus Scraper | Health check probe (`/api/health`) dan eksposisi metrik standar (`/api/metrics`). |
 
 ### 3.1 Aturan Batas Antarmodul & Integritas Transaksi (*Encapsulation Rules*)
 

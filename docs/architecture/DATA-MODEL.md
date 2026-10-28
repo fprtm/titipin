@@ -21,6 +21,7 @@ Desain basis data pada **Titipin POS** memprioritaskan:
 4. **Audit Trail & Dual Logging:** Memisahkan log sistem `audit_logs` (append-only, mencatat seluruh aksi *write* pengguna) dari log siklus hidup transaksi `order_activity_logs` (`BR-017`).
 5. **Dukungan Pelanggan Umum (*Walk-in Support*):** Kolom `orders.customer_id` bernilai `nullable`, memfasilitasi transaksi tanpa memilih pelanggan terdaftar (`BR-013`).
 6. **Zero-Overhead BigInt Serialization di Node.js:** Seluruh kolom `bigint` didefinisikan menggunakan opsi Drizzle `{ mode: 'number' }`, secara alami menyelesaikan potensi galat `TypeError: Do not know how to serialize a BigInt` saat serialisasi JSON.
+7. **Akselerasi Pencarian Teks Bebas GIN Trigram (`pg_trgm`):** Mengaktifkan ekstensi PostgreSQL `pg_trgm` dan memasang indeks GIN Trigram (`gin_trgm_ops`) pada kolom pencarian teks bebas (`products.product_name`, `products.product_code`, `customers.customer_name`, `customers.phone`, dan `orders.order_number`), mengubah query pencarian parsial `ILIKE '%keyword%'` dari *Sequential Table Scan* berbiaya tinggi menjadi *Bitmap Index Scan* yang sangat efisien.
 
 ---
 
@@ -166,6 +167,8 @@ Menyimpan katalog produk barang dagangan toko.
 * **Index:**
   - `products_product_code_idx` (`UNIQUE btree (product_code)`).
   - `idx_products_search` (`btree (product_name, product_code)`).
+  - `idx_products_name_trgm` (`gin (product_name gin_trgm_ops)` — akselerasi pencarian nama produk).
+  - `idx_products_code_trgm` (`gin (product_code gin_trgm_ops)` — akselerasi pencarian kode barcode).
 * **Check Constraints:**
   - `check_stock_non_negative`: `CHECK (stock >= 0)`
   - `check_price_positive`: `CHECK (price > 0)`
@@ -187,7 +190,10 @@ Menyimpan data identitas pelanggan terdaftar (member).
 | `updated_at` | `timestamptz` | No | `NOW()` | Timestamp pembaharuan profil member. |
 | `deleted_at` | `timestamptz` | Yes | `NULL` | Soft delete (`BR-006`). |
 
-* **Index:** `idx_customers_name` (`btree (customer_name)`).
+* **Index:**
+  - `idx_customers_name` (`btree (customer_name)`).
+  - `idx_customers_name_trgm` (`gin (customer_name gin_trgm_ops)` — akselerasi pencarian nama pelanggan).
+  - `idx_customers_phone_trgm` (`gin (phone gin_trgm_ops)` — akselerasi pencarian nomor telepon pelanggan).
 
 ---
 
@@ -210,6 +216,7 @@ Menyimpan transaksi penjualan POS yang telah **selesai (*COMPLETED*)**.
   - `idx_orders_customer_date` (`btree (customer_id, order_date)`).
   - `idx_orders_created_by` (`btree (created_by)`).
   - `idx_orders_date` (`btree (order_date)`).
+  - `idx_orders_number_trgm` (`gin (order_number gin_trgm_ops)` — akselerasi pencarian nomor invoice).
 
 ---
 
@@ -346,6 +353,8 @@ export const products = pgTable(
   },
   (table) => [
     index('idx_products_search').on(table.productName, table.productCode),
+    index('idx_products_name_trgm').using('gin', sql`${table.productName} gin_trgm_ops`),
+    index('idx_products_code_trgm').using('gin', sql`${table.productCode} gin_trgm_ops`),
     check('check_stock_non_negative', sql`${table.stock} >= 0`),
     check('check_price_positive', sql`${table.price} > 0`),
   ],
@@ -357,6 +366,7 @@ export const products = pgTable(
 ### 4.3 `src/database/schema/customers.schema.ts`
 ```typescript
 import { pgTable, uuid, varchar, date, timestamp, pgEnum, index } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
 
 export const genderEnum = pgEnum('gender', ['Pria', 'Wanita']);
 
@@ -367,7 +377,7 @@ export const customers = pgTable(
     customerName: varchar('customer_name', { length: 150 }).notNull(),
     customerAddress: varchar('customer_address', { length: 255 }).notNull(),
     gender: genderEnum('gender').notNull(),
-    birthDate: date('birth_date', { mode: 'string' }).notNull(),
+    birthDate: date('birth_date', { mode: 'string' }),
     phone: varchar('phone', { length: 20 }),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
@@ -375,6 +385,8 @@ export const customers = pgTable(
   },
   (table) => [
     index('idx_customers_name').on(table.customerName),
+    index('idx_customers_name_trgm').using('gin', sql`${table.customerName} gin_trgm_ops`),
+    index('idx_customers_phone_trgm').using('gin', sql`${table.phone} gin_trgm_ops`),
   ],
 );
 ```
