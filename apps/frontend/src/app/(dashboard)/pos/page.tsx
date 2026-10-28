@@ -13,12 +13,16 @@ import {
   Trash2,
   Loader2,
   ShoppingCart,
-  Download,
+  FileText,
+  Image as ImageIcon,
 } from 'lucide-react';
 import type { ProductItem, CustomerItem } from '@titipin/shared';
 import { apiClient } from '../../../lib/api-client';
 import { formatCurrency } from '../../../lib/utils';
-import { downloadReceiptAsText } from '../../../lib/receipt-download';
+import {
+  downloadReceiptAsPdf,
+  downloadReceiptAsImage,
+} from '../../../lib/receipt-download';
 import { useAuth } from '../../../hooks/use-auth';
 import { usePosCart, type CartItem } from '../../../hooks/use-pos-cart';
 import { PosCatalog } from '../../../components/pos/pos-catalog';
@@ -784,12 +788,12 @@ export default function PosPage() {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2 no-print">
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
                   onClick={() => {
                     if (completedOrder) {
-                      downloadReceiptAsText({
+                      downloadReceiptAsPdf({
                         invoiceNumber: completedOrder.invoiceNumber || completedOrder.invoice_number,
                         cashierName: completedOrder.cashier_name || user?.name || 'Kasir',
                         customer: completedOrder.customer,
@@ -809,8 +813,36 @@ export default function PosPage() {
                   }}
                   className="flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
                 >
-                  <Download className="h-4 w-4 text-emerald-700" />
-                  <span>Unduh Struk</span>
+                  <FileText className="h-4 w-4 text-rose-600" />
+                  <span>Unduh PDF</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (completedOrder) {
+                      downloadReceiptAsImage({
+                        invoiceNumber: completedOrder.invoiceNumber || completedOrder.invoice_number,
+                        cashierName: completedOrder.cashier_name || user?.name || 'Kasir',
+                        customer: completedOrder.customer,
+                        items: (completedOrder.items || []).map((it: CartItem) => ({
+                          productName: it.product?.productName || it.product?.product_name,
+                          quantity: it.quantity,
+                          unitPrice: Number(it.product?.price || 0),
+                          subtotal: Number(it.product?.price || 0) * it.quantity,
+                        })),
+                        subtotal: completedOrder.subtotal || cart.subtotal,
+                        birthday_discount: completedOrder.birthday_discount,
+                        totalAmount: completedOrder.totalAmount || completedOrder.total_amount || cart.totalAmount,
+                        total_paid: completedOrder.total_paid,
+                        change_amount: completedOrder.change_amount,
+                      });
+                    }
+                  }}
+                  className="flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                >
+                  <ImageIcon className="h-4 w-4 text-emerald-700" />
+                  <span>Unduh Gambar</span>
                 </button>
 
                 <button
@@ -818,7 +850,7 @@ export default function PosPage() {
                   onClick={() => window.print()}
                   className="flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
                 >
-                  <Printer className="h-4 w-4" />
+                  <Printer className="h-4 w-4 text-slate-600" />
                   <span>Cetak Struk (80mm)</span>
                 </button>
               </div>
