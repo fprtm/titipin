@@ -169,118 +169,118 @@ async function seed() {
     }
     console.log(`✅ Verified/Seeded ${seededProducts.length} catalog products.`);
 
-    // 4. Seed Member Customers (16 customers with varied birthdates)
+    // 4. Seed Member Customers (16 customers with realistic profiles and varied birthdates)
     const todayIso = new Date().toISOString().split('T')[0];
     const customerProfiles = [
       {
         customerName: 'Budi Santoso',
         phone: '081234567890',
-        customerAddress: 'Jl. Sudirman No. 10 Jakarta Pusat',
+        customerAddress: 'Jl. Jenderal Sudirman No. 14, Karet Semanggi, Jakarta Selatan',
         gender: 'Pria' as const,
         birthDate: todayIso, // Birthday today (tests BR-006)
       },
       {
         customerName: 'Siti Aminah',
         phone: '081298765432',
-        customerAddress: 'Jl. Thamrin No. 25 Jakarta Pusat',
+        customerAddress: 'Jl. M.H. Thamrin No. 28, Kebon Sirih, Jakarta Pusat',
         gender: 'Wanita' as const,
         birthDate: '1998-05-15',
       },
       {
         customerName: 'Hendra Gunawan',
         phone: '081311223344',
-        customerAddress: 'Jl. Gatot Subroto No. 40 Jakarta Selatan',
+        customerAddress: 'Jl. Gatot Subroto Kav. 52, Kuningan Barat, Jakarta Selatan',
         gender: 'Pria' as const,
         birthDate: '1992-11-20',
       },
       {
-        customerName: 'Dewi Lestari',
+        customerName: 'Dewi Anggraini',
         phone: '081355667788',
-        customerAddress: 'Jl. Senopati No. 18 Jakarta Selatan',
+        customerAddress: 'Jl. Senopati No. 42, Kebayoran Baru, Jakarta Selatan',
         gender: 'Wanita' as const,
         birthDate: '1995-03-08',
       },
       {
         customerName: 'Rizky Pratama',
         phone: '081799887766',
-        customerAddress: 'Jl. Surya Kencana No. 5 Bogor',
+        customerAddress: 'Jl. Suryakencana No. 118, Babakan Pasar, Bogor Tengah',
         gender: 'Pria' as const,
         birthDate: null, // Nullable birth date example
       },
       {
         customerName: 'Maya Indah Sari',
         phone: '081822334455',
-        customerAddress: 'Jl. Dago No. 102 Bandung',
+        customerAddress: 'Jl. Ir. H. Juanda No. 102, Coblong, Bandung',
         gender: 'Wanita' as const,
         birthDate: '1997-12-25',
       },
       {
         customerName: 'Agus Setiawan',
         phone: '081933445566',
-        customerAddress: 'Jl. Malioboro No. 50 Yogyakarta',
+        customerAddress: 'Jl. Malioboro No. 56, Danurejan, Yogyakarta',
         gender: 'Pria' as const,
         birthDate: '1988-04-12',
       },
       {
         customerName: 'Rina Wulandari',
         phone: '082144556677',
-        customerAddress: 'Jl. Pemuda No. 88 Semarang',
+        customerAddress: 'Jl. Pemuda No. 142, Sekayu, Semarang Tengah',
         gender: 'Wanita' as const,
         birthDate: '1994-07-30',
       },
       {
-        customerName: 'Denny Caknan',
+        customerName: 'Dedi Kurniawan',
         phone: '082255667788',
-        customerAddress: 'Jl. Basuki Rahmat No. 12 Surabaya',
+        customerAddress: 'Jl. Basuki Rahmat No. 35, Genteng, Surabaya',
         gender: 'Pria' as const,
         birthDate: '1993-10-10',
       },
       {
         customerName: 'Gita Permata',
         phone: '082366778899',
-        customerAddress: 'Jl. Gajah Mada No. 34 Denpasar',
+        customerAddress: 'Jl. Gajah Mada No. 88, Denpasar Barat, Denpasar',
         gender: 'Wanita' as const,
         birthDate: null, // Nullable birth date example
       },
       {
-        customerName: 'Fajar Alfian',
+        customerName: 'Fajar Nugraha',
         phone: '085277889900',
-        customerAddress: 'Jl. Riau No. 45 Pekanbaru',
+        customerAddress: 'Jl. Riau No. 64, Senapelan, Pekanbaru',
         gender: 'Pria' as const,
         birthDate: '1996-01-22',
       },
       {
         customerName: 'Dian Paramita',
         phone: '085388990011',
-        customerAddress: 'Jl. Diponegoro No. 15 Medan',
+        customerAddress: 'Jl. Pangeran Diponegoro No. 30, Medan Kota, Medan',
         gender: 'Wanita' as const,
         birthDate: '1982-03-16',
       },
       {
-        customerName: 'Nicholas Saputra',
+        customerName: 'Nico Hardiansyah',
         phone: '085699001122',
-        customerAddress: 'Jl. Kemang Raya No. 7 Jakarta Selatan',
+        customerAddress: 'Jl. Kemang Raya No. 15, Bangka, Jakarta Selatan',
         gender: 'Pria' as const,
         birthDate: '1984-02-24',
       },
       {
-        customerName: 'Chelsea Elizabeth',
+        customerName: 'Clarissa Putri',
         phone: '085711223344',
-        customerAddress: 'Jl. Panglima Polim No. 9 Jakarta Selatan',
+        customerAddress: 'Jl. Panglima Polim IV No. 22, Melawai, Jakarta Selatan',
         gender: 'Wanita' as const,
         birthDate: '1995-06-02',
       },
       {
-        customerName: 'Joe Taslim',
+        customerName: 'Joko Susilo',
         phone: '087822334455',
-        customerAddress: 'Jl. Palembang No. 20 Palembang',
+        customerAddress: 'Jl. Jenderal Sudirman No. 128, Ilir Timur I, Palembang',
         gender: 'Pria' as const,
         birthDate: '1981-06-23',
       },
       {
-        customerName: 'Iko Uwais',
+        customerName: 'Irfan Maulana',
         phone: '089633445566',
-        customerAddress: 'Jl. Matraman No. 60 Jakarta Timur',
+        customerAddress: 'Jl. Matraman Raya No. 74, Kebon Manggis, Jakarta Timur',
         gender: 'Pria' as const,
         birthDate: '1983-02-12',
       },
@@ -309,7 +309,18 @@ async function seed() {
           });
         }
       } else {
-        seededCustomers.push(existing[0]);
+        const [updated] = await database
+          .update(schema.customers)
+          .set({
+            customerName: cust.customerName,
+            customerAddress: cust.customerAddress,
+            gender: cust.gender,
+            birthDate: cust.birthDate,
+            updatedAt: new Date(),
+          })
+          .where(eq(schema.customers.id, existing[0].id))
+          .returning();
+        seededCustomers.push(updated);
       }
     }
     console.log(`✅ Verified/Seeded ${seededCustomers.length} customer members.`);
