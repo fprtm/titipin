@@ -11,9 +11,15 @@ export const envSchema = z.object({
   PORT: z.coerce.number().default(3001),
   FRONTEND_URL: z.string().url().default('http://localhost:3000'),
   DATABASE_URL: z.string().default('postgresql://postgres:postgres@localhost:5432/titipin_db'),
-  JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters long'),
+  JWT_SECRET: z
+    .string()
+    .min(32, 'JWT_SECRET must be at least 32 characters long')
+    .default('super-secret-jwt-key-for-development-32chars'),
   JWT_EXPIRES_IN: z.string().default('15m'),
-  JWT_REFRESH_SECRET: z.string().min(32, 'JWT_REFRESH_SECRET must be at least 32 characters long'),
+  JWT_REFRESH_SECRET: z
+    .string()
+    .min(32, 'JWT_REFRESH_SECRET must be at least 32 characters long')
+    .default('super-secret-refresh-jwt-key-for-dev-32chars'),
   JWT_REFRESH_EXPIRES_IN: z.string().default('7d'),
   THROTTLE_TTL: z.coerce.number().default(60),
   THROTTLE_LIMIT: z.coerce.number().default(10),
