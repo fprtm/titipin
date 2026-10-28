@@ -205,7 +205,7 @@ async function seed() {
         phone: '081799887766',
         customerAddress: 'Jl. Suryakencana No. 118, Babakan Pasar, Bogor Tengah',
         gender: 'Pria' as const,
-        birthDate: null, // Nullable birth date example
+        birthDate: '1992-07-19',
       },
       {
         customerName: 'Maya Indah Sari',
@@ -240,7 +240,7 @@ async function seed() {
         phone: '082366778899',
         customerAddress: 'Jl. Gajah Mada No. 88, Denpasar Barat, Denpasar',
         gender: 'Wanita' as const,
-        birthDate: null, // Nullable birth date example
+        birthDate: '1999-09-09',
       },
       {
         customerName: 'Fajar Nugraha',
