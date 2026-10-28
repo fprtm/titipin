@@ -285,10 +285,10 @@ export default function PosPage() {
     }
   };
 
-  // Keyboard Shortcuts (F1: Pay, F2: Search, F3: Member, F4: Hold, Esc: Cancel/Close)
+  // Keyboard Shortcuts (F1/F9: Pay, F2: Search, F3: Member, F4/F8: Hold, Esc: Cancel/Close)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'F1') {
+      if (e.key === 'F1' || e.key === 'F9') {
         e.preventDefault();
         if (cart.items.length > 0 && !isPaymentModalOpen && !isReceiptModalOpen && !isNewMemberModalOpen) {
           handleOpenPayment();
@@ -308,7 +308,7 @@ export default function PosPage() {
           customerSearchInputRef.current?.focus();
           customerSearchInputRef.current?.select();
         }
-      } else if (e.key === 'F4') {
+      } else if (e.key === 'F4' || e.key === 'F8') {
         e.preventDefault();
         if (cart.items.length > 0 && !isHoldingCart) {
           handleHoldCart();

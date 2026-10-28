@@ -50,6 +50,8 @@ pnpm dev
 Aplikasi dan dokumentasi siap diakses di:
 - **Frontend App**: [http://localhost:3000](http://localhost:3000)
 - **Backend API**: [http://localhost:3001/api](http://localhost:3001/api)
+- **Swagger OpenAPI Docs**: [http://localhost:3001/api/docs](http://localhost:3001/api/docs)
+- **Prometheus Metrics**: [http://localhost:3001/api/metrics](http://localhost:3001/api/metrics)
 - **API Health Check**: [http://localhost:3001/api/health](http://localhost:3001/api/health)
 
 ---
@@ -111,9 +113,9 @@ flowchart TD
 
 ---
 
-## 5. 🧪 Panduan Menjalankan Automated Tests
+## 5. 🧪 Panduan Menjalankan Automated Tests & Benchmark
 
-Aplikasi dilengkapi dengan **266 skenario pengujian otomatis** (183 Backend Integration & Stress Tests + 83 Frontend Unit & Component Tests):
+Aplikasi dilengkapi dengan **287 skenario pengujian otomatis** (198 Backend Integration, RBAC, & Concurrency Tests + 89 Frontend Unit & Component Tests) serta modul pengujian beban (*concurrency stress benchmark*):
 
 ```bash
 # Menjalankan seluruh test suite monorepo
@@ -124,6 +126,9 @@ pnpm --filter @titipin/backend test
 
 # Menjalankan test suite frontend saja (Vitest + React Testing Library)
 pnpm --filter @titipin/frontend test
+
+# Menjalankan benchmark beban konkuren (30 checkout bersamaan, verifikasi 0 overselling & p95 latensi)
+pnpm benchmark
 
 # Menjalankan linting standar ESLint 9 Flat Config
 pnpm lint
@@ -181,7 +186,9 @@ Sesuai ketentuan pengerjaan pada Halaman 6 dokumen Technical Test:
 
 ## 9. 📖 Dokumentasi API & Postman Collection
 
-- **Spesifikasi OpenAPI 3.1**: Tersedia di [docs/api/openapi.yaml](docs/api/openapi.yaml).
+- **Interactive Swagger UI**: Dapat langsung dijelajahi dan diuji di peramban web pada [http://localhost:3001/api/docs](http://localhost:3001/api/docs) lengkap dengan fitur *Authorize* JWT Bearer Token.
+- **Spesifikasi OpenAPI 3.0 / 3.1**: Tersedia via endpoint JSON di [http://localhost:3001/api/docs-json](http://localhost:3001/api/docs-json) serta berkas statis di [docs/api/openapi.yaml](docs/api/openapi.yaml).
+- **Prometheus Metrics Scraper Endpoint**: Tersedia di [http://localhost:3001/api/metrics](http://localhost:3001/api/metrics).
 - **Postman Collection**: Berkas koleksi JSON siap impor tersedia di [docs/api/titipin_postman_collection.json](docs/api/titipin_postman_collection.json).
 - **Model Data Relasional**: [docs/architecture/DATA-MODEL.md](docs/architecture/DATA-MODEL.md).
 - **Spesifikasi Fondasi Sistem**: [docs/architecture/FOUNDATION.md](docs/architecture/FOUNDATION.md).

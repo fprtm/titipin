@@ -3,6 +3,7 @@ import { AuditQueryInput } from '@titipin/shared';
 import { CreateAuditLogDto } from './dto/create-audit-log.dto';
 import { RecordAuditLogUseCase } from './use-cases/record-audit-log.use-case';
 import { FindAuditLogsUseCase } from './use-cases/find-audit-logs.use-case';
+import type { DrizzleClient } from '../../database/database.module';
 
 @Injectable()
 export class AuditService {
@@ -11,8 +12,8 @@ export class AuditService {
     private readonly findAuditLogsUseCase: FindAuditLogsUseCase,
   ) {}
 
-  async log(entry: CreateAuditLogDto) {
-    return this.recordAuditLogUseCase.execute(entry);
+  async log(entry: CreateAuditLogDto, tx?: DrizzleClient) {
+    return this.recordAuditLogUseCase.execute(entry, tx);
   }
 
   async findAll(query: AuditQueryInput = { page: 1, per_page: 10 }) {
