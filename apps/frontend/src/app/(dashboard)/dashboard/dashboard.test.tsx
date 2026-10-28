@@ -108,4 +108,25 @@ describe('DashboardPage Component', () => {
       expect(screen.getByText('0 Terjual')).toBeDefined();
     });
   });
+
+  it('triggers refresh when Segarkan button is clicked and shows success feedback', async () => {
+    render(<DashboardPage />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Segarkan Dashboard/i })).toBeDefined();
+    });
+
+    const refreshButton = screen.getByRole('button', { name: /Segarkan Dashboard/i });
+    fireEvent.click(refreshButton);
+
+    await waitFor(() => {
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/dashboard/summary',
+        expect.objectContaining({
+          params: expect.objectContaining({ period: 'daily', _t: expect.any(Number) }),
+        }),
+      );
+      expect(screen.getByText('Data dashboard berhasil diperbarui!')).toBeDefined();
+    });
+  });
 });
