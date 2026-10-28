@@ -74,7 +74,12 @@ apiClient.interceptors.response.use(
         failedQueue = [];
         setAccessToken(null);
         if (typeof window !== 'undefined') {
-          window.location.href = '/login';
+          // Clear cookie on document level if non-httpOnly
+          document.cookie = 'refresh_token=; Max-Age=0; path=/;';
+          // Prevent infinite redirect loop if already on /login
+          if (window.location.pathname !== '/login') {
+            window.location.href = '/login?error=session_expired';
+          }
         }
         return Promise.reject(refreshError);
       } finally {

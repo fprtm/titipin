@@ -27,11 +27,31 @@ function getRoleFromToken(token: string): string | null {
   }
 }
 
+function isTokenExpired(token: string): boolean {
+  try {
+    const parts = token.split('.');
+    if (parts.length < 2) return false;
+    const base64Url = parts[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
+    const jsonStr = atob(padded);
+    const payload = JSON.parse(jsonStr);
+    if (typeof payload.exp === 'number') {
+      const nowInSeconds = Math.floor(Date.now() / 1000);
+      return payload.exp <= nowInSeconds;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
   const refreshTokenCookie = request.cookies.get('refresh_token');
   const tokenValue = refreshTokenCookie?.value;
   const hasRefreshToken = !!tokenValue;
+  const tokenExpired = hasRefreshToken && isTokenExpired(tokenValue);
 
   const isProtectedRoute = PROTECTED_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
@@ -42,21 +62,42 @@ export function middleware(request: NextRequest) {
   );
 
   const isLoginPage = pathname === '/login';
+  const hasAuthError = searchParams.has('error') || searchParams.has('session');
 
-  // 1. If trying to access protected route without refresh token cookie, redirect to /login
-  if (isProtectedRoute && !hasRefreshToken) {
+  // If accessing /login:
+  if (isLoginPage) {
+    // If arriving with an auth error or an expired token, allow /login and purge the dead cookie
+    if (hasAuthError || tokenExpired) {
+      const response = NextResponse.next();
+      if (hasRefreshToken) {
+        response.cookies.delete('refresh_token');
+      }
+      return response;
+    }
+
+    // Only redirect active, non-expired sessions away from /login
+    if (hasRefreshToken) {
+      const role = getRoleFromToken(tokenValue);
+      const destination = role === 'CASHIER' ? '/pos' : '/dashboard';
+      return NextResponse.redirect(new URL(destination, request.url));
+    }
+
+    return NextResponse.next();
+  }
+
+  // 1. If trying to access protected route without refresh token or with expired token, redirect to /login
+  if (isProtectedRoute && (!hasRefreshToken || tokenExpired)) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(loginUrl);
+    const response = NextResponse.redirect(loginUrl);
+    if (tokenExpired) {
+      response.cookies.delete('refresh_token');
+    }
+    return response;
   }
 
-  // 2. If already logged in (has refresh token) and accessing /login, redirect to /dashboard
-  if (isLoginPage && hasRefreshToken) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-
-  // 3. RBAC Guard: If logged in as CASHIER and accessing admin-only routes, redirect to /pos with forbidden notice
-  if (isAdminOnlyRoute && hasRefreshToken && tokenValue) {
+  // 2. RBAC Guard: If logged in as CASHIER and accessing admin-only routes, redirect to /pos with forbidden notice
+  if (isAdminOnlyRoute && hasRefreshToken && !tokenExpired && tokenValue) {
     const role = getRoleFromToken(tokenValue);
     if (role === 'CASHIER') {
       const posUrl = new URL('/pos', request.url);
