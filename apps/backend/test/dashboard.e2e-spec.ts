@@ -160,26 +160,54 @@ describe('DashboardController & Analytics Engine (E2E)', () => {
     }
   });
 
-  it('Sales Trend: GET /api/dashboard/trend returns time series points array', async (ctx) => {
+  it('Sales Trend: GET /api/dashboard/trend returns time series points array across all periods', async (ctx) => {
     if (!isDashboardModuleMounted) {
       ctx.skip();
       return;
     }
 
-    const response = await request(app.getHttpServer())
+    // Monthly
+    const monthlyRes = await request(app.getHttpServer())
       .get('/api/dashboard/trend?period=monthly')
       .set('Authorization', `Bearer ${cashierAccessToken}`);
 
-    expect(response.status).toBe(200);
-    expect(response.body.success).toBe(true);
-    expect(Array.isArray(response.body.data)).toBe(true);
+    expect(monthlyRes.status).toBe(200);
+    expect(monthlyRes.body.success).toBe(true);
+    expect(Array.isArray(monthlyRes.body.data)).toBe(true);
 
-    if (response.body.data.length > 0) {
-      const point = response.body.data[0];
+    if (monthlyRes.body.data.length > 0) {
+      const point = monthlyRes.body.data[0];
       expect(point.date).toBeDefined();
       expect(typeof point.transactions === 'number').toBe(true);
       expect(point.revenue !== undefined).toBe(true);
     }
+
+    // Daily
+    const dailyRes = await request(app.getHttpServer())
+      .get('/api/dashboard/trend?period=daily')
+      .set('Authorization', `Bearer ${cashierAccessToken}`);
+
+    expect(dailyRes.status).toBe(200);
+    expect(dailyRes.body.success).toBe(true);
+    expect(Array.isArray(dailyRes.body.data)).toBe(true);
+
+    // Quarterly
+    const quarterlyRes = await request(app.getHttpServer())
+      .get('/api/dashboard/trend?period=quarterly')
+      .set('Authorization', `Bearer ${cashierAccessToken}`);
+
+    expect(quarterlyRes.status).toBe(200);
+    expect(quarterlyRes.body.success).toBe(true);
+    expect(Array.isArray(quarterlyRes.body.data)).toBe(true);
+
+    // Yearly
+    const yearlyRes = await request(app.getHttpServer())
+      .get('/api/dashboard/trend?period=yearly')
+      .set('Authorization', `Bearer ${cashierAccessToken}`);
+
+    expect(yearlyRes.status).toBe(200);
+    expect(yearlyRes.body.success).toBe(true);
+    expect(Array.isArray(yearlyRes.body.data)).toBe(true);
   });
 
   it('Validation: Rejects invalid period with 422 or 400', async (ctx) => {

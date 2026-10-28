@@ -159,22 +159,111 @@ export class DashboardRepository {
 
   async getTrend(period: DashboardPeriod): Promise<DashboardTrendItem[]> {
     const startDate = this.getStartDate(period);
+    const MONTH_NAMES = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+      'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des',
+    ];
 
+    if (period === 'daily') {
+      const rows = await this.db
+        .select({
+          hour: sql<string>`TO_CHAR(${schema.orders.orderDate}, 'HH24:00')`,
+          transactions: sql<number>`CAST(COUNT(${schema.orders.id}) AS INTEGER)`,
+          revenue: sql<string>`COALESCE(SUM(${schema.orders.totalAmount}), 0)`,
+        })
+        .from(schema.orders)
+        .where(gte(schema.orders.orderDate, startDate))
+        .groupBy(sql`TO_CHAR(${schema.orders.orderDate}, 'HH24:00')`)
+        .orderBy(asc(sql`TO_CHAR(${schema.orders.orderDate}, 'HH24:00')`));
+
+      return rows.map((r) => ({
+        date: r.hour,
+        label: r.hour,
+        transactions: Number(r.transactions),
+        revenue: Number(r.revenue),
+      }));
+    }
+
+    if (period === 'yearly') {
+      const rows = await this.db
+        .select({
+          monthKey: sql<string>`TO_CHAR(${schema.orders.orderDate}, 'YYYY-MM')`,
+          monthNum: sql<string>`TO_CHAR(${schema.orders.orderDate}, 'MM')`,
+          transactions: sql<number>`CAST(COUNT(${schema.orders.id}) AS INTEGER)`,
+          revenue: sql<string>`COALESCE(SUM(${schema.orders.totalAmount}), 0)`,
+        })
+        .from(schema.orders)
+        .where(gte(schema.orders.orderDate, startDate))
+        .groupBy(
+          sql`TO_CHAR(${schema.orders.orderDate}, 'YYYY-MM')`,
+          sql`TO_CHAR(${schema.orders.orderDate}, 'MM')`,
+        )
+        .orderBy(asc(sql`TO_CHAR(${schema.orders.orderDate}, 'YYYY-MM')`));
+
+      return rows.map((r) => {
+        const mIdx = parseInt(r.monthNum, 10) - 1;
+        const label = MONTH_NAMES[mIdx] || r.monthKey;
+        return {
+          date: r.monthKey,
+          label,
+          transactions: Number(r.transactions),
+          revenue: Number(r.revenue),
+        };
+      });
+    }
+
+    if (period === 'quarterly') {
+      const rows = await this.db
+        .select({
+          weekStart: sql<string>`TO_CHAR(DATE_TRUNC('week', ${schema.orders.orderDate}), 'YYYY-MM-DD')`,
+          weekNum: sql<string>`TO_CHAR(${schema.orders.orderDate}, 'IW')`,
+          transactions: sql<number>`CAST(COUNT(${schema.orders.id}) AS INTEGER)`,
+          revenue: sql<string>`COALESCE(SUM(${schema.orders.totalAmount}), 0)`,
+        })
+        .from(schema.orders)
+        .where(gte(schema.orders.orderDate, startDate))
+        .groupBy(
+          sql`DATE_TRUNC('week', ${schema.orders.orderDate})`,
+          sql`TO_CHAR(DATE_TRUNC('week', ${schema.orders.orderDate}), 'YYYY-MM-DD')`,
+          sql`TO_CHAR(${schema.orders.orderDate}, 'IW')`,
+        )
+        .orderBy(asc(sql`DATE_TRUNC('week', ${schema.orders.orderDate})`));
+
+      return rows.map((r) => ({
+        date: r.weekStart,
+        label: `Mg ${r.weekNum}`,
+        transactions: Number(r.transactions),
+        revenue: Number(r.revenue),
+      }));
+    }
+
+    // Default: monthly (daily points)
     const rows = await this.db
       .select({
-        date: sql<string>`TO_CHAR(${schema.orders.orderDate}, 'YYYY-MM-DD')`,
+        dayKey: sql<string>`TO_CHAR(${schema.orders.orderDate}, 'YYYY-MM-DD')`,
+        dayNum: sql<string>`TO_CHAR(${schema.orders.orderDate}, 'DD')`,
+        monthNum: sql<string>`TO_CHAR(${schema.orders.orderDate}, 'MM')`,
         transactions: sql<number>`CAST(COUNT(${schema.orders.id}) AS INTEGER)`,
         revenue: sql<string>`COALESCE(SUM(${schema.orders.totalAmount}), 0)`,
       })
       .from(schema.orders)
       .where(gte(schema.orders.orderDate, startDate))
-      .groupBy(sql`TO_CHAR(${schema.orders.orderDate}, 'YYYY-MM-DD')`)
+      .groupBy(
+        sql`TO_CHAR(${schema.orders.orderDate}, 'YYYY-MM-DD')`,
+        sql`TO_CHAR(${schema.orders.orderDate}, 'DD')`,
+        sql`TO_CHAR(${schema.orders.orderDate}, 'MM')`,
+      )
       .orderBy(asc(sql`TO_CHAR(${schema.orders.orderDate}, 'YYYY-MM-DD')`));
 
-    return rows.map((r) => ({
-      date: r.date,
-      transactions: Number(r.transactions),
-      revenue: Number(r.revenue),
-    }));
+    return rows.map((r) => {
+      const mIdx = parseInt(r.monthNum, 10) - 1;
+      const monthLabel = MONTH_NAMES[mIdx] || '';
+      return {
+        date: r.dayKey,
+        label: `${r.dayNum} ${monthLabel}`.trim(),
+        transactions: Number(r.transactions),
+        revenue: Number(r.revenue),
+      };
+    });
   }
 }
