@@ -183,3 +183,19 @@ Menu opsi pada user profil kasir atau menu aksi tabel.
 
 * **Menu Container:** `glass-panel p-2 rounded-2xl shadow-xl min-w-[200px] border border-white/80 animate-in fade-in-80 zoom-in-95`.
 * **Menu Item:** `flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-slate-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-900 cursor-pointer transition-colors`.
+
+---
+
+### 1.13 `KeyboardShortcutBadge` (`kbd`)
+Indikator tombol pintas keyboard kasir retail (`F2`, `F8`, `F9`, `Esc`).
+
+* **Styling:** `inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-mono font-semibold rounded bg-slate-100 text-slate-600 border border-slate-300 shadow-xs`.
+* **Penggunaan:** Dipasang di sisi dalam input pencarian (`F2`), tombol tahan keranjang (`F8`), dan tombol proses bayar (`F9`).
+
+---
+
+### 1.14 `DualAxisChart` (Recharts)
+Visualisasi multi-axis pada modul `/analytics` untuk memetakan dinamika pendapatan dan volume pesanan.
+
+* **Container:** `glass-panel p-6 rounded-3xl`.
+* **Karakteristik:** Dual independent Y-axes (Kiri: Omset format Rupiah kompak, Kanan: Integer kuantitas transaksi), CartesianGrid dashed lembut, dan tooltip kaca mengambang.
