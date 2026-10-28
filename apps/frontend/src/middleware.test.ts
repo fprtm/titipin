@@ -80,4 +80,36 @@ describe('Edge SSR Middleware', () => {
     expect(response.status).toBe(200);
     expect(response.headers.get('location')).toBeNull();
   });
+
+  it('allows access to /login and clears stale cookie when error query param is present', () => {
+    const request = new NextRequest('http://localhost:3000/login?error=session_expired', {
+      headers: {
+        cookie: 'refresh_token=some-stale-token',
+      },
+    });
+
+    const response = middleware(request);
+    expect(response.status).toBe(200);
+    expect(response.headers.get('location')).toBeNull();
+  });
+
+  it('redirects to /login and clears stale cookie when accessing protected route with expired token', () => {
+    const pastTimeInSeconds = Math.floor(Date.now() / 1000) - 3600;
+    const expiredPayload = Buffer.from(
+      JSON.stringify({ sub: 'user-1', exp: pastTimeInSeconds }),
+    ).toString('base64');
+    const expiredToken = `fakeheader.${expiredPayload}.fakesig`;
+
+    const request = new NextRequest('http://localhost:3000/dashboard', {
+      headers: {
+        cookie: `refresh_token=${expiredToken}`,
+      },
+    });
+
+    const response = middleware(request);
+    expect(response.status).toBe(307);
+    expect(response.headers.get('location')).toBe(
+      'http://localhost:3000/login?callbackUrl=%2Fdashboard',
+    );
+  });
 });

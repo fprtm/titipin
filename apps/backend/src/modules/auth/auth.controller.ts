@@ -66,23 +66,31 @@ export class AuthController {
       (request.headers['x-refresh-token'] as string | undefined) ||
       bodyRefreshToken;
 
-    const result = await this.authService.refresh(refreshToken);
+    try {
+      const result = await this.authService.refresh(refreshToken);
 
-    response.cookie('refresh_token', result.refreshToken, {
-      httpOnly: true,
-      secure: envConfig.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+      response.cookie('refresh_token', result.refreshToken, {
+        httpOnly: true,
+        secure: envConfig.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
 
-    return {
-      message: 'Token diperpanjang',
-      data: {
-        accessToken: result.accessToken,
-        access_token: result.accessToken,
-      },
-    };
+      return {
+        message: 'Token diperpanjang',
+        data: {
+          accessToken: result.accessToken,
+          access_token: result.accessToken,
+        },
+      };
+    } catch (err) {
+      response.clearCookie('refresh_token', {
+        httpOnly: true,
+        path: '/',
+      });
+      throw err;
+    }
   }
 
   @UseGuards(JwtAuthGuard)

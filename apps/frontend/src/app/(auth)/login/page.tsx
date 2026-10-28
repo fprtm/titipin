@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Store, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, Sparkles } from 'lucide-react';
 import { useAuth } from '../../../hooks/use-auth';
 import { loginSchema } from '@titipin/shared';
@@ -15,6 +15,12 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.search.includes('error=session_expired')) {
+      setErrorMessage('Sesi Anda telah berakhir. Silakan masuk kembali.');
+    }
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
