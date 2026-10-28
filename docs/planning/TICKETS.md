@@ -26,6 +26,8 @@
 │ SLICE 8: Dashboard Analytics & Sales Trends        [DONE / VERIFIED]   │
 │ SLICE 9: Seeder, 9/9 Tests & Prod Docker Release   [DONE / VERIFIED]   │
 │ SLICE 10: Performance, Standards & UX Upgrade      [DONE / VERIFIED]   │
+│ SLICE 11: Sales Analytics & BI Dashboard           [DONE / VERIFIED]   │
+│ SLICE 12: Trigram, Observability & Benchmark       [DONE / VERIFIED]   │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -46,3 +48,5 @@
 | **`TICKET-SLICE-8`** | Dashboard Analytics & Sales Trends | `dashboard` | `feature/slice-8-dashboard-analytics` | [TICKET-SLICE-8.md](./tickets/TICKET-SLICE-8.md) |
 | **`TICKET-SLICE-9`** | Seeder, 9/9 Tests & Production Release | All System | `feature/slice-9-seeder-prod-release` | [TICKET-SLICE-9.md](./tickets/TICKET-SLICE-9.md) |
 | **`TICKET-SLICE-10`** | POS Shortcuts, Excel Export, Toast & Diff | `orders`, `ui` | `feature/slice-10-quality-and-performance-upgrade` | [TICKET-SLICE-10.md](./tickets/TICKET-SLICE-10.md) |
+| **`TICKET-SLICE-11`** | Sales Analytics & Business Intelligence | `analytics` | `feature/slice-11-sales-analytics-and-business-intelligence` | [TICKET-SLICE-11.md](./tickets/TICKET-SLICE-11.md) |
+| **`TICKET-SLICE-12`** | GIN Trigram, Observability & Benchmark | `database`, `monitoring` | `feature/slice-12-perf-monitoring-openapi-and-benchmark` | [TICKET-SLICE-12.md](./tickets/TICKET-SLICE-12.md) |
