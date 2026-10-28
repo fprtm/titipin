@@ -35,17 +35,31 @@ body {
 /* ============================================================
    GLASS PANEL (Container Utama, Modal, Sticky Drawer POS)
    Sudut kurva besar: rounded-3xl (24px) dengan padding lega (p-6 / p-8)
+   Efek kaca tebal (Frosted Thick Glass) dengan specular rim dan multi-depth shadow
    ============================================================ */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.78);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.70);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.90) 0%, rgba(255, 255, 255, 0.80) 100%);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
   border-radius: 1.5rem; /* 24px - rounded-3xl */
   box-shadow: 
-    inset 0 1px 2px 0 rgba(255, 255, 255, 0.90),      /* Specular rim highlight */
-    0 10px 25px -5px rgba(15, 23, 42, 0.04),          /* Soft ambient shadow */
-    0 20px 25px -5px rgba(15, 23, 42, 0.02);
+    inset 0 1.5px 3px 0 rgba(255, 255, 255, 1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 12px 32px -4px rgba(15, 23, 42, 0.07),
+    0 4px 12px -2px rgba(15, 23, 42, 0.03);
+}
+
+.glass-thick {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.86) 100%);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  border-radius: 1.5rem;
+  box-shadow: 
+    inset 0 2px 4px 0 rgba(255, 255, 255, 1),
+    0 16px 40px -4px rgba(15, 23, 42, 0.09),
+    0 6px 16px -2px rgba(15, 23, 42, 0.04);
 }
 
 /* ============================================================
@@ -53,25 +67,26 @@ body {
    Sudut kurva sedang-besar: rounded-2xl (16px) dengan padding p-5
    ============================================================ */
 .glass-card {
-  background: rgba(255, 255, 255, 0.68);
-  backdrop-filter: blur(12px) saturate(150%);
-  -webkit-backdrop-filter: blur(12px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.65);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.76) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
   border-radius: 1rem; /* 16px - rounded-2xl */
   box-shadow: 
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95),
-    0 4px 6px -1px rgba(15, 23, 42, 0.03);
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 1),
+    0 6px 16px -2px rgba(15, 23, 42, 0.05),
+    0 2px 4px -1px rgba(15, 23, 42, 0.02);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card:hover {
-  background: rgba(255, 255, 255, 0.94);
-  border-color: rgba(15, 118, 110, 0.35); /* Emerald accent */
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(15, 118, 110, 0.45); /* Emerald accent */
   transform: translateY(-3px) scale(1.01);
   box-shadow: 
-    inset 0 1px 0 0 rgba(255, 255, 255, 1),
-    0 12px 28px -6px rgba(15, 118, 110, 0.14),
-    0 6px 10px -3px rgba(15, 23, 42, 0.04);
+    inset 0 1.5px 0 0 rgba(255, 255, 255, 1),
+    0 16px 36px -6px rgba(15, 118, 110, 0.18),
+    0 8px 14px -3px rgba(15, 23, 42, 0.05);
 }
 
 /* ============================================================
@@ -79,27 +94,34 @@ body {
    Sudut kurva: rounded-xl (12px)
    ============================================================ */
 .glass-button {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.84) 100%);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1.5px solid rgba(226, 232, 240, 0.9);
   border-radius: 0.75rem; /* 12px - rounded-xl */
-  box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 1),
+    0 2px 5px 0 rgba(15, 23, 42, 0.05);
   transition: all 0.2s ease;
 }
 
 .glass-button:hover {
-  background: rgba(255, 255, 255, 0.98);
-  border-color: rgba(15, 118, 110, 0.4);
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(15, 118, 110, 0.45);
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 1),
+    0 4px 10px 0 rgba(15, 118, 110, 0.12);
 }
 
 .glass-input {
-  background: rgba(255, 255, 255, 0.70);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1.5px solid rgba(226, 232, 240, 0.85);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(203, 213, 225, 0.9);
   border-radius: 0.75rem; /* 12px - rounded-xl */
-  box-shadow: inset 0 1px 2px 0 rgba(15, 23, 42, 0.03);
+  box-shadow: 
+    inset 0 2px 4px 0 rgba(15, 23, 42, 0.03),
+    0 1px 2px 0 rgba(255, 255, 255, 0.9);
   transition: all 0.2s ease;
 }
 
@@ -113,19 +135,42 @@ body {
    THERMAL RECEIPT PRINTING STANDARD (80mm width)
    ============================================================ */
 @media print {
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+  html, body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
   body * {
-    visibility: hidden;
+    visibility: hidden !important;
   }
   #thermal-receipt, #thermal-receipt * {
-    visibility: visible;
+    visibility: visible !important;
   }
   #thermal-receipt {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 80mm;
-    font-family: monospace;
-    font-size: 11px;
-    color: black;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 80mm !important;
+    max-width: 80mm !important;
+    margin: 0 auto !important;
+    padding: 4mm 6mm !important;
+    font-family: 'Courier New', Courier, monospace, system-ui !important;
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+    color: #000000 !important;
+    background: #FFFFFF !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  #thermal-receipt button,
+  #thermal-receipt .no-print,
+  .no-print {
+    display: none !important;
+    visibility: hidden !important;
   }
 }

@@ -127,6 +127,28 @@ describe('CustomersController & Membership Engine (E2E)', () => {
     expect(response.body.data.id).toBeDefined();
   });
 
+  it('Admin registers new member without birth date (optional/nullable)', async (ctx) => {
+    if (!isCustomersModuleMounted) {
+      ctx.skip();
+      return;
+    }
+
+    const response = await request(app.getHttpServer())
+      .post('/api/customers')
+      .set('Authorization', `Bearer ${adminAccessToken}`)
+      .send({
+        customer_name: 'Member Tanpa Ultah',
+        customer_address: 'Jl. Sukajadi No. 10 Bandung',
+        gender: 'Pria',
+        phone: '081299990000',
+      });
+
+    expect(response.status).toBe(201);
+    expect(response.body.success).toBe(true);
+    expect(response.body.data.id).toBeDefined();
+    expect(response.body.data.birth_date ?? response.body.data.birthDate).toBeNull();
+  });
+
   it('Both Cashier and Admin can search and list active customers with pagination', async (ctx) => {
     if (!isCustomersModuleMounted) {
       ctx.skip();

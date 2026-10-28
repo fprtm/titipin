@@ -17,7 +17,9 @@ export const createCustomerSchema = z.object({
   }),
   birth_date: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format tanggal lahir harus YYYY-MM-DD'),
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format tanggal lahir harus YYYY-MM-DD')
+    .nullable()
+    .optional(),
   phone: z
     .string()
     .max(20, 'Nomor telepon maksimal 20 karakter')
@@ -49,6 +51,7 @@ export const updateCustomerSchema = z.object({
   birth_date: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format tanggal lahir harus YYYY-MM-DD')
+    .nullable()
     .optional(),
   phone: z
     .string()

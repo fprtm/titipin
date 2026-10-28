@@ -111,7 +111,7 @@ export class CustomersRepository {
       customerName: string;
       customerAddress: string;
       gender: 'Pria' | 'Wanita';
-      birthDate: string;
+      birthDate?: string | null;
       phone?: string | null;
     },
     tx?: DrizzleClient,

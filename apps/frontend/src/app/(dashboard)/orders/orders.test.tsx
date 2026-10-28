@@ -128,4 +128,36 @@ describe('OrdersHistoryPage Component', () => {
       expect(screen.getByText('Belum ada data transaksi')).toBeDefined();
     });
   });
+
+  it('allows searching and selecting a customer in filter dropdown', async () => {
+    render(<OrdersHistoryPage />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Semua Pelanggan')).toBeDefined();
+    });
+
+    // Open dropdown
+    const customerFilterBtn = screen.getByLabelText('Filter Pelanggan');
+    fireEvent.click(customerFilterBtn);
+
+    // Search input should appear
+    const searchInput = screen.getByPlaceholderText('Cari nama atau no. telp...');
+    expect(searchInput).toBeDefined();
+
+    // Type query
+    fireEvent.change(searchInput, { target: { value: 'Budi' } });
+
+    // Option should be visible and clickable
+    const budiOption = screen.getByRole('button', { name: /Budi Santoso/i });
+    fireEvent.click(budiOption);
+
+    await waitFor(() => {
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/orders',
+        expect.objectContaining({
+          params: expect.objectContaining({ customer_id: 'cust-1' }),
+        }),
+      );
+    });
+  });
 });

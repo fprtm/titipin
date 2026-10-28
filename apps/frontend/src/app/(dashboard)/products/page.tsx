@@ -179,8 +179,8 @@ export default function ProductsPage() {
       {/* Header Section */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">Katalog & Inventaris Produk</h1>
-          <p className="text-sm text-zinc-400">
+          <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">Katalog & Inventaris Produk</h1>
+          <p className="text-sm text-slate-500">
             Kelola katalog barang dagangan toko, pantau ketersediaan stok fisik, dan ekspor data.
           </p>
         </div>
@@ -188,7 +188,7 @@ export default function ProductsPage() {
           <button
             onClick={fetchProducts}
             disabled={isLoading}
-            className="glass-button flex h-11 items-center gap-2 rounded-xl px-3.5 text-sm font-medium text-zinc-300 hover:text-white"
+            className="glass-button flex h-11 items-center gap-2 rounded-xl px-3.5 text-sm font-medium text-slate-700 hover:text-slate-900"
             title="Segarkan data"
           >
             <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -198,13 +198,13 @@ export default function ProductsPage() {
           <button
             onClick={handleExportExcel}
             disabled={isExporting}
-            className="glass-button flex h-11 items-center gap-2 rounded-xl px-3.5 text-sm font-medium text-zinc-300 hover:text-white"
+            className="glass-button flex h-11 items-center gap-2 rounded-xl px-3.5 text-sm font-medium text-slate-700 hover:text-slate-900"
             title="Unduh katalog dalam format Excel"
           >
             {isExporting ? (
-              <Loader2 className="h-4 w-4 animate-spin text-emerald-400" />
+              <Loader2 className="h-4 w-4 animate-spin text-emerald-600" />
             ) : (
-              <Download className="h-4 w-4 text-emerald-400" />
+              <Download className="h-4 w-4 text-emerald-600" />
             )}
             <span>Export Excel</span>
           </button>
@@ -213,7 +213,7 @@ export default function ProductsPage() {
             <>
               <button
                 onClick={() => setIsImportModalOpen(true)}
-                className="glass-button flex h-11 items-center gap-2 rounded-xl px-3.5 text-sm font-medium text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 bg-emerald-500/10"
+                className="glass-button flex h-11 items-center gap-2 rounded-xl px-3.5 text-sm font-medium text-emerald-800 hover:text-emerald-900 border border-emerald-200 bg-emerald-50/70"
                 title="Unggah berkas Excel atau CSV untuk update massal"
               >
                 <FileSpreadsheet className="h-4 w-4" />
@@ -225,7 +225,7 @@ export default function ProductsPage() {
                   setEditingProduct(null);
                   setIsCreateEditModalOpen(true);
                 }}
-                className="flex h-11 items-center gap-2 rounded-xl bg-emerald-600 px-4 text-sm font-medium text-white shadow-lg shadow-emerald-950/40 hover:bg-emerald-500 transition-colors"
+                className="flex h-11 items-center gap-2 rounded-xl bg-emerald-700 px-4 text-sm font-medium text-white shadow-md hover:bg-emerald-800 transition-colors"
               >
                 <Plus className="h-4 w-4" />
                 <span>+ Tambah Produk</span>
@@ -238,17 +238,17 @@ export default function ProductsPage() {
       {/* Toolbar: Search & Sort Filter */}
       <div className="glass-panel flex flex-col gap-3 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative flex-1">
-          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari nama atau kode produk..."
-            className="w-full rounded-xl border border-white/10 bg-zinc-900/60 pl-10 pr-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:border-emerald-500/60 focus:outline-none focus:ring-1 focus:ring-emerald-500/60 transition"
+            className="glass-input w-full rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition"
           />
         </div>
         <div className="flex items-center gap-2">
-          <label htmlFor="sort-filter" className="text-xs font-medium text-zinc-400 shrink-0">
+          <label htmlFor="sort-filter" className="text-xs font-semibold text-slate-600 shrink-0">
             Urutkan:
           </label>
           <select
@@ -265,7 +265,7 @@ export default function ProductsPage() {
                   | 'stock_desc',
               )
             }
-            className="rounded-xl border border-white/10 bg-zinc-900/80 px-3 py-2 text-sm text-white focus:border-emerald-500/60 focus:outline-none focus:ring-1 focus:ring-emerald-500/60 transition"
+            className="glass-input rounded-xl px-3 py-2 text-sm text-slate-800 bg-white focus:outline-none transition"
           >
             <option value="name_asc">Nama (A - Z)</option>
             <option value="name_desc">Nama (Z - A)</option>
@@ -280,8 +280,8 @@ export default function ProductsPage() {
       {/* Data Table */}
       <div className="glass-panel overflow-hidden rounded-2xl">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-zinc-300">
-            <thead className="border-b border-white/5 bg-white/[0.02] text-xs uppercase tracking-wider text-zinc-400 font-semibold">
+          <table className="w-full text-left text-sm text-slate-700">
+            <thead className="border-b border-slate-200/80 bg-slate-50/75 text-xs uppercase tracking-wider text-slate-600 font-semibold">
               <tr>
                 <th scope="col" className="px-6 py-4">
                   Kode
@@ -305,19 +305,19 @@ export default function ProductsPage() {
                 )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 font-normal">
+            <tbody className="divide-y divide-slate-100 font-normal">
               {isLoading && products.length === 0 ? (
                 <tr>
-                  <td colSpan={isAdmin ? 6 : 5} className="py-12 text-center text-zinc-500">
+                  <td colSpan={isAdmin ? 6 : 5} className="py-12 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <Loader2 className="h-6 w-6 animate-spin text-emerald-500" />
+                      <Loader2 className="h-6 w-6 animate-spin text-emerald-600" />
                       <span>Memuat katalog produk...</span>
                     </div>
                   </td>
                 </tr>
               ) : products.length === 0 ? (
                 <tr>
-                  <td colSpan={isAdmin ? 6 : 5} className="py-12 text-center text-zinc-500">
+                  <td colSpan={isAdmin ? 6 : 5} className="py-12 text-center text-slate-500">
                     Tidak ada produk yang ditemukan.
                   </td>
                 </tr>
@@ -327,11 +327,11 @@ export default function ProductsPage() {
                   return (
                     <tr
                       key={product.id}
-                      className="hover:bg-white/[0.02] transition-colors"
+                      className="hover:bg-slate-50/60 transition-colors"
                     >
                       {/* Product Code */}
                       <td className="whitespace-nowrap px-6 py-4">
-                        <span className="rounded-lg bg-zinc-800/80 border border-zinc-700/60 px-2.5 py-1 font-mono text-xs font-semibold text-emerald-400">
+                        <span className="rounded-lg bg-emerald-50 border border-emerald-200 px-2.5 py-1 font-mono text-xs font-semibold text-emerald-800">
                           {product.productCode}
                         </span>
                       </td>
@@ -339,43 +339,43 @@ export default function ProductsPage() {
                       {/* Product Name */}
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-800/80 border border-white/5 text-zinc-400">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 border border-slate-200 text-slate-600">
                             <Package className="h-4 w-4" />
                           </div>
                           <div>
-                            <div className="font-medium text-white">{product.productName}</div>
-                            <div className="text-xs text-zinc-500">ID #{product.id}</div>
+                            <div className="font-medium text-slate-900">{product.productName}</div>
+                            <div className="text-xs text-slate-400">ID #{product.id}</div>
                           </div>
                         </div>
                       </td>
 
                       {/* Price */}
-                      <td className="whitespace-nowrap px-6 py-4 font-mono font-medium text-white">
+                      <td className="whitespace-nowrap px-6 py-4 font-mono font-bold text-slate-900">
                         {formatRupiah(product.price)}
                       </td>
 
                       {/* Stock Badge */}
                       <td className="whitespace-nowrap px-6 py-4">
                         {stockNumber >= 10 ? (
-                          <span className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-400">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                          <span className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
                             {stockNumber} Unit
                           </span>
                         ) : stockNumber > 0 ? (
-                          <span className="inline-flex items-center gap-1.5 rounded-lg border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-400">
+                          <span className="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">
                             <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-ping" />
                             {stockNumber}! Menipis
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 rounded-lg border border-red-500/20 bg-red-500/10 px-2.5 py-1 text-xs font-semibold text-red-400">
-                            <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
+                          <span className="inline-flex items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700">
+                            <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
                             0 Habis
                           </span>
                         )}
                       </td>
 
                       {/* Created At */}
-                      <td className="whitespace-nowrap px-6 py-4 text-xs text-zinc-400">
+                      <td className="whitespace-nowrap px-6 py-4 text-xs text-slate-500">
                         {new Date(product.createdAt).toLocaleDateString('id-ID', {
                           day: '2-digit',
                           month: 'short',
@@ -392,7 +392,7 @@ export default function ProductsPage() {
                                 setEditingProduct(product);
                                 setIsCreateEditModalOpen(true);
                               }}
-                              className="glass-button flex h-9 items-center gap-1.5 rounded-xl px-3 text-xs font-medium text-zinc-300 hover:text-white transition"
+                              className="glass-button flex h-9 items-center gap-1.5 rounded-xl px-3 text-xs font-semibold text-slate-700 hover:text-slate-900 transition"
                               title="Ubah data produk"
                             >
                               <Edit3 className="h-3.5 w-3.5" />
@@ -401,7 +401,7 @@ export default function ProductsPage() {
 
                             <button
                               onClick={() => setDeleteTargetProduct(product)}
-                              className="flex h-9 items-center gap-1.5 rounded-xl border border-red-500/20 bg-red-500/10 px-3 text-xs font-medium text-red-400 hover:bg-red-500/20 transition"
+                              className="flex h-9 items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3 text-xs font-semibold text-rose-700 hover:bg-rose-100 transition"
                               title="Hapus produk"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
@@ -419,7 +419,7 @@ export default function ProductsPage() {
         </div>
 
         {/* Pagination & Summary Bar */}
-        <div className="flex flex-col gap-3 border-t border-white/5 bg-white/[0.01] px-6 py-3.5 sm:flex-row sm:items-center sm:justify-between text-xs text-zinc-500">
+        <div className="flex flex-col gap-3 border-t border-slate-200/80 bg-slate-50/50 px-6 py-3.5 sm:flex-row sm:items-center sm:justify-between text-xs text-slate-600">
           <div>
             Menampilkan {products.length} dari {paginationMeta.total_items} data produk aktif
           </div>
@@ -427,17 +427,17 @@ export default function ProductsPage() {
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage <= 1 || isLoading}
-              className="glass-button h-8 rounded-lg px-3 font-medium text-zinc-300 hover:text-white disabled:opacity-40"
+              className="glass-button h-8 rounded-lg px-3 font-semibold text-slate-700 hover:text-slate-900 disabled:opacity-40"
             >
               Sebelumnya
             </button>
-            <span className="px-2 font-mono text-zinc-400">
+            <span className="px-2 font-mono text-slate-600">
               Halaman {paginationMeta.page} / {paginationMeta.total_pages}
             </span>
             <button
               onClick={() => setCurrentPage((p) => Math.min(paginationMeta.total_pages, p + 1))}
               disabled={currentPage >= paginationMeta.total_pages || isLoading}
-              className="glass-button h-8 rounded-lg px-3 font-medium text-zinc-300 hover:text-white disabled:opacity-40"
+              className="glass-button h-8 rounded-lg px-3 font-semibold text-slate-700 hover:text-slate-900 disabled:opacity-40"
             >
               Selanjutnya
             </button>
@@ -569,25 +569,25 @@ function CreateEditProductModal({ product, onClose, onSuccess }: CreateEditProdu
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/10">
-        <div className="flex items-center justify-between pb-4 border-b border-white/5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 bg-white">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200">
               <Package className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">
+              <h2 className="text-lg font-bold text-slate-900">
                 {isEdit ? 'Ubah Data Produk' : 'Tambah Produk Baru'}
               </h2>
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-slate-500">
                 {isEdit ? `Mengubah produk ID #${product.id}` : 'Tambahkan barang dagangan ke inventaris'}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded-xl p-2 text-zinc-400 hover:bg-white/5 hover:text-white transition"
+            className="rounded-xl p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
             aria-label="Tutup modal"
           >
             <X className="h-5 w-5" />
@@ -595,7 +595,7 @@ function CreateEditProductModal({ product, onClose, onSuccess }: CreateEditProdu
         </div>
 
         {error && (
-          <div className="mt-4 flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-400">
+          <div className="mt-4 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -603,7 +603,7 @@ function CreateEditProductModal({ product, onClose, onSuccess }: CreateEditProdu
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
               Kode Produk (SKU / Barcode)
             </label>
             <input
@@ -614,12 +614,12 @@ function CreateEditProductModal({ product, onClose, onSuccess }: CreateEditProdu
               value={productCode}
               onChange={(e) => setProductCode(e.target.value.toUpperCase())}
               placeholder="e.g. P0001"
-              className="w-full h-11 rounded-xl border border-white/10 bg-zinc-900/70 px-4 font-mono text-sm text-white placeholder-zinc-500 focus:border-emerald-500/60 focus:outline-none focus:ring-1 focus:ring-emerald-500/60 disabled:opacity-50 transition"
+              className="glass-input w-full h-11 rounded-xl px-4 font-mono text-sm text-slate-900 placeholder-slate-400 focus:outline-none disabled:opacity-50 transition"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
               Nama Produk Lengkap
             </label>
             <input
@@ -629,13 +629,13 @@ function CreateEditProductModal({ product, onClose, onSuccess }: CreateEditProdu
               value={productName}
               onChange={(e) => setProductName(e.target.value)}
               placeholder="e.g. Hydrococo 150ml"
-              className="w-full h-11 rounded-xl border border-white/10 bg-zinc-900/70 px-4 text-sm text-white placeholder-zinc-500 focus:border-emerald-500/60 focus:outline-none focus:ring-1 focus:ring-emerald-500/60 transition"
+              className="glass-input w-full h-11 rounded-xl px-4 text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
                 Harga Jual Satuan (Rp)
               </label>
               <input
@@ -646,12 +646,12 @@ function CreateEditProductModal({ product, onClose, onSuccess }: CreateEditProdu
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="12000"
-                className="w-full h-11 rounded-xl border border-white/10 bg-zinc-900/70 px-4 text-sm text-white placeholder-zinc-500 focus:border-emerald-500/60 focus:outline-none focus:ring-1 focus:ring-emerald-500/60 transition font-mono"
+                className="glass-input w-full h-11 rounded-xl px-4 text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition font-mono"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
                 Sisa Stok Fisik
               </label>
               <input
@@ -662,24 +662,24 @@ function CreateEditProductModal({ product, onClose, onSuccess }: CreateEditProdu
                 value={stock}
                 onChange={(e) => setStock(e.target.value)}
                 placeholder="0"
-                className="w-full h-11 rounded-xl border border-white/10 bg-zinc-900/70 px-4 text-sm text-white placeholder-zinc-500 focus:border-emerald-500/60 focus:outline-none focus:ring-1 focus:ring-emerald-500/60 transition font-mono"
+                className="glass-input w-full h-11 rounded-xl px-4 text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition font-mono"
               />
             </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-white/5">
+          <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
             <button
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="glass-button h-11 rounded-xl px-5 text-sm font-medium text-zinc-300 hover:text-white"
+              className="glass-button h-11 rounded-xl px-5 text-sm font-semibold text-slate-700 hover:text-slate-900"
             >
               Batal
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="flex h-11 items-center gap-2 rounded-xl bg-emerald-600 px-6 text-sm font-medium text-white shadow-lg shadow-emerald-950/40 hover:bg-emerald-500 disabled:opacity-50 transition"
+              className="flex h-11 items-center gap-2 rounded-xl bg-emerald-700 px-6 text-sm font-bold text-white shadow-md hover:bg-emerald-800 disabled:opacity-50 transition"
             >
               {isLoading ? (
                 <>
@@ -759,23 +759,23 @@ function ImportSpreadsheetModal({ onClose, onSuccess }: ImportSpreadsheetModalPr
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="glass-panel w-full max-w-xl rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/10">
-        <div className="flex items-center justify-between pb-4 border-b border-white/5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="glass-panel w-full max-w-xl rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 bg-white">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200">
               <FileSpreadsheet className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Import Produk Massal</h2>
-              <p className="text-xs text-zinc-400">
+              <h2 className="text-lg font-bold text-slate-900">Import Produk Massal</h2>
+              <p className="text-xs text-slate-500">
                 Unggah spreadsheet .xlsx atau .csv dengan prinsip idempoten
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded-xl p-2 text-zinc-400 hover:bg-white/5 hover:text-white transition"
+            className="rounded-xl p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
             aria-label="Tutup modal"
           >
             <X className="h-5 w-5" />
@@ -783,7 +783,7 @@ function ImportSpreadsheetModal({ onClose, onSuccess }: ImportSpreadsheetModalPr
         </div>
 
         {error && (
-          <div className="mt-4 flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-400">
+          <div className="mt-4 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -792,7 +792,7 @@ function ImportSpreadsheetModal({ onClose, onSuccess }: ImportSpreadsheetModalPr
         {/* Drag & Drop Upload Zone */}
         <div
           onClick={() => fileInputRef.current?.click()}
-          className="mt-6 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 p-8 text-center cursor-pointer transition-all"
+          className="mt-6 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50/50 hover:bg-emerald-50 p-8 text-center cursor-pointer transition-all"
         >
           <input
             type="file"
@@ -801,13 +801,13 @@ function ImportSpreadsheetModal({ onClose, onSuccess }: ImportSpreadsheetModalPr
             accept=".xlsx,.csv"
             className="hidden"
           />
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-3">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 border border-emerald-200 mb-3">
             <UploadCloud className="h-7 w-7" />
           </div>
-          <p className="text-sm font-semibold text-white">
+          <p className="text-sm font-semibold text-slate-900">
             {selectedFile ? selectedFile.name : 'Pilih berkas spreadsheet (.xlsx atau .csv)'}
           </p>
-          <p className="mt-1 text-xs text-zinc-400">
+          <p className="mt-1 text-xs text-slate-500">
             {selectedFile
               ? `${(selectedFile.size / 1024).toFixed(1)} KB siap diunggah`
               : 'Klik untuk telusuri berkas dari komputer Anda'}
@@ -815,44 +815,44 @@ function ImportSpreadsheetModal({ onClose, onSuccess }: ImportSpreadsheetModalPr
         </div>
 
         {/* Template info */}
-        <div className="mt-4 flex items-center justify-between text-xs text-zinc-400">
+        <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
           <span>Format kolom: [Kode Produk, Nama Produk, Harga, Stok]</span>
-          <span className="text-emerald-400">Idempoten: Update jika kode ada</span>
+          <span className="text-emerald-700 font-medium">Idempoten: Update jika kode ada</span>
         </div>
 
         {/* Summary Card if completed */}
         {summary && (
-          <div className="mt-5 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 animate-in fade-in">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-emerald-300 mb-2">
+          <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50/60 p-4 animate-in fade-in">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-emerald-800 mb-2">
               Ringkasan Hasil Import:
             </h3>
             <div className="grid grid-cols-4 gap-2 text-center">
-              <div className="glass-panel p-2 rounded-xl">
-                <div className="text-xs text-zinc-400">Total Baris</div>
-                <div className="font-mono text-base font-bold text-white">{summary.total_rows}</div>
+              <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-xs">
+                <div className="text-xs text-slate-500">Total Baris</div>
+                <div className="font-mono text-base font-bold text-slate-900">{summary.total_rows}</div>
               </div>
-              <div className="glass-panel p-2 rounded-xl">
-                <div className="text-xs text-emerald-400">Baru (Insert)</div>
-                <div className="font-mono text-base font-bold text-emerald-400">{summary.inserted}</div>
+              <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-xs">
+                <div className="text-xs text-emerald-700">Baru (Insert)</div>
+                <div className="font-mono text-base font-bold text-emerald-700">{summary.inserted}</div>
               </div>
-              <div className="glass-panel p-2 rounded-xl">
-                <div className="text-xs text-blue-400">Update</div>
-                <div className="font-mono text-base font-bold text-blue-400">{summary.updated}</div>
+              <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-xs">
+                <div className="text-xs text-blue-700">Update</div>
+                <div className="font-mono text-base font-bold text-blue-700">{summary.updated}</div>
               </div>
-              <div className="glass-panel p-2 rounded-xl">
-                <div className="text-xs text-zinc-400">Gagal</div>
-                <div className="font-mono text-base font-bold text-zinc-300">{summary.failed}</div>
+              <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-xs">
+                <div className="text-xs text-rose-700">Gagal</div>
+                <div className="font-mono text-base font-bold text-rose-700">{summary.failed}</div>
               </div>
             </div>
           </div>
         )}
 
-        <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-white/5">
+        <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
           <button
             type="button"
             onClick={onClose}
             disabled={isUploading}
-            className="glass-button h-11 rounded-xl px-5 text-sm font-medium text-zinc-300 hover:text-white"
+            className="glass-button h-11 rounded-xl px-5 text-sm font-semibold text-slate-700 hover:text-slate-900"
           >
             {summary ? 'Tutup' : 'Batal'}
           </button>
@@ -861,7 +861,7 @@ function ImportSpreadsheetModal({ onClose, onSuccess }: ImportSpreadsheetModalPr
               type="button"
               onClick={handleUpload}
               disabled={isUploading || !selectedFile}
-              className="flex h-11 items-center gap-2 rounded-xl bg-emerald-600 px-6 text-sm font-medium text-white shadow-lg shadow-emerald-950/40 hover:bg-emerald-500 disabled:opacity-50 transition"
+              className="flex h-11 items-center gap-2 rounded-xl bg-emerald-700 px-6 text-sm font-bold text-white shadow-md hover:bg-emerald-800 disabled:opacity-50 transition"
             >
               {isUploading ? (
                 <>
@@ -908,40 +908,40 @@ function DeleteProductDialog({ product, onClose, onSuccess }: DeleteProductDialo
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="glass-panel w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl border border-red-500/20">
-        <div className="flex items-center gap-3.5 pb-4 border-b border-white/5">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-500/10 text-red-400 border border-red-500/20">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="glass-panel w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl border border-rose-200 bg-white">
+        <div className="flex items-center gap-3.5 pb-4 border-b border-slate-100">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rose-50 text-rose-700 border border-rose-200">
             <AlertTriangle className="h-6 w-6" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white">Hapus Produk</h2>
-            <p className="text-xs text-zinc-400">Konfirmasi tindakan soft-delete</p>
+            <h2 className="text-lg font-bold text-slate-900">Hapus Produk</h2>
+            <p className="text-xs text-slate-500">Konfirmasi tindakan soft-delete</p>
           </div>
         </div>
 
         {error && (
-          <div className="mt-4 flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-400">
+          <div className="mt-4 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         <div className="mt-4 space-y-3">
-          <p className="text-sm text-zinc-300 leading-relaxed">
-            Yakin ingin menghapus produk <span className="font-semibold text-white">{product.productName}</span> (<span className="font-mono text-emerald-400">{product.productCode}</span>)?
+          <p className="text-sm text-slate-700 leading-relaxed">
+            Yakin ingin menghapus produk <span className="font-semibold text-slate-900">{product.productName}</span> (<span className="font-mono font-semibold text-emerald-800">{product.productCode}</span>)?
           </p>
-          <div className="rounded-2xl bg-red-500/5 border border-red-500/10 p-3 text-xs text-red-300/90 leading-relaxed">
+          <div className="rounded-2xl bg-rose-50 border border-rose-200 p-3.5 text-xs text-rose-800 leading-relaxed">
             Produk tidak akan bisa dipilih lagi untuk transaksi kasir baru, namun seluruh histori transaksi penjualan lampau tetap aman dan utuh.
           </div>
         </div>
 
-        <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-white/5">
+        <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
           <button
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="glass-button h-11 rounded-xl px-5 text-sm font-medium text-zinc-300 hover:text-white"
+            className="glass-button h-11 rounded-xl px-5 text-sm font-semibold text-slate-700 hover:text-slate-900"
           >
             Batal
           </button>
@@ -949,7 +949,7 @@ function DeleteProductDialog({ product, onClose, onSuccess }: DeleteProductDialo
             type="button"
             onClick={handleDelete}
             disabled={isLoading}
-            className="flex h-11 items-center gap-2 rounded-xl bg-red-600 px-6 text-sm font-medium text-white shadow-lg shadow-red-950/40 hover:bg-red-500 disabled:opacity-50 transition"
+            className="flex h-11 items-center gap-2 rounded-xl bg-rose-600 px-6 text-sm font-bold text-white shadow-md hover:bg-rose-700 disabled:opacity-50 transition"
           >
             {isLoading ? (
               <>
