@@ -58,6 +58,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setTokenState(token);
       setUser(loggedInUser);
 
+      if (typeof document !== 'undefined') {
+        document.cookie = `refresh_token=${token}; path=/; max-age=604800; SameSite=Lax`;
+      }
+
       // Route based on role per 01-login.md
       if (loggedInUser.role === ('CASHIER' as Role)) {
         router.push('/pos');
@@ -79,6 +83,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setAccessToken(null);
       setTokenState(null);
       setUser(null);
+      if (typeof document !== 'undefined') {
+        document.cookie = 'refresh_token=; path=/; max-age=0; SameSite=Lax';
+      }
       router.push('/login');
     }
   }, [router]);
