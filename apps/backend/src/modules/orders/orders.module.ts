@@ -9,6 +9,7 @@ import { DiscardDraftOrderUseCase } from './use-cases/discard-draft-order.use-ca
 import { ResumeDraftOrderUseCase } from './use-cases/resume-draft-order.use-case';
 import { FindOrdersUseCase } from './use-cases/find-orders.use-case';
 import { GetOrderByIdUseCase } from './use-cases/get-order-by-id.use-case';
+import { ExportOrdersUseCase } from './use-cases/export-orders.use-case';
 import { DatabaseModule } from '../../database/database.module';
 import { ProductsModule } from '../products/products.module';
 import { CustomersModule } from '../customers/customers.module';
@@ -33,6 +34,7 @@ import { AuthModule } from '../auth/auth.module';
     ResumeDraftOrderUseCase,
     FindOrdersUseCase,
     GetOrderByIdUseCase,
+    ExportOrdersUseCase,
     OrdersService,
   ],
   exports: [
@@ -45,6 +47,7 @@ import { AuthModule } from '../auth/auth.module';
     ResumeDraftOrderUseCase,
     FindOrdersUseCase,
     GetOrderByIdUseCase,
+    ExportOrdersUseCase,
   ],
 })
 export class OrdersModule {}

@@ -9,6 +9,8 @@ import {
   SQL,
   gte,
   lte,
+  ilike,
+  inArray,
 } from 'drizzle-orm';
 import { DRIZZLE_ORM, DrizzleDatabase, DrizzleClient } from '../../../database/database.module';
 import * as schema from '../../../database/schema';
@@ -336,5 +338,108 @@ export class OrdersRepository {
       updatedAt: orderRow.updatedAt.toISOString(),
       updated_at: orderRow.updatedAt.toISOString(),
     };
+  }
+
+  async findAllForExport(
+    query: { from?: string; to?: string; customer_id?: string; search?: string },
+    tx?: DrizzleClient,
+  ): Promise<{
+    orders: Array<{
+      id: number;
+      orderNumber: string;
+      customerName: string;
+      cashierName: string;
+      orderDate: Date;
+      totalAmount: number;
+    }>;
+    items: Array<{
+      orderNumber: string;
+      orderDate: Date;
+      productCode: string;
+      productName: string;
+      quantity: number;
+      unitPrice: number;
+      subtotal: number;
+    }>;
+  }> {
+    const conditions: SQL[] = [];
+
+    if (query.customer_id) {
+      conditions.push(eq(schema.orders.customerId, query.customer_id));
+    }
+    if (query.from) {
+      const fromDate = query.from.includes('T') ? new Date(query.from) : new Date(`${query.from}T00:00:00.000Z`);
+      conditions.push(gte(schema.orders.orderDate, fromDate));
+    }
+    if (query.to) {
+      const toDate = query.to.includes('T') ? new Date(query.to) : new Date(`${query.to}T23:59:59.999Z`);
+      conditions.push(lte(schema.orders.orderDate, toDate));
+    }
+    if (query.search) {
+      conditions.push(ilike(schema.orders.orderNumber, `%${query.search}%`));
+    }
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+    const orderRows = await this.getClient(tx)
+      .select({
+        id: schema.orders.id,
+        orderNumber: schema.orders.orderNumber,
+        customerId: schema.orders.customerId,
+        customerName: schema.customers.customerName,
+        createdBy: schema.orders.createdBy,
+        createdByName: schema.users.name,
+        orderDate: schema.orders.orderDate,
+        totalAmount: schema.orders.totalAmount,
+      })
+      .from(schema.orders)
+      .leftJoin(schema.customers, eq(schema.orders.customerId, schema.customers.id))
+      .leftJoin(schema.users, eq(schema.orders.createdBy, schema.users.id))
+      .where(whereClause)
+      .orderBy(desc(schema.orders.orderDate))
+      .limit(10000);
+
+    const orders = orderRows.map((r) => ({
+      id: r.id,
+      orderNumber: r.orderNumber,
+      customerName: r.customerId ? (r.customerName ?? 'Pelanggan') : 'Pelanggan Umum',
+      cashierName: r.createdByName ?? 'Kasir',
+      orderDate: r.orderDate,
+      totalAmount: Number(r.totalAmount),
+    }));
+
+    if (orders.length === 0) {
+      return { orders: [], items: [] };
+    }
+
+    const orderIds = orders.map((o) => o.id);
+
+    const itemRows = await this.getClient(tx)
+      .select({
+        orderNumber: schema.orders.orderNumber,
+        orderDate: schema.orders.orderDate,
+        productCode: schema.products.productCode,
+        productName: schema.products.productName,
+        quantity: schema.orderItems.quantity,
+        unitPrice: schema.orderItems.unitPrice,
+        subtotal: schema.orderItems.subtotal,
+      })
+      .from(schema.orderItems)
+      .innerJoin(schema.orders, eq(schema.orderItems.orderId, schema.orders.id))
+      .innerJoin(schema.products, eq(schema.orderItems.productId, schema.products.id))
+      .where(inArray(schema.orderItems.orderId, orderIds))
+      .orderBy(desc(schema.orders.orderDate), asc(schema.orderItems.id));
+
+    const items = itemRows.map((it) => ({
+      orderNumber: it.orderNumber,
+      orderDate: it.orderDate,
+      productCode: it.productCode,
+      productName: it.productName,
+      quantity: it.quantity,
+      unitPrice: Number(it.unitPrice),
+      subtotal: Number(it.subtotal),
+    }));
+
+    return { orders, items };
   }
 }

@@ -167,12 +167,15 @@ export function downloadReceiptAsText(order: ReceiptData): void {
 // 2. HTML5 CANVAS THERMAL RECEIPT RENDERER (Image & PDF Base)
 // ============================================================================
 
-export function renderReceiptToCanvas(order: ReceiptData): HTMLCanvasElement {
+export function renderReceiptToCanvas(
+  order: ReceiptData,
+  paperSize: '58mm' | '80mm' = '80mm',
+): HTMLCanvasElement {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Canvas 2D context not available');
 
-  const width = 420; // 80mm thermal receipt width
+  const width = paperSize === '58mm' ? 320 : 420; // 58mm vs 80mm thermal receipt width
   const scale = 2; // Retina 2x scale for sharp text
 
   // Extract order fields
@@ -302,7 +305,7 @@ export function renderReceiptToCanvas(order: ReceiptData): HTMLCanvasElement {
   ctx.fillStyle = '#0F172A';
   ctx.fillText('ITEM', 20, y);
   ctx.textAlign = 'center';
-  ctx.fillText('QTY', 230, y);
+  ctx.fillText('QTY', paperSize === '58mm' ? 175 : 230, y);
   ctx.textAlign = 'right';
   ctx.fillText('TOTAL', width - 20, y);
 
@@ -326,7 +329,8 @@ export function renderReceiptToCanvas(order: ReceiptData): HTMLCanvasElement {
     ctx.textAlign = 'left';
     ctx.font = 'bold 12px "Courier New", Courier, monospace';
     ctx.fillStyle = '#0F172A';
-    const displayName = name.length > 28 ? `${name.slice(0, 26)}..` : name;
+    const maxChars = paperSize === '58mm' ? 18 : 28;
+    const displayName = name.length > maxChars ? `${name.slice(0, maxChars - 2)}..` : name;
     ctx.fillText(displayName, 20, y);
 
     // Price details & subtotal row
@@ -454,10 +458,15 @@ export function renderReceiptToCanvas(order: ReceiptData): HTMLCanvasElement {
 // 3. IMAGE (PNG) DOWNLOADER
 // ============================================================================
 
-export function downloadReceiptAsImage(order: ReceiptData, filename?: string): void {
-  const canvas = renderReceiptToCanvas(order);
+export function downloadReceiptAsImage(
+  order: ReceiptData,
+  optionsOrFilename?: string | { paperSize?: '58mm' | '80mm'; filename?: string },
+): void {
+  const paperSize = typeof optionsOrFilename === 'object' ? optionsOrFilename.paperSize || '80mm' : '80mm';
+  const customFilename = typeof optionsOrFilename === 'string' ? optionsOrFilename : optionsOrFilename?.filename;
+  const canvas = renderReceiptToCanvas(order, paperSize);
   const invoice = order.orderNumber || order.invoiceNumber || 'INV-0000';
-  const targetFilename = filename || `struk-${invoice}.png`;
+  const targetFilename = customFilename || `struk-${invoice}.png`;
 
   canvas.toBlob((blob) => {
     if (!blob) return;
@@ -556,10 +565,15 @@ export function buildReceiptPdfBlob(
   return new Blob([bytes.buffer as ArrayBuffer], { type: 'application/pdf' });
 }
 
-export function downloadReceiptAsPdf(order: ReceiptData, filename?: string): void {
-  const canvas = renderReceiptToCanvas(order);
+export function downloadReceiptAsPdf(
+  order: ReceiptData,
+  optionsOrFilename?: string | { paperSize?: '58mm' | '80mm'; filename?: string },
+): void {
+  const paperSize = typeof optionsOrFilename === 'object' ? optionsOrFilename.paperSize || '80mm' : '80mm';
+  const customFilename = typeof optionsOrFilename === 'string' ? optionsOrFilename : optionsOrFilename?.filename;
+  const canvas = renderReceiptToCanvas(order, paperSize);
   const invoice = order.orderNumber || order.invoiceNumber || 'INV-0000';
-  const targetFilename = filename || `struk-${invoice}.pdf`;
+  const targetFilename = customFilename || `struk-${invoice}.pdf`;
 
   // Export as high-quality JPEG
   const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
@@ -571,8 +585,8 @@ export function downloadReceiptAsPdf(order: ReceiptData, filename?: string): voi
     jpegBytes[i] = binaryString.charCodeAt(i);
   }
 
-  // 80mm in points (72 pt/inch, 25.4 mm/inch -> 80 / 25.4 * 72 = 226.77 pt)
-  const widthPt = 226.77;
+  // Paper width in points (72 pt/inch, 25.4 mm/inch): 58mm -> 164.41 pt, 80mm -> 226.77 pt
+  const widthPt = paperSize === '58mm' ? 164.41 : 226.77;
   const heightPt = (canvas.height / canvas.width) * widthPt;
 
   const pdfBlob = buildReceiptPdfBlob(jpegBytes, canvas.width, canvas.height, widthPt, heightPt);
