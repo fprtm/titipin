@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { TopNavbar } from './top-navbar';
+import { TopNavbar, type HeldDraftData } from './top-navbar';
 import { Sidebar } from './sidebar';
 import { Role } from '@titipin/shared';
 
@@ -8,6 +8,14 @@ import { Role } from '@titipin/shared';
 vi.mock('next/navigation', () => ({
   usePathname: () => '/dashboard',
   useRouter: () => ({ push: vi.fn() }),
+}));
+
+// Mock apiClient
+vi.mock('../../lib/api-client', () => ({
+  apiClient: {
+    get: vi.fn().mockResolvedValue({ data: { data: null } }),
+    delete: vi.fn().mockResolvedValue({ data: { success: true } }),
+  },
 }));
 
 // Mock useAuth
@@ -28,14 +36,44 @@ vi.mock('../../hooks/use-auth', () => ({
   }),
 }));
 
+const sampleHeldDraft: HeldDraftData = {
+  id: 1,
+  customerName: 'Pelanggan VIP',
+  items: [
+    {
+      productId: 101,
+      productName: 'Kopi Susu Gula Aren',
+      quantity: 2,
+      price: 18000,
+    },
+  ],
+};
+
 describe('App Shell Layout Components', () => {
-  it('TopNavbar renders brand title, terminal status badge, and held transaction pill', () => {
-    render(<TopNavbar />);
+  it('TopNavbar renders brand title and terminal status badge without held draft', () => {
+    render(<TopNavbar initialHeldDraft={null} />);
 
     expect(screen.getByText('Titipin POS')).toBeDefined();
     expect(screen.getByText(/Terminal 01 • Aktif/i)).toBeDefined();
-    expect(screen.getByText(/1 Transaksi Tertahan/i)).toBeDefined();
+    expect(screen.queryByText(/1 Transaksi Tertahan/i)).toBeNull();
     expect(screen.getByText('Admin Utama')).toBeDefined();
+  });
+
+  it('TopNavbar renders held transaction pill when draft exists and opens modal on click', () => {
+    render(<TopNavbar initialHeldDraft={sampleHeldDraft} />);
+
+    const heldPill = screen.getByText(/1 Transaksi Tertahan/i);
+    expect(heldPill).toBeDefined();
+
+    // Click pill to open detail modal
+    fireEvent.click(heldPill);
+
+    // Modal elements must be present
+    expect(screen.getByText('Transaksi Tertahan')).toBeDefined();
+    expect(screen.getByText('Pelanggan VIP')).toBeDefined();
+    expect(screen.getByText(/Kopi Susu Gula Aren/i)).toBeDefined();
+    expect(screen.getByRole('button', { name: /hapus draft/i })).toBeDefined();
+    expect(screen.getByRole('button', { name: /lanjutkan ke kasir/i })).toBeDefined();
   });
 
   it('TopNavbar opens dropdown and can trigger logout', () => {
@@ -62,28 +100,27 @@ describe('App Shell Layout Components', () => {
 
     render(<Sidebar />);
 
-    expect(screen.getByText('Dashboard')).toBeDefined();
-    expect(screen.getByText('Kasir POS')).toBeDefined();
-    expect(screen.getByText('Katalog Produk')).toBeDefined();
-    expect(screen.getByText('Data Pelanggan')).toBeDefined();
-    expect(screen.getByText('Riwayat Transaksi')).toBeDefined();
+    expect(screen.getByText(/Kasir POS/i)).toBeDefined();
+    expect(screen.getByText(/Katalog Produk/i)).toBeDefined();
+    expect(screen.getByText(/Pelanggan/i)).toBeDefined();
+    expect(screen.getByText(/Riwayat Transaksi/i)).toBeDefined();
 
-    // Admin-only items should be hidden for CASHIER
-    expect(screen.queryByText('Manajemen Pengguna')).toBeNull();
-    expect(screen.queryByText('Audit Trail')).toBeNull();
+    // Kasir should not see Admin-restricted links
+    expect(screen.queryByText(/Manajemen Pengguna/i)).toBeNull();
+    expect(screen.queryByText(/Audit Trail/i)).toBeNull();
   });
 
-  it('Sidebar renders admin-only items when user role is ADMIN', () => {
+  it('Sidebar renders admin management section when user is ADMIN', () => {
     mockUser = {
       id: 'admin-1',
-      name: 'Admin Toko',
+      name: 'Admin Utama',
       email: 'admin@titipin.id',
       role: Role.ADMIN,
     };
 
     render(<Sidebar />);
 
-    expect(screen.getByText('Manajemen Pengguna')).toBeDefined();
-    expect(screen.getByText('Audit Trail')).toBeDefined();
+    expect(screen.getByText(/Manajemen Pengguna/i)).toBeDefined();
+    expect(screen.getByText(/Audit Trail/i)).toBeDefined();
   });
 });

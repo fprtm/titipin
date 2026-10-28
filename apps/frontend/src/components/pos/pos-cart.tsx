@@ -98,11 +98,32 @@ export function PosCart({
       <div className="my-3 flex-1 overflow-y-auto max-h-[380px] lg:max-h-[calc(100vh-480px)] space-y-2 pr-1">
         {isCartEmpty ? (
           <div className="flex h-48 flex-col items-center justify-center gap-2 text-center text-slate-400">
-            <ShoppingCart className="h-10 w-10 text-slate-300" />
-            <p className="text-xs font-semibold text-slate-600">Keranjang masih kosong</p>
-            <p className="text-[11px] text-slate-400 max-w-[200px]">
-              Klik produk dari katalog di sebelah kiri untuk menambahkan barang.
-            </p>
+            {hasHeldDraft ? (
+              <div className="w-full max-w-[280px] rounded-xl border border-amber-300 bg-amber-50/90 p-3.5 space-y-2 text-center animate-in fade-in">
+                <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-amber-900">
+                  <Clock className="h-4 w-4 text-amber-700 animate-pulse" />
+                  <span>Ada 1 Transaksi Tertahan</span>
+                </div>
+                <p className="text-[11px] text-amber-800">
+                  Anda memiliki transaksi sebelumnya yang disimpan sementara.
+                </p>
+                <button
+                  type="button"
+                  onClick={onOpenHeldDrawer}
+                  className="w-full rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-amber-700 transition-colors shadow-xs"
+                >
+                  Buka & Lanjutkan Transaksi
+                </button>
+              </div>
+            ) : (
+              <>
+                <ShoppingCart className="h-10 w-10 text-slate-300" />
+                <p className="text-xs font-semibold text-slate-600">Keranjang masih kosong</p>
+                <p className="text-[11px] text-slate-400 max-w-[200px]">
+                  Klik produk dari katalog di sebelah kiri untuk menambahkan barang.
+                </p>
+              </>
+            )}
           </div>
         ) : (
           items.map(({ product, quantity }) => {

@@ -203,6 +203,7 @@ export default function PosPage() {
       // Reset cart and refresh product stock
       cart.resetAll();
       fetchProducts();
+      window.dispatchEvent(new CustomEvent('held-draft-changed', { detail: null }));
     } catch (err: unknown) {
       const apiErr = err as ApiErrorResponse;
       const msg =
@@ -234,6 +235,7 @@ export default function PosPage() {
       await apiClient.post('/orders/hold', payload);
       cart.resetAll();
       await checkHeldDraft();
+      window.dispatchEvent(new CustomEvent('held-draft-changed'));
     } catch (err: unknown) {
       const apiErr = err as ApiErrorResponse;
       alert(
@@ -253,44 +255,49 @@ export default function PosPage() {
     setIsLoadingDraft(false);
   };
 
+  // Helper to load draft data into active POS cart
+  const restoreDraftToCart = useCallback(
+    (draft: HeldDraftData) => {
+      const restoredItems = (draft.items || []).map((it: HeldDraftItem) => {
+        const matched = products.find((p) => p.id === it.productId || p.id === it.product_id);
+        const productObj: ProductItem = matched || {
+          id: (it.productId || it.product_id || 0) as number,
+          productCode: it.productCode || it.product_code || 'P0000',
+          productName: it.productName || it.product_name || 'Produk',
+          product_code: it.productCode || it.product_code || 'P0000',
+          product_name: it.productName || it.product_name || 'Produk',
+          price: String(it.price || '0'),
+          stock: 99,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          deletedAt: null,
+          deleted_at: null,
+        };
+        return {
+          product: productObj,
+          quantity: it.quantity,
+        };
+      });
+
+      const customerObj = (draft.customer as unknown as CustomerItem) || null;
+      cart.loadDraft(customerObj, restoredItems);
+
+      // Discard server draft since it is now active on POS terminal
+      apiClient.delete('/orders/draft').catch(() => {});
+      setHasHeldDraft(false);
+      setHeldDraftData(null);
+      setIsHeldDrawerOpen(false);
+      window.dispatchEvent(new CustomEvent('held-draft-changed', { detail: null }));
+    },
+    [products, cart],
+  );
+
   // Resume Draft Order
   const handleResumeDraft = () => {
     if (!heldDraftData) return;
-
-    // Convert draft items to cart items
-    const restoredItems = (heldDraftData.items || []).map((it: HeldDraftItem) => {
-      // Find product in catalog
-      const matched = products.find((p) => p.id === it.productId || p.id === it.product_id);
-      const productObj: ProductItem = matched || {
-        id: (it.productId || it.product_id || 0) as number,
-        productCode: it.productCode || it.product_code || 'P0000',
-        productName: it.productName || it.product_name || 'Produk',
-        product_code: it.productCode || it.product_code || 'P0000',
-        product_name: it.productName || it.product_name || 'Produk',
-        price: String(it.price || '0'),
-        stock: 99,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        deletedAt: null,
-        deleted_at: null,
-      };
-      return {
-        product: productObj,
-        quantity: it.quantity,
-      };
-    });
-
-    // Customer
-    const customerObj = (heldDraftData.customer as unknown as CustomerItem) || null;
-    cart.loadDraft(customerObj, restoredItems);
-
-    // Discard server draft since it is now active on POS terminal
-    apiClient.delete('/orders/draft').catch(() => {});
-    setHasHeldDraft(false);
-    setHeldDraftData(null);
-    setIsHeldDrawerOpen(false);
+    restoreDraftToCart(heldDraftData);
   };
 
   // Discard Draft Order
@@ -301,10 +308,46 @@ export default function PosPage() {
       setHasHeldDraft(false);
       setHeldDraftData(null);
       setIsHeldDrawerOpen(false);
+      window.dispatchEvent(new CustomEvent('held-draft-changed', { detail: null }));
     } catch {
       alert('Gagal menghapus transaksi tertahan.');
     }
   };
+
+  // Sync with Navbar and URL ?resume=true
+  useEffect(() => {
+    const handleResumeEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<HeldDraftData | null>;
+      if (customEvent.detail) {
+        restoreDraftToCart(customEvent.detail);
+      }
+    };
+
+    const handleDraftChangedEvent = () => {
+      checkHeldDraft();
+    };
+
+    window.addEventListener('held-draft-resume', handleResumeEvent);
+    window.addEventListener('held-draft-changed', handleDraftChangedEvent);
+
+    if (typeof window !== 'undefined' && window.location.search.includes('resume=true')) {
+      apiClient
+        .get('/orders/draft')
+        .then((res) => {
+          const draft = res.data?.data;
+          if (draft && draft.items && draft.items.length > 0) {
+            restoreDraftToCart(draft);
+            window.history.replaceState({}, '', '/pos');
+          }
+        })
+        .catch(() => {});
+    }
+
+    return () => {
+      window.removeEventListener('held-draft-resume', handleResumeEvent);
+      window.removeEventListener('held-draft-changed', handleDraftChangedEvent);
+    };
+  }, [restoreDraftToCart, checkHeldDraft]);
 
   // Create & Register New Member on-the-fly
   const handleCreateNewMember = async (e: React.FormEvent) => {
