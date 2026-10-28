@@ -36,21 +36,33 @@ export class LockAndDeductStockUseCase {
       recordMap.set(record.id, record);
     }
 
-    // 2. Validate stock availability and active status for each item
+    // 2. Validate active status and stock availability for each item
     for (const item of items) {
       const product = recordMap.get(item.productId);
-
       if (!product || product.deletedAt !== null) {
         throw new UnprocessableEntityException(
           `Produk dengan ID ${item.productId} tidak ditemukan atau sudah tidak aktif`,
         );
       }
+    }
+
+    const stockErrors: Record<string, string[]> = {};
+    for (let idx = 0; idx < items.length; idx++) {
+      const item = items[idx];
+      const product = recordMap.get(item.productId)!;
 
       if (product.stock < item.quantity) {
-        throw new UnprocessableEntityException(
-          `Stok produk ${product.productName} tidak mencukupi (tersedia: ${product.stock}, diminta: ${item.quantity})`,
-        );
+        stockErrors[`items.${idx}.quantity`] = [
+          `Stok ${product.productName} tersisa ${product.stock}, diminta ${item.quantity}`,
+        ];
       }
+    }
+
+    if (Object.keys(stockErrors).length > 0) {
+      throw new UnprocessableEntityException({
+        message: 'Stok tidak mencukupi',
+        errors: stockErrors,
+      });
     }
 
     // 3. Atomically deduct stock and prepare result snapshot
