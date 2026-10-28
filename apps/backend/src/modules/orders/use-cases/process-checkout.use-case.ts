@@ -122,19 +122,22 @@ export class ProcessCheckoutUseCase {
         tx,
       );
 
-      await this.auditService.log({
-        action: OrderActivityAction.ORDER_CREATED,
-        entityType: 'ORDER',
-        entityId: String(order.id),
-        userId: cashierId,
-        newValues: {
-          orderNumber,
-          customerId: customer ? customer.id : null,
-          totalAmount,
+      await this.auditService.log(
+        {
+          action: OrderActivityAction.ORDER_CREATED,
+          entityType: 'ORDER',
+          entityId: String(order.id),
+          userId: cashierId,
+          newValues: {
+            orderNumber,
+            customerId: customer ? customer.id : null,
+            totalAmount,
+          },
+          ipAddress: metadata?.ipAddress,
+          userAgent: metadata?.userAgent,
         },
-        ipAddress: metadata?.ipAddress,
-        userAgent: metadata?.userAgent,
-      });
+        tx,
+      );
 
       const orderDetail = await this.ordersRepository.findById(order.id, tx);
       if (!orderDetail) {

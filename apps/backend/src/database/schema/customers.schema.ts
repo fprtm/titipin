@@ -1,4 +1,5 @@
 import { pgTable, uuid, varchar, date, timestamp, pgEnum, index } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
 
 export const genderEnum = pgEnum('gender', ['Pria', 'Wanita']);
 
@@ -15,5 +16,9 @@ export const customers = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
     deletedAt: timestamp('deleted_at', { withTimezone: true }),
   },
-  (table) => [index('idx_customers_name').on(table.customerName)],
+  (table) => [
+    index('idx_customers_name').on(table.customerName),
+    index('idx_customers_name_trgm').using('gin', sql`${table.customerName} gin_trgm_ops`),
+    index('idx_customers_phone_trgm').using('gin', sql`${table.phone} gin_trgm_ops`),
+  ],
 );

@@ -24,6 +24,8 @@ export const products = pgTable(
   },
   (table) => [
     index('idx_products_search').on(table.productName, table.productCode),
+    index('idx_products_name_trgm').using('gin', sql`${table.productName} gin_trgm_ops`),
+    index('idx_products_code_trgm').using('gin', sql`${table.productCode} gin_trgm_ops`),
     check('check_stock_non_negative', sql`${table.stock} >= 0`),
     check('check_price_positive', sql`${table.price} > 0`),
   ],

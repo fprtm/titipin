@@ -6,6 +6,8 @@ export interface HealthCheckResult {
   status: 'ok' | 'error';
   timestamp: string;
   database: 'connected' | 'disconnected';
+  uptimeSeconds?: number;
+  memoryUsageMb?: number;
 }
 
 @Injectable()
@@ -20,6 +22,8 @@ export class HealthService {
         status: 'ok',
         timestamp,
         database: 'connected',
+        uptimeSeconds: Math.round(process.uptime()),
+        memoryUsageMb: Math.round(process.memoryUsage().heapUsed / (1024 * 1024)),
       };
     } catch (error) {
       throw new ServiceUnavailableException({

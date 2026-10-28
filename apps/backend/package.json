@@ -16,7 +16,9 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "tsx src/database/seeds/index.ts"
+    "db:seed": "tsx src/database/seeds/index.ts",
+    "docs:generate": "tsx scripts/generate-openapi-and-postman.ts",
+    "benchmark": "tsx scripts/benchmark-concurrency.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.10",
@@ -24,6 +26,7 @@
     "@nestjs/core": "^11.0.10",
     "@nestjs/jwt": "^12.0.3",
     "@nestjs/platform-express": "^11.0.10",
+    "@nestjs/swagger": "^12.0.4",
     "@nestjs/throttler": "^6.4.0",
     "@titipin/shared": "workspace:*",
     "bcryptjs": "^3.0.3",
@@ -32,8 +35,10 @@
     "drizzle-orm": "^0.39.3",
     "exceljs": "^4.4.0",
     "pg": "^8.13.3",
+    "prom-client": "^15.1.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "swagger-ui-express": "^5.0.1",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -49,6 +54,7 @@
     "@types/node": "^22.13.4",
     "@types/pg": "^8.11.11",
     "@types/supertest": "^6.0.2",
+    "@types/swagger-ui-express": "^4.1.8",
     "drizzle-kit": "^0.30.4",
     "eslint": "^9.20.0",
     "supertest": "^7.0.0",

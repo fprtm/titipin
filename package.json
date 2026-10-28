@@ -15,7 +15,8 @@
     "db:studio": "turbo db:studio",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "audit:quality": "bash .agents/skills/titipin-dev/scripts/audit-code-quality.sh",
-    "audit:links": "python3 .agents/skills/titipin-dev/scripts/verify-links.py"
+    "audit:links": "python3 .agents/skills/titipin-dev/scripts/verify-links.py",
+    "benchmark": "pnpm --filter @titipin/backend benchmark"
   },
   "devDependencies": {
     "prettier": "^3.4.2",
