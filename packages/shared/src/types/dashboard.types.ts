@@ -1,4 +1,4 @@
-export type DashboardPeriod = 'daily' | 'monthly' | 'quarterly';
+export type DashboardPeriod = 'daily' | 'monthly' | 'quarterly' | 'yearly';
 
 export interface DashboardSummary {
   totalRevenue: number;
