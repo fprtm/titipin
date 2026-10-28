@@ -14,6 +14,7 @@ import {
   Package,
   ArrowRight,
   CheckCircle2,
+  Loader2,
 } from 'lucide-react';
 import { apiClient } from '../../../lib/api-client';
 import { formatCurrency } from '../../../lib/utils';
@@ -28,7 +29,23 @@ const PERIOD_OPTIONS: Array<{ label: string; value: DashboardPeriod }> = [
   { label: 'Hari Ini', value: 'daily' },
   { label: 'Bulan Ini', value: 'monthly' },
   { label: 'Kuartal Ini', value: 'quarterly' },
+  { label: 'Tahun Ini', value: 'yearly' },
 ];
+
+function getPeriodLabel(period: DashboardPeriod): string {
+  switch (period) {
+    case 'daily':
+      return 'Hari Ini';
+    case 'monthly':
+      return 'Bulan Ini';
+    case 'quarterly':
+      return 'Kuartal Ini';
+    case 'yearly':
+      return 'Tahun Ini';
+    default:
+      return period;
+  }
+}
 
 export default function DashboardPage() {
   const [period, setPeriod] = useState<DashboardPeriod>('daily');
@@ -106,20 +123,27 @@ export default function DashboardPage() {
         <div className="flex items-center gap-2 self-start sm:self-auto">
           {/* Period Selector Tabs */}
           <div className="glass-panel flex rounded-full p-1 border border-slate-200/80 shadow-xs">
-            {PERIOD_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => setPeriod(opt.value)}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                  period === opt.value
-                    ? 'bg-emerald-700 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
+            {PERIOD_OPTIONS.map((opt) => {
+              const isActive = period === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  disabled={isLoading || isRefreshing}
+                  onClick={() => setPeriod(opt.value)}
+                  className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                    isActive
+                      ? 'bg-emerald-700 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 disabled:opacity-60'
+                  }`}
+                >
+                  {isLoading && !isRefreshing && isActive && (
+                    <Loader2 className="h-3 w-3 animate-spin text-white" />
+                  )}
+                  <span>{opt.label}</span>
+                </button>
+              );
+            })}
           </div>
 
           <button
@@ -143,7 +167,11 @@ export default function DashboardPage() {
       )}
 
       {/* 4 Stat Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div
+        className={`grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 transition-opacity duration-200 ${
+          isLoading ? 'opacity-60 pointer-events-none' : ''
+        }`}
+      >
         {/* 1. Total Omset */}
         <div className="glass-card p-5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
@@ -159,7 +187,7 @@ export default function DashboardPage() {
               {formatCurrency(totalSales)}
             </p>
             <p className="text-[11px] text-emerald-600 font-medium mt-0.5">
-              Periode {period === 'daily' ? 'Hari Ini' : period === 'monthly' ? 'Bulan Ini' : 'Kuartal Ini'}
+              Periode {getPeriodLabel(period)}
             </p>
           </div>
         </div>
@@ -244,7 +272,11 @@ export default function DashboardPage() {
       </div>
 
       {/* Sales Trend Chart (Zero inline SVG, pure tactile CSS bars) */}
-      <div className="glass-panel p-6 rounded-3xl space-y-4 shadow-xs">
+      <div
+        className={`glass-panel p-6 rounded-3xl space-y-4 shadow-xs transition-opacity duration-200 ${
+          isLoading ? 'opacity-60' : ''
+        }`}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-emerald-700" />
@@ -297,7 +329,11 @@ export default function DashboardPage() {
       </div>
 
       {/* Top 5 Best Selling vs Bottom 5 Slow Moving Comparative Panels */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div
+        className={`grid grid-cols-1 lg:grid-cols-2 gap-6 transition-opacity duration-200 ${
+          isLoading ? 'opacity-60' : ''
+        }`}
+      >
         {/* Top 5 Best Sellers */}
         <div className="glass-panel p-5 rounded-2xl space-y-3 shadow-xs">
           <div className="flex items-center gap-2 border-b border-slate-100 pb-3">

@@ -160,4 +160,27 @@ describe('OrdersHistoryPage Component', () => {
       );
     });
   });
+
+  it('applies quick date presets when filter buttons are clicked', async () => {
+    render(<OrdersHistoryPage />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Hari Ini' })).toBeDefined();
+    });
+
+    const hariIniBtn = screen.getByRole('button', { name: 'Hari Ini' });
+    fireEvent.click(hariIniBtn);
+
+    await waitFor(() => {
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/orders',
+        expect.objectContaining({
+          params: expect.objectContaining({
+            from: expect.any(String),
+            to: expect.any(String),
+          }),
+        }),
+      );
+    });
+  });
 });

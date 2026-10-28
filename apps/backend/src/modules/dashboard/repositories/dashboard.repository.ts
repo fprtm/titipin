@@ -33,6 +33,9 @@ export class DashboardRepository {
       startDate.setHours(0, 0, 0, 0);
       const currentMonth = startDate.getMonth();
       startDate.setMonth(currentMonth - (currentMonth % 3));
+    } else if (period === 'yearly') {
+      startDate.setMonth(0, 1);
+      startDate.setHours(0, 0, 0, 0);
     } else {
       // monthly
       startDate.setDate(1);

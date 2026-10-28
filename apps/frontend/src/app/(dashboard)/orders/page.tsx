@@ -302,8 +302,86 @@ export default function OrdersHistoryPage() {
           </div>
         </div>
 
-        {(searchQuery || fromDate || toDate || selectedCustomerId) && (
-          <div className="flex items-center justify-end pt-1">
+        {/* Quick Date Presets & Reset Filter */}
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
+          <div className="flex flex-wrap items-center gap-1.5 text-xs">
+            <span className="text-[11px] font-semibold text-slate-500 mr-1">Filter Periode:</span>
+            <button
+              type="button"
+              onClick={() => {
+                setFromDate('');
+                setToDate('');
+                setCurrentPage(1);
+              }}
+              className={`rounded-full px-3 py-1 font-semibold transition-all ${
+                !fromDate && !toDate
+                  ? 'bg-emerald-700 text-white shadow-xs'
+                  : 'bg-white/80 border border-slate-200 text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Semua
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const now = new Date();
+                const yyyy = now.getFullYear();
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const dd = String(now.getDate()).padStart(2, '0');
+                const todayStr = `${yyyy}-${mm}-${dd}`;
+                setFromDate(todayStr);
+                setToDate(todayStr);
+                setCurrentPage(1);
+              }}
+              className={`rounded-full px-3 py-1 font-semibold transition-all ${
+                fromDate === toDate && fromDate.length === 10
+                  ? 'bg-emerald-700 text-white shadow-xs'
+                  : 'bg-white/80 border border-slate-200 text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Hari Ini
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const now = new Date();
+                const yyyy = now.getFullYear();
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const dd = String(now.getDate()).padStart(2, '0');
+                setFromDate(`${yyyy}-${mm}-01`);
+                setToDate(`${yyyy}-${mm}-${dd}`);
+                setCurrentPage(1);
+              }}
+              className={`rounded-full px-3 py-1 font-semibold transition-all ${
+                fromDate.endsWith('-01') && !fromDate.endsWith('-01-01')
+                  ? 'bg-emerald-700 text-white shadow-xs'
+                  : 'bg-white/80 border border-slate-200 text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Bulan Ini
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const now = new Date();
+                const yyyy = now.getFullYear();
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const dd = String(now.getDate()).padStart(2, '0');
+                setFromDate(`${yyyy}-01-01`);
+                setToDate(`${yyyy}-${mm}-${dd}`);
+                setCurrentPage(1);
+              }}
+              className={`rounded-full px-3 py-1 font-semibold transition-all ${
+                fromDate.endsWith('-01-01')
+                  ? 'bg-emerald-700 text-white shadow-xs'
+                  : 'bg-white/80 border border-slate-200 text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Tahun Ini
+            </button>
+          </div>
+
+          {(searchQuery || fromDate || toDate || selectedCustomerId) && (
             <button
               type="button"
               onClick={handleResetFilters}
@@ -311,8 +389,8 @@ export default function OrdersHistoryPage() {
             >
               Reset Filter
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Orders Table */}
