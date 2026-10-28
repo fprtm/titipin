@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { eq, count } from 'drizzle-orm';
+import { eq, count, lt } from 'drizzle-orm';
 import * as bcrypt from 'bcryptjs';
 import * as schema from '../schema';
 import { envConfig } from '../../config/env.config';
@@ -314,22 +314,50 @@ async function seed() {
     }
     console.log(`✅ Verified/Seeded ${seededCustomers.length} customer members.`);
 
-    // 5. Seed Historical Sales Orders (at least 35 realistic orders over the past 30 days)
+    // 5. Seed Historical Sales Orders (comprehensive timeline across today, this month, prior quarter, and this year)
     const [existingOrdersCount] = await database
       .select({ count: count() })
       .from(schema.orders);
 
     const totalExistingOrders = Number(existingOrdersCount?.count || 0);
 
-    if (totalExistingOrders < 30) {
-      console.log(`⏳ Seeding historical orders (current: ${totalExistingOrders}, target: 35)...`);
+    const [oldOrdersCount] = await database
+      .select({ count: count() })
+      .from(schema.orders)
+      .where(lt(schema.orders.orderDate, new Date(Date.now() - 40 * 24 * 60 * 60 * 1000)));
+
+    const hasOldOrders = Number(oldOrdersCount?.count || 0) > 0;
+
+    if (totalExistingOrders < 60 || !hasOldOrders) {
+      console.log(`⏳ Seeding comprehensive historical orders across multiple periods (current: ${totalExistingOrders}, target: 70)...`);
+      // Clean previous synthetic orders to ensure clean distribution
+      await database.delete(schema.orderActivityLogs);
+      await database.delete(schema.orderItems);
+      await database.delete(schema.orders);
+
       const now = new Date();
 
-      for (let i = 1; i <= 35; i++) {
-        // Distribute dates over last 30 days
-        const daysAgo = Math.floor((35 - i) * (28 / 35));
+      for (let i = 1; i <= 70; i++) {
+        let daysAgo = 0;
+        if (i <= 6) {
+          // Today (Hari Ini) - 6 orders
+          daysAgo = 0;
+        } else if (i <= 18) {
+          // Past 7 days (this week) - 12 orders
+          daysAgo = Math.floor(1 + ((i - 7) * 6) / 12);
+        } else if (i <= 36) {
+          // Earlier this month (Oct 1 to Oct 21) - 18 orders
+          daysAgo = Math.floor(8 + ((i - 19) * 18) / 18);
+        } else if (i <= 52) {
+          // Prior months in Q3 (August & September: 30 to 80 days ago) - 16 orders
+          daysAgo = Math.floor(30 + ((i - 37) * 55) / 16);
+        } else {
+          // Earlier this year in Q1 & Q2 (February to July: 90 to 240 days ago) - 18 orders
+          daysAgo = Math.floor(95 + ((i - 53) * 145) / 18);
+        }
+
         const orderDate = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
-        orderDate.setHours(9 + (i % 12), (i * 17) % 60, 0, 0);
+        orderDate.setHours(8 + (i % 13), (i * 19) % 60, 0, 0);
 
         const yyyy = orderDate.getFullYear().toString();
         const mm = String(orderDate.getMonth() + 1).padStart(2, '0');

@@ -107,7 +107,7 @@ describe('DashboardController & Analytics Engine (E2E)', () => {
     expect(response.body.data).toBeDefined();
   });
 
-  it('Period Filtering: Supports daily, monthly, and quarterly aggregations', async (ctx) => {
+  it('Period Filtering: Supports daily, monthly, quarterly, and yearly aggregations', async (ctx) => {
     if (!isDashboardModuleMounted) {
       ctx.skip();
       return;
@@ -133,6 +133,13 @@ describe('DashboardController & Analytics Engine (E2E)', () => {
       .set('Authorization', `Bearer ${cashierAccessToken}`);
     expect(quarterlyRes.status).toBe(200);
     expect(quarterlyRes.body.data.period).toBe('quarterly');
+
+    // Yearly
+    const yearlyRes = await request(app.getHttpServer())
+      .get('/api/dashboard/summary?period=yearly')
+      .set('Authorization', `Bearer ${cashierAccessToken}`);
+    expect(yearlyRes.status).toBe(200);
+    expect(yearlyRes.body.data.period).toBe('yearly');
   });
 
   it('Low Stock Products: Only active products with stock < 5 are listed in low_stock_products', async (ctx) => {

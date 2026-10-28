@@ -76,7 +76,7 @@ describe('DashboardPage Component', () => {
     });
   });
 
-  it('allows switching period between Hari Ini, Bulan Ini, and Kuartal Ini', async () => {
+  it('allows switching period between Hari Ini, Bulan Ini, Kuartal Ini, and Tahun Ini', async () => {
     render(<DashboardPage />);
 
     await waitFor(() => {
@@ -93,6 +93,16 @@ describe('DashboardPage Component', () => {
       expect(apiClient.get).toHaveBeenCalledWith(
         '/dashboard/summary',
         expect.objectContaining({ params: { period: 'monthly' } }),
+      );
+    });
+
+    const yearButton = screen.getByText('Tahun Ini');
+    fireEvent.click(yearButton);
+
+    await waitFor(() => {
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/dashboard/summary',
+        expect.objectContaining({ params: { period: 'yearly' } }),
       );
     });
   });

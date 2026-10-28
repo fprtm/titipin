@@ -118,7 +118,7 @@ describe('Challenger M1: Clean Architecture & Concurrency Stress Test', () => {
       // 3. Dashboard query schema valid
       const validDashboard = dashboardQuerySchema.safeParse({ period: 'monthly' });
       expect(validDashboard.success).toBe(true);
-      const invalidDashboard = dashboardQuerySchema.safeParse({ period: 'yearly' });
+      const invalidDashboard = dashboardQuerySchema.safeParse({ period: 'annual' });
       expect(invalidDashboard.success).toBe(false);
 
       // 4. Audit query schema default values
