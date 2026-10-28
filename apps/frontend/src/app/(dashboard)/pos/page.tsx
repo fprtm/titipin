@@ -13,10 +13,12 @@ import {
   Trash2,
   Loader2,
   ShoppingCart,
+  Download,
 } from 'lucide-react';
 import type { ProductItem, CustomerItem } from '@titipin/shared';
 import { apiClient } from '../../../lib/api-client';
 import { formatCurrency } from '../../../lib/utils';
+import { downloadReceiptAsText } from '../../../lib/receipt-download';
 import { useAuth } from '../../../hooks/use-auth';
 import { usePosCart, type CartItem } from '../../../hooks/use-pos-cart';
 import { PosCatalog } from '../../../components/pos/pos-catalog';
@@ -352,8 +354,8 @@ export default function PosPage() {
   // Create & Register New Member on-the-fly
   const handleCreateNewMember = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMemberName.trim() || !newMemberPhone.trim() || !newMemberBirthDate.trim()) {
-      setNewMemberError('Nama, nomor telepon, dan tanggal lahir wajib diisi.');
+    if (!newMemberName.trim() || !newMemberPhone.trim()) {
+      setNewMemberError('Nama dan nomor telepon wajib diisi.');
       return;
     }
 
@@ -364,7 +366,7 @@ export default function PosPage() {
         customer_name: newMemberName.trim(),
         phone: newMemberPhone.trim(),
         gender: newMemberGender,
-        birth_date: newMemberBirthDate,
+        birth_date: newMemberBirthDate.trim() || null,
         customer_address: newMemberAddress.trim() || 'Bogor',
       };
       const res = await apiClient.post('/customers', payload);
@@ -696,7 +698,7 @@ export default function PosPage() {
             </div>
 
             {/* Thermal Receipt Simulation (80mm width look) */}
-            <div className="rounded-xl border border-slate-300 bg-slate-50 p-4 font-mono text-xs text-slate-800 space-y-2 shadow-inner">
+            <div id="thermal-receipt" className="rounded-xl border border-slate-300 bg-slate-50 p-4 font-mono text-xs text-slate-800 space-y-2 shadow-inner print:p-0 print:border-none print:bg-white">
               <div className="text-center pb-2 border-b border-dashed border-slate-300">
                 <h4 className="font-extrabold text-sm tracking-wider">TITIPIN POS</h4>
                 <p className="text-[10px] text-slate-500">Jl. Pajajaran No. 128, Bogor</p>
@@ -781,20 +783,50 @@ export default function PosPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-between gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => window.print()}
-                className="flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
-              >
-                <Printer className="h-4 w-4" />
-                <span>Cetak Struk (80mm)</span>
-              </button>
+            <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2 no-print">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (completedOrder) {
+                      downloadReceiptAsText({
+                        invoiceNumber: completedOrder.invoiceNumber || completedOrder.invoice_number,
+                        cashierName: completedOrder.cashier_name || user?.name || 'Kasir',
+                        customer: completedOrder.customer,
+                        items: (completedOrder.items || []).map((it: CartItem) => ({
+                          productName: it.product?.productName || it.product?.product_name,
+                          quantity: it.quantity,
+                          unitPrice: Number(it.product?.price || 0),
+                          subtotal: Number(it.product?.price || 0) * it.quantity,
+                        })),
+                        subtotal: completedOrder.subtotal || cart.subtotal,
+                        birthday_discount: completedOrder.birthday_discount,
+                        totalAmount: completedOrder.totalAmount || completedOrder.total_amount || cart.totalAmount,
+                        total_paid: completedOrder.total_paid,
+                        change_amount: completedOrder.change_amount,
+                      });
+                    }
+                  }}
+                  className="flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                >
+                  <Download className="h-4 w-4 text-emerald-700" />
+                  <span>Unduh Struk</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                >
+                  <Printer className="h-4 w-4" />
+                  <span>Cetak Struk (80mm)</span>
+                </button>
+              </div>
 
               <button
                 type="button"
                 onClick={() => setIsReceiptModalOpen(false)}
-                className="flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-emerald-800"
+                className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-xs font-bold text-white shadow-md hover:bg-emerald-800 transition-colors"
               >
                 <Plus className="h-4 w-4" />
                 <span>Transaksi Baru</span>
@@ -867,12 +899,11 @@ export default function PosPage() {
                 </div>
                 <div>
                   <label htmlFor="quick-birth-date" className="block text-xs font-semibold text-slate-700">
-                    Tanggal Lahir <span className="text-rose-500">*</span>
+                    Tanggal Lahir <span className="text-slate-400 font-normal">(Opsional)</span>
                   </label>
                   <input
                     id="quick-birth-date"
                     type="date"
-                    required
                     value={newMemberBirthDate}
                     onChange={(e) => setNewMemberBirthDate(e.target.value)}
                     className="glass-input mt-1 w-full text-xs text-slate-900 py-2 px-3 rounded-xl focus:outline-none"

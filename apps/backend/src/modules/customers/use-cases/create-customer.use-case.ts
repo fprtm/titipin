@@ -19,7 +19,7 @@ export class CreateCustomerUseCase {
     const name = (dto.customer_name || dto.customerName || '').trim();
     const address = (dto.customer_address || dto.customerAddress || '').trim();
     const gender = dto.gender;
-    const birthDate = dto.birth_date || dto.birthDate || '';
+    const birthDate = dto.birth_date || dto.birthDate || null;
     const phone = dto.phone ? dto.phone.trim() : null;
 
     const newCustomer = await this.customersRepository.create({

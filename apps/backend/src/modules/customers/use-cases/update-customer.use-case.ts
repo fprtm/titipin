@@ -38,7 +38,7 @@ export class UpdateCustomerUseCase {
       updateValues.gender = dto.gender;
     }
     if (dto.birth_date !== undefined || dto.birthDate !== undefined) {
-      updateValues.birthDate = (dto.birth_date ?? dto.birthDate)!;
+      updateValues.birthDate = (dto.birth_date ?? dto.birthDate) || null;
     }
     if (dto.phone !== undefined) {
       updateValues.phone = dto.phone ? dto.phone.trim() : null;

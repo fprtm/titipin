@@ -11,10 +11,12 @@ import {
   ShoppingBag,
   Clock,
   AlertCircle,
+  Download,
 } from 'lucide-react';
 import { apiClient } from '../../../../lib/api-client';
 import { formatCurrency, formatDate } from '../../../../lib/utils';
 import { Badge } from '../../../../components/ui/badge';
+import { downloadReceiptAsText } from '../../../../lib/receipt-download';
 import type { OrderDetailData } from '@titipin/shared';
 
 interface OrderDetailPageProps {
@@ -86,6 +88,11 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
   const cashier = order.cashierName || order.createdByName || order.created_by_name || 'Kasir';
   const items = order.items || [];
   const total = Number(order.totalAmount || order.total_amount || 0);
+  const subtotal = items.reduce((acc, it) => {
+    const unitPrice = Number(it.unitPrice || it.unit_price || 0);
+    return acc + Number(it.subtotal || unitPrice * it.quantity);
+  }, 0);
+  const discount = Math.max(0, subtotal - total);
   const activityLogs = order.activityLogs || order.activity_logs || [];
 
   return (
@@ -100,18 +107,47 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
           <span>Kembali ke Riwayat Transaksi</span>
         </Link>
 
-        <button
-          type="button"
-          onClick={handlePrint}
-          className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-xs font-bold text-white shadow-md hover:bg-emerald-800 active:scale-95 transition-all"
-        >
-          <Printer className="h-4 w-4" />
-          <span>Cetak Nota (Print)</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              if (order) {
+                downloadReceiptAsText({
+                  orderNumber: orderNum,
+                  orderDate: orderDt,
+                  cashierName: cashier,
+                  customerName: custName,
+                  items: items.map((it) => ({
+                    productName: it.productName || it.product_name,
+                    quantity: it.quantity,
+                    unitPrice: it.unitPrice || it.unit_price,
+                    subtotal: it.subtotal,
+                  })),
+                  subtotal,
+                  discount,
+                  totalAmount: total,
+                });
+              }
+            }}
+            className="glass-button flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:text-slate-900 active:scale-95 transition-all"
+          >
+            <Download className="h-4 w-4 text-emerald-700" />
+            <span>Unduh Struk</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handlePrint}
+            className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-xs font-bold text-white shadow-md hover:bg-emerald-800 active:scale-95 transition-all"
+          >
+            <Printer className="h-4 w-4" />
+            <span>Cetak Nota (Print)</span>
+          </button>
+        </div>
       </div>
 
       {/* Official Receipt Card (screen view + 80mm thermal print view) */}
-      <div className="glass-panel p-6 sm:p-8 rounded-3xl space-y-6 shadow-sm border border-slate-200/80 bg-white/90 print:p-0 print:border-none print:shadow-none print:bg-white print:max-w-[80mm] print:mx-auto">
+      <div id="thermal-receipt" className="glass-panel p-6 sm:p-8 rounded-3xl space-y-6 shadow-sm border border-slate-200/80 bg-white/90 print:p-0 print:border-none print:shadow-none print:bg-white print:max-w-[80mm] print:mx-auto">
         {/* Receipt Header */}
         <div className="border-b border-slate-200 pb-5 text-center sm:text-left print:text-center space-y-1">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between print:flex-col gap-2">

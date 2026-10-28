@@ -80,12 +80,12 @@ export default function UsersPage() {
   if (!isAuthLoading && !isAdmin) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center p-4">
-        <div className="glass-panel max-w-md rounded-3xl p-8 text-center border border-red-500/20">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-500/10 text-red-400">
+        <div className="glass-panel max-w-md rounded-3xl p-8 text-center border border-rose-200 bg-white shadow-xl">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-700 border border-rose-200">
             <ShieldAlert className="h-8 w-8" />
           </div>
-          <h2 className="text-xl font-bold text-white">Akses Ditolak (403)</h2>
-          <p className="mt-2 text-sm text-zinc-400">
+          <h2 className="text-xl font-bold text-slate-900">Akses Ditolak (403)</h2>
+          <p className="mt-2 text-sm text-slate-500">
             Halaman Manajemen Pengguna hanya dapat diakses oleh Administrator sistem.
           </p>
         </div>
@@ -97,14 +97,14 @@ export default function UsersPage() {
     <div className="space-y-6">
       {/* Toast / Notification Banner */}
       {successMessage && (
-        <div className="glass-panel flex items-center justify-between gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-400">
+        <div className="glass-panel flex items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-800">
           <div className="flex items-center gap-3">
-            <CheckCircle2 className="h-5 w-5 shrink-0" />
-            <p className="text-sm font-medium">{successMessage}</p>
+            <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-700" />
+            <p className="text-sm font-semibold">{successMessage}</p>
           </div>
           <button
             onClick={() => setSuccessMessage(null)}
-            className="rounded-lg p-1 hover:bg-emerald-500/20"
+            className="rounded-lg p-1 hover:bg-emerald-100 text-emerald-700"
             aria-label="Tutup notifikasi"
           >
             <X className="h-4 w-4" />
@@ -113,14 +113,14 @@ export default function UsersPage() {
       )}
 
       {errorMessage && (
-        <div className="glass-panel flex items-center justify-between gap-3 rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-red-400">
+        <div className="glass-panel flex items-center justify-between gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-rose-800">
           <div className="flex items-center gap-3">
-            <AlertCircle className="h-5 w-5 shrink-0" />
-            <p className="text-sm font-medium">{errorMessage}</p>
+            <AlertCircle className="h-5 w-5 shrink-0 text-rose-600" />
+            <p className="text-sm font-semibold">{errorMessage}</p>
           </div>
           <button
             onClick={() => setErrorMessage(null)}
-            className="rounded-lg p-1 hover:bg-red-500/20"
+            className="rounded-lg p-1 hover:bg-rose-100 text-rose-700"
             aria-label="Tutup error"
           >
             <X className="h-4 w-4" />
@@ -131,8 +131,8 @@ export default function UsersPage() {
       {/* Header Section */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">Manajemen Pengguna</h1>
-          <p className="text-sm text-zinc-400">
+          <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">Manajemen Pengguna</h1>
+          <p className="text-sm text-slate-500">
             Daftar seluruh akun operator internal dan staf kasir sistem.
           </p>
         </div>
@@ -140,7 +140,7 @@ export default function UsersPage() {
           <button
             onClick={fetchUsers}
             disabled={isLoading}
-            className="glass-button flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-medium text-zinc-300 hover:text-white"
+            className="glass-button flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-semibold text-slate-700 hover:text-slate-900"
             title="Muat ulang data"
           >
             <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -148,7 +148,7 @@ export default function UsersPage() {
           </button>
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="flex h-11 items-center gap-2 rounded-xl bg-emerald-600 px-4 text-sm font-medium text-white shadow-lg shadow-emerald-950/40 hover:bg-emerald-500 transition-colors"
+            className="flex h-11 items-center gap-2 rounded-xl bg-emerald-700 px-4 text-sm font-bold text-white shadow-md hover:bg-emerald-800 transition-colors"
           >
             <UserPlus className="h-4 w-4" />
             <span>+ Tambah Pengguna</span>
@@ -159,24 +159,24 @@ export default function UsersPage() {
       {/* Filter and Search Bar */}
       <div className="glass-panel flex flex-col gap-3 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative flex-1">
-          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari berdasarkan nama atau email..."
-            className="w-full rounded-xl border border-white/10 bg-zinc-900/60 pl-10 pr-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:border-emerald-500/60 focus:outline-none focus:ring-1 focus:ring-emerald-500/60 transition"
+            className="glass-input w-full rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition"
           />
         </div>
         <div className="flex items-center gap-2">
-          <label htmlFor="role-filter" className="text-xs font-medium text-zinc-400 shrink-0">
+          <label htmlFor="role-filter" className="text-xs font-semibold text-slate-600 shrink-0">
             Role:
           </label>
           <select
             id="role-filter"
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value as 'ALL' | 'ADMIN' | 'CASHIER')}
-            className="rounded-xl border border-white/10 bg-zinc-900/80 px-3 py-2 text-sm text-white focus:border-emerald-500/60 focus:outline-none focus:ring-1 focus:ring-emerald-500/60 transition"
+            className="glass-input rounded-xl px-3 py-2 text-sm text-slate-800 bg-white focus:outline-none transition"
           >
             <option value="ALL">Semua Role</option>
             <option value="ADMIN">Administrator</option>
@@ -188,8 +188,8 @@ export default function UsersPage() {
       {/* Staff Data Table */}
       <div className="glass-panel overflow-hidden rounded-2xl">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-zinc-300">
-            <thead className="border-b border-white/5 bg-white/[0.02] text-xs uppercase tracking-wider text-zinc-400 font-semibold">
+          <table className="w-full text-left text-sm text-slate-700">
+            <thead className="border-b border-slate-200/80 bg-slate-50/75 text-xs uppercase tracking-wider text-slate-600 font-semibold">
               <tr>
                 <th scope="col" className="px-6 py-4">
                   Nama Staf
@@ -208,19 +208,19 @@ export default function UsersPage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 font-normal">
+            <tbody className="divide-y divide-slate-100 font-normal">
               {isLoading && users.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-zinc-500">
+                  <td colSpan={5} className="py-12 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <Loader2 className="h-6 w-6 animate-spin text-emerald-500" />
+                      <Loader2 className="h-6 w-6 animate-spin text-emerald-600" />
                       <span>Memuat data pengguna...</span>
                     </div>
                   </td>
                 </tr>
               ) : filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-zinc-500">
+                  <td colSpan={5} className="py-12 text-center text-slate-500">
                     Tidak ada pengguna yang sesuai dengan filter.
                   </td>
                 </tr>
@@ -232,42 +232,42 @@ export default function UsersPage() {
                   return (
                     <tr
                       key={user.id}
-                      className="hover:bg-white/[0.02] transition-colors"
+                      className="hover:bg-slate-50/60 transition-colors"
                     >
                       {/* Name & Avatar */}
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs font-bold text-emerald-400">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100 border border-emerald-200 text-xs font-bold text-emerald-800">
                             {user.name.substring(0, 2).toUpperCase()}
                           </div>
                           <div>
-                            <div className="font-medium text-white flex items-center gap-1.5">
+                            <div className="font-semibold text-slate-900 flex items-center gap-1.5">
                               <span>{user.name}</span>
                               {isSelf && (
-                                <span className="rounded-md bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300">
+                                <span className="rounded-md bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-800">
                                   Anda
                                 </span>
                               )}
                             </div>
-                            <div className="text-xs text-zinc-500">ID: {user.id.substring(0, 8)}...</div>
+                            <div className="text-xs text-slate-400 font-mono">ID: {user.id.substring(0, 8)}...</div>
                           </div>
                         </div>
                       </td>
 
                       {/* Email */}
-                      <td className="whitespace-nowrap px-6 py-4 text-zinc-300">
+                      <td className="whitespace-nowrap px-6 py-4 text-slate-600">
                         {user.email}
                       </td>
 
                       {/* Role Badge */}
                       <td className="whitespace-nowrap px-6 py-4">
                         {user.role === 'ADMIN' ? (
-                          <span className="inline-flex items-center gap-1 rounded-lg border border-blue-500/20 bg-blue-500/10 px-2.5 py-1 text-xs font-semibold text-blue-400">
+                          <span className="inline-flex items-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
                             <ShieldCheck className="h-3.5 w-3.5" />
                             ADMIN
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-400">
+                          <span className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
                             <User className="h-3.5 w-3.5" />
                             KASIR
                           </span>
@@ -277,12 +277,12 @@ export default function UsersPage() {
                       {/* Status Badge */}
                       <td className="whitespace-nowrap px-6 py-4">
                         {isDeactivated ? (
-                          <span className="inline-flex items-center gap-1 rounded-lg border border-zinc-700 bg-zinc-800/80 px-2.5 py-1 text-xs font-semibold text-zinc-400">
+                          <span className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-500">
                             <UserX className="h-3.5 w-3.5" />
                             Nonaktif
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-400">
+                          <span className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
                             <CheckCircle2 className="h-3.5 w-3.5" />
                             Aktif
                           </span>
@@ -295,7 +295,7 @@ export default function UsersPage() {
                           <button
                             onClick={() => setResetTargetUser(user)}
                             disabled={isSelf || isDeactivated}
-                            className="glass-button flex h-9 items-center gap-1.5 rounded-xl px-3 text-xs font-medium text-zinc-300 hover:text-white disabled:opacity-40 disabled:pointer-events-none transition"
+                            className="glass-button flex h-9 items-center gap-1.5 rounded-xl px-3 text-xs font-semibold text-slate-700 hover:text-slate-900 disabled:opacity-40 disabled:pointer-events-none transition"
                             title={
                               isSelf
                                 ? 'Admin tidak dapat mereset kata sandi sendiri'
@@ -311,7 +311,7 @@ export default function UsersPage() {
                           <button
                             onClick={() => setDeactivateTargetUser(user)}
                             disabled={isSelf || isDeactivated}
-                            className="flex h-9 items-center gap-1.5 rounded-xl border border-red-500/20 bg-red-500/10 px-3 text-xs font-medium text-red-400 hover:bg-red-500/20 disabled:opacity-40 disabled:pointer-events-none transition"
+                            className="flex h-9 items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3 text-xs font-semibold text-rose-700 hover:bg-rose-100 disabled:opacity-40 disabled:pointer-events-none transition"
                             title={
                               isSelf
                                 ? 'Admin tidak dapat menonaktifkan akun sendiri'
@@ -334,7 +334,7 @@ export default function UsersPage() {
         </div>
 
         {/* Footer info */}
-        <div className="border-t border-white/5 bg-white/[0.01] px-6 py-3 text-xs text-zinc-500">
+        <div className="border-t border-slate-200/80 bg-slate-50/50 px-6 py-3 text-xs text-slate-600">
           Menampilkan {filteredUsers.length} dari {users.length} total pengguna sistem
         </div>
       </div>
@@ -441,21 +441,22 @@ function CreateUserModal({ onClose, onSuccess }: CreateUserModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/10">
-        <div className="flex items-center justify-between pb-4 border-b border-white/5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="glass-panel relative w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-2xl animate-in fade-in duration-200">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-800 border border-emerald-200">
               <UserPlus className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Tambah Pengguna Baru</h2>
-              <p className="text-xs text-zinc-400">Daftarkan operator atau kasir internal sistem</p>
+              <h2 className="text-lg font-bold text-slate-900">Tambah Pengguna Baru</h2>
+              <p className="text-xs text-slate-500">Daftarkan operator atau kasir internal sistem</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded-xl p-2 text-zinc-400 hover:bg-white/5 hover:text-white transition"
+            className="rounded-xl p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
             aria-label="Tutup modal"
           >
             <X className="h-5 w-5" />
@@ -463,7 +464,7 @@ function CreateUserModal({ onClose, onSuccess }: CreateUserModalProps) {
         </div>
 
         {error && (
-          <div className="mt-4 flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-400">
+          <div className="mt-4 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -471,7 +472,7 @@ function CreateUserModal({ onClose, onSuccess }: CreateUserModalProps) {
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
               Nama Lengkap
             </label>
             <input
@@ -481,12 +482,12 @@ function CreateUserModal({ onClose, onSuccess }: CreateUserModalProps) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Budi Santoso"
-              className="w-full h-11 rounded-xl border border-white/10 bg-zinc-900/70 px-4 text-sm text-white placeholder-zinc-500 focus:border-emerald-500/60 focus:outline-none focus:ring-1 focus:ring-emerald-500/60 transition"
+              className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
               Alamat Email
             </label>
             <input
@@ -495,12 +496,12 @@ function CreateUserModal({ onClose, onSuccess }: CreateUserModalProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="budi@titipin.id"
-              className="w-full h-11 rounded-xl border border-white/10 bg-zinc-900/70 px-4 text-sm text-white placeholder-zinc-500 focus:border-emerald-500/60 focus:outline-none focus:ring-1 focus:ring-emerald-500/60 transition"
+              className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
               Kata Sandi Awal (Min. 8 Karakter)
             </label>
             <div className="relative">
@@ -511,12 +512,12 @@ function CreateUserModal({ onClose, onSuccess }: CreateUserModalProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full h-11 rounded-xl border border-white/10 bg-zinc-900/70 pl-4 pr-11 text-sm text-white placeholder-zinc-500 focus:border-emerald-500/60 focus:outline-none focus:ring-1 focus:ring-emerald-500/60 transition"
+                className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 pl-4 pr-11 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700"
                 aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -525,32 +526,32 @@ function CreateUserModal({ onClose, onSuccess }: CreateUserModalProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
               Pilihan Role
             </label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value as Role)}
-              className="w-full h-11 rounded-xl border border-white/10 bg-zinc-900/70 px-3 text-sm text-white focus:border-emerald-500/60 focus:outline-none focus:ring-1 focus:ring-emerald-500/60 transition"
+              className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition"
             >
               <option value="CASHIER">Kasir (Operasional POS & Transaksi)</option>
               <option value="ADMIN">Administrator (Akses Penuh Sistem)</option>
             </select>
           </div>
 
-          <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-white/5">
+          <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
             <button
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="glass-button h-11 rounded-xl px-5 text-sm font-medium text-zinc-300 hover:text-white"
+              className="glass-button h-11 rounded-xl px-5 text-sm font-semibold text-slate-700 hover:text-slate-900"
             >
               Batal
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="flex h-11 items-center gap-2 rounded-xl bg-emerald-600 px-6 text-sm font-medium text-white shadow-lg shadow-emerald-950/40 hover:bg-emerald-500 disabled:opacity-50 transition"
+              className="flex h-11 items-center gap-2 rounded-xl bg-emerald-600 px-6 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50 transition"
             >
               {isLoading ? (
                 <>
@@ -615,23 +616,24 @@ function ResetPasswordModal({ user, onClose, onSuccess }: ResetPasswordModalProp
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/10">
-        <div className="flex items-center justify-between pb-4 border-b border-white/5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="glass-panel relative w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-2xl animate-in fade-in duration-200">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-400 border border-blue-500/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-100 text-blue-800 border border-blue-200">
               <KeyRound className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Reset Kata Sandi Staf</h2>
-              <p className="text-xs text-zinc-400">
+              <h2 className="text-lg font-bold text-slate-900">Reset Kata Sandi Staf</h2>
+              <p className="text-xs text-slate-500">
                 Perbarui kata sandi untuk {user.name} ({user.email})
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded-xl p-2 text-zinc-400 hover:bg-white/5 hover:text-white transition"
+            className="rounded-xl p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
             aria-label="Tutup modal"
           >
             <X className="h-5 w-5" />
@@ -639,18 +641,18 @@ function ResetPasswordModal({ user, onClose, onSuccess }: ResetPasswordModalProp
         </div>
 
         {/* Info Box: Instant Session Revocation Warning */}
-        <div className="mt-4 flex items-start gap-3 rounded-2xl border border-blue-500/20 bg-blue-500/5 p-3.5 text-xs text-blue-300">
-          <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-blue-400" />
+        <div className="mt-4 flex items-start gap-3 rounded-2xl border border-blue-200 bg-blue-50/70 p-3.5 text-xs text-blue-800">
+          <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-blue-600" />
           <div>
-            <p className="font-semibold text-blue-200">Instant Session Revocation</p>
-            <p className="mt-0.5 text-blue-300/90 leading-relaxed">
+            <p className="font-semibold text-blue-900">Instant Session Revocation</p>
+            <p className="mt-0.5 text-blue-800 leading-relaxed">
               Setelah kata sandi direset, seluruh sesi login aktif staf ini di terminal atau perangkat lain akan dicabut seketika. Staf wajib login kembali dengan kata sandi baru.
             </p>
           </div>
         </div>
 
         {error && (
-          <div className="mt-4 flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-400">
+          <div className="mt-4 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -658,7 +660,7 @@ function ResetPasswordModal({ user, onClose, onSuccess }: ResetPasswordModalProp
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
               Kata Sandi Baru (Min. 8 Karakter)
             </label>
             <div className="relative">
@@ -669,12 +671,12 @@ function ResetPasswordModal({ user, onClose, onSuccess }: ResetPasswordModalProp
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Kata sandi baru min. 8 karakter"
-                className="w-full h-11 rounded-xl border border-white/10 bg-zinc-900/70 pl-4 pr-11 text-sm text-white placeholder-zinc-500 focus:border-blue-500/60 focus:outline-none focus:ring-1 focus:ring-blue-500/60 transition"
+                className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 pl-4 pr-11 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700"
                 aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -683,7 +685,7 @@ function ResetPasswordModal({ user, onClose, onSuccess }: ResetPasswordModalProp
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
               Konfirmasi Kata Sandi Baru
             </label>
             <input
@@ -693,23 +695,23 @@ function ResetPasswordModal({ user, onClose, onSuccess }: ResetPasswordModalProp
               value={confirmation}
               onChange={(e) => setConfirmation(e.target.value)}
               placeholder="Ulangi kata sandi baru"
-              className="w-full h-11 rounded-xl border border-white/10 bg-zinc-900/70 px-4 text-sm text-white placeholder-zinc-500 focus:border-blue-500/60 focus:outline-none focus:ring-1 focus:ring-blue-500/60 transition"
+              className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
             />
           </div>
 
-          <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-white/5">
+          <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
             <button
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="glass-button h-11 rounded-xl px-5 text-sm font-medium text-zinc-300 hover:text-white"
+              className="glass-button h-11 rounded-xl px-5 text-sm font-semibold text-slate-700 hover:text-slate-900"
             >
               Batal
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="flex h-11 items-center gap-2 rounded-xl bg-blue-600 px-6 text-sm font-medium text-white shadow-lg shadow-blue-950/40 hover:bg-blue-500 disabled:opacity-50 transition"
+              className="flex h-11 items-center gap-2 rounded-xl bg-blue-600 px-6 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50 transition"
             >
               {isLoading ? (
                 <>
@@ -756,40 +758,41 @@ function DeactivateUserDialog({ user, onClose, onSuccess }: DeactivateUserDialog
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="glass-panel w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl border border-red-500/20">
-        <div className="flex items-center gap-3.5 pb-4 border-b border-white/5">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-500/10 text-red-400 border border-red-500/20">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="glass-panel relative w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-2xl animate-in fade-in duration-200">
+        <div className="flex items-center gap-3.5 pb-4 border-b border-slate-100">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rose-100 text-rose-800 border border-rose-200">
             <AlertTriangle className="h-6 w-6" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white">Nonaktifkan Akun Staf</h2>
-            <p className="text-xs text-zinc-400">Konfirmasi tindakan destruktif</p>
+            <h2 className="text-lg font-bold text-slate-900">Nonaktifkan Akun Staf</h2>
+            <p className="text-xs text-slate-500">Konfirmasi tindakan destruktif</p>
           </div>
         </div>
 
         {error && (
-          <div className="mt-4 flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-400">
+          <div className="mt-4 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         <div className="mt-4 space-y-3">
-          <p className="text-sm text-zinc-300 leading-relaxed">
-            Yakin ingin menonaktifkan akun staf <span className="font-semibold text-white">{user.name}</span> (<span className="text-zinc-400">{user.email}</span>)?
+          <p className="text-sm text-slate-700 leading-relaxed">
+            Yakin ingin menonaktifkan akun staf <span className="font-semibold text-slate-900">{user.name}</span> (<span className="text-slate-500">{user.email}</span>)?
           </p>
-          <div className="rounded-2xl bg-red-500/5 border border-red-500/10 p-3 text-xs text-red-300/90 leading-relaxed">
+          <div className="rounded-2xl bg-rose-50 border border-rose-200 p-3 text-xs text-rose-800 leading-relaxed">
             Pengguna akan langsung dikeluarkan dari sistem dan tidak dapat login kembali. Seluruh histori penjualan yang pernah dibuatnya tetap tersimpan utuh di database.
           </div>
         </div>
 
-        <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-white/5">
+        <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
           <button
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="glass-button h-11 rounded-xl px-5 text-sm font-medium text-zinc-300 hover:text-white"
+            className="glass-button h-11 rounded-xl px-5 text-sm font-semibold text-slate-700 hover:text-slate-900"
           >
             Batal
           </button>
@@ -797,7 +800,7 @@ function DeactivateUserDialog({ user, onClose, onSuccess }: DeactivateUserDialog
             type="button"
             onClick={handleDeactivate}
             disabled={isLoading}
-            className="flex h-11 items-center gap-2 rounded-xl bg-red-600 px-6 text-sm font-medium text-white shadow-lg shadow-red-950/40 hover:bg-red-500 disabled:opacity-50 transition"
+            className="flex h-11 items-center gap-2 rounded-xl bg-rose-600 px-6 text-sm font-semibold text-white shadow-sm hover:bg-rose-700 disabled:opacity-50 transition"
           >
             {isLoading ? (
               <>

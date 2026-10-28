@@ -104,31 +104,31 @@ async function seed() {
 
     // 3. Seed Catalog Products (25 varied items, including low stock < 5)
     const productCatalog = [
-      { productCode: 'P0001', productName: 'Kopi Susu Gula Aren', stock: 50, price: '18000.00' },
-      { productCode: 'P0002', productName: 'Teh Tarik Klasik', stock: 40, price: '12000.00' },
-      { productCode: 'P0003', productName: 'Roti Bakar Coklat Keju', stock: 25, price: '20000.00' },
-      { productCode: 'P0004', productName: 'Keripik Singkong Balado', stock: 3, price: '15000.00' }, // Low stock (<5)
-      { productCode: 'P0005', productName: 'Air Mineral 600ml', stock: 100, price: '5000.00' },
-      { productCode: 'P0006', productName: 'Matcha Latte Premium', stock: 2, price: '24000.00' }, // Low stock (<5)
-      { productCode: 'P0007', productName: 'Americano Dingin', stock: 60, price: '16000.00' },
-      { productCode: 'P0008', productName: 'Es Coklat Belgia', stock: 35, price: '22000.00' },
-      { productCode: 'P0009', productName: 'Donat Kampung Gula Halus', stock: 30, price: '8000.00' },
-      { productCode: 'P0010', productName: 'Croissant Butter Artisan', stock: 15, price: '25000.00' },
-      { productCode: 'P0011', productName: 'Pisang Goreng Crispy', stock: 4, price: '14000.00' }, // Low stock (<5)
-      { productCode: 'P0012', productName: 'Kentang Goreng Truffle', stock: 20, price: '28000.00' },
-      { productCode: 'P0013', productName: 'Singkong Goreng Keju', stock: 18, price: '16000.00' },
-      { productCode: 'P0014', productName: 'Nasi Goreng Spesial Titipin', stock: 45, price: '32000.00' },
-      { productCode: 'P0015', productName: 'Mie Goreng Aceh Rempah', stock: 30, price: '30000.00' },
-      { productCode: 'P0016', productName: 'Ayam Geprek Sambal Matah', stock: 40, price: '26000.00' },
-      { productCode: 'P0017', productName: 'Bakmie Ayam Jamur', stock: 25, price: '27000.00' },
-      { productCode: 'P0018', productName: 'Tumbler Stainless Titipin', stock: 1, price: '85000.00' }, // Low stock (<5)
-      { productCode: 'P0019', productName: 'Tote Bag Kanvas Titipin', stock: 12, price: '45000.00' },
-      { productCode: 'P0020', productName: 'Biji Kopi Arabika 250g', stock: 10, price: '75000.00' },
-      { productCode: 'P0021', productName: 'Kaos Polos Titipin Hitam (L)', stock: 8, price: '95000.00' },
-      { productCode: 'P0022', productName: 'Brownies Fudgy Panggang', stock: 16, price: '35000.00' },
-      { productCode: 'P0023', productName: 'Dimsum Ayam Udang (4 pcs)', stock: 22, price: '20000.00' },
-      { productCode: 'P0024', productName: 'Jus Jeruk Murni Peras', stock: 28, price: '15000.00' },
-      { productCode: 'P0025', productName: 'Earl Grey Milk Tea', stock: 32, price: '21000.00' },
+      { productCode: 'P0001', productName: 'Aqua Air Mineral 600ml', stock: 120, price: '3500.00' },
+      { productCode: 'P0002', productName: 'Indomie Goreng Spesial 85g', stock: 150, price: '3500.00' },
+      { productCode: 'P0003', productName: 'Teh Botol Sosro Kotak 250ml', stock: 80, price: '4000.00' },
+      { productCode: 'P0004', productName: 'Chitato Sapi Panggang 68g', stock: 3, price: '11500.00' }, // Low stock (<5)
+      { productCode: 'P0005', productName: 'Ultra Milk Cokelat 250ml', stock: 90, price: '6500.00' },
+      { productCode: 'P0006', productName: 'SilverQueen Chunky Bar Cashew 95g', stock: 2, price: '26500.00' }, // Low stock (<5)
+      { productCode: 'P0007', productName: 'Pocari Sweat Kaleng 330ml', stock: 65, price: '8000.00' },
+      { productCode: 'P0008', productName: 'Oreo Vanilla Sandwich Cookies 133g', stock: 45, price: '10000.00' },
+      { productCode: 'P0009', productName: 'Pocky Chocolate Stick 47g', stock: 35, price: '9500.00' },
+      { productCode: 'P0010', productName: 'Bear Brand Susu Steril 189ml', stock: 75, price: '10500.00' },
+      { productCode: 'P0011', productName: 'Kusuka Keripik Singkong Balado 60g', stock: 4, price: '8000.00' }, // Low stock (<5)
+      { productCode: 'P0012', productName: 'Sari Roti Sobek Cokelat', stock: 25, price: '18000.00' },
+      { productCode: 'P0013', productName: 'Roma Kelapa Biskuit 300g', stock: 30, price: '12000.00' },
+      { productCode: 'P0014', productName: 'Nescafe Latte Kaleng 220ml', stock: 50, price: '11000.00' },
+      { productCode: 'P0015', productName: 'Kopi Kapal Api Special Mix 24g', stock: 100, price: '2000.00' },
+      { productCode: 'P0016', productName: 'Beng-Beng Wafer Coklat 25g', stock: 120, price: '2500.00' },
+      { productCode: 'P0017', productName: 'Chiki Twist Jagung Bakar 40g', stock: 40, price: '4500.00' },
+      { productCode: 'P0018', productName: 'Minyak Goreng Bimoli Pouch 2L', stock: 1, price: '39000.00' }, // Low stock (<5)
+      { productCode: 'P0019', productName: 'Gulaku Tebu Murni Kuning 1kg', stock: 35, price: '17500.00' },
+      { productCode: 'P0020', productName: 'Bango Kecap Manis Refill 520ml', stock: 28, price: '24500.00' },
+      { productCode: 'P0021', productName: 'Cadbury Dairy Milk Chocolate 62g', stock: 20, price: '16500.00' },
+      { productCode: 'P0022', productName: 'Khong Guan Classic Red Mini 650g', stock: 12, price: '56000.00' },
+      { productCode: 'P0023', productName: 'Taro Net Seaweed 65g', stock: 30, price: '6000.00' },
+      { productCode: 'P0024', productName: 'Buavita Jeruk Botol 245ml', stock: 32, price: '8500.00' },
+      { productCode: 'P0025', productName: 'Kratingdaeng Energy Drink 150ml', stock: 40, price: '7000.00' },
     ];
 
     const seededProducts: (typeof schema.products.$inferSelect)[] = [];
@@ -154,7 +154,17 @@ async function seed() {
           });
         }
       } else {
-        seededProducts.push(existing[0]);
+        const [updated] = await database
+          .update(schema.products)
+          .set({
+            productName: prod.productName,
+            price: prod.price,
+            stock: prod.stock,
+            updatedAt: new Date(),
+          })
+          .where(eq(schema.products.id, existing[0].id))
+          .returning();
+        seededProducts.push(updated);
       }
     }
     console.log(`✅ Verified/Seeded ${seededProducts.length} catalog products.`);
@@ -195,7 +205,7 @@ async function seed() {
         phone: '081799887766',
         customerAddress: 'Jl. Surya Kencana No. 5 Bogor',
         gender: 'Pria' as const,
-        birthDate: '2000-08-17',
+        birthDate: null, // Nullable birth date example
       },
       {
         customerName: 'Maya Indah Sari',
@@ -230,7 +240,7 @@ async function seed() {
         phone: '082366778899',
         customerAddress: 'Jl. Gajah Mada No. 34 Denpasar',
         gender: 'Wanita' as const,
-        birthDate: '1991-08-11',
+        birthDate: null, // Nullable birth date example
       },
       {
         customerName: 'Fajar Alfian',
