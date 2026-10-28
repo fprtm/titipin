@@ -169,14 +169,6 @@ export function TopNavbar({ onToggleSidebar, initialHeldDraft = null }: TopNavba
               Titipin POS
             </span>
           </div>
-
-          {/* Terminal Status Pill */}
-          <div className="hidden items-center gap-1.5 sm:flex">
-            <Badge variant="success" className="gap-1.5 py-1">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-              <span>Terminal 01 • Aktif</span>
-            </Badge>
-          </div>
         </div>
 
         {/* Center / Right Quick Pill: Held Orders (Dynamic) */}
