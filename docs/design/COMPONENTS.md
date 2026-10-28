@@ -199,3 +199,17 @@ Visualisasi multi-axis pada modul `/analytics` untuk memetakan dinamika pendapat
 
 * **Container:** `glass-panel p-6 rounded-3xl`.
 * **Karakteristik:** Dual independent Y-axes (Kiri: Omset format Rupiah kompak, Kanan: Integer kuantitas transaksi), CartesianGrid dashed lembut, dan tooltip kaca mengambang.
+
+---
+
+### 1.15 `InfoTooltip` (`components/ui/info-tooltip.tsx`)
+Komponen ikon informasi interaktif dengan popover kaca mengambang untuk transparansi metodologi kalkulasi data.
+
+* **Trigger:** Tombol ikon `Info` Lucide (`h-3.5 w-3.5 text-slate-400 hover:text-emerald-700`).
+* **Popover Panel:** `glass-panel rounded-xl p-3.5 border border-slate-200/90 bg-white/95 shadow-xl backdrop-blur-md z-50 text-left w-72 sm:w-80`.
+* **Elemen:**
+  - Judul metrik.
+  - Sumber Data (Ikon `Database` + tabel/kolom database).
+  - Metode Hitung / Kalkulasi (Ikon `Calculator` + rumus SQL/agregasi).
+  - Wawasan Bisnis (Ikon `HelpCircle` + penjelasan dampak operasional).
+* **Interaktivitas:** Mendukung hover desktop dan tap/click perangkat sentuh, menutup saat klik di luar atau tombol `Esc`.

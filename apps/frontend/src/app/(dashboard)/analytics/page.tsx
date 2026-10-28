@@ -32,6 +32,7 @@ import {
 import { apiClient } from '../../../lib/api-client';
 import { formatCurrency } from '../../../lib/utils';
 import { Badge } from '../../../components/ui/badge';
+import { InfoTooltip } from '../../../components/ui/info-tooltip';
 import { useAuth } from '../../../hooks/use-auth';
 import type {
   DashboardPeriod,
@@ -238,11 +239,20 @@ export default function AnalyticsPage() {
           {/* Section 1: KPI Summary Glass Cards */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {/* Total Revenue */}
-            <div className="glass-panel relative overflow-hidden rounded-2xl border border-emerald-100/80 bg-white/80 p-5 shadow-sm transition hover:shadow-md">
+            <div className="glass-panel relative overflow-visible rounded-2xl border border-emerald-100/80 bg-white/80 p-5 shadow-sm transition hover:shadow-md">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Total Omset
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    Total Omset
+                  </span>
+                  <InfoTooltip
+                    title="Total Omset Penjualan"
+                    source="PostgreSQL orders.total_amount"
+                    formula="SUM(total_amount) WHERE deleted_at IS NULL"
+                    description="Akumulasi seluruh nilai belanja dari transaksi berstatus final (COMPLETED) pada periode terpilih. Tidak memperhitungkan draft (held order)."
+                    align="left"
+                  />
+                </div>
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
                   <TrendingUp className="h-5 w-5" />
                 </div>
@@ -259,11 +269,20 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Total Transactions & AOV */}
-            <div className="glass-panel relative overflow-hidden rounded-2xl border border-blue-100/80 bg-white/80 p-5 shadow-sm transition hover:shadow-md">
+            <div className="glass-panel relative overflow-visible rounded-2xl border border-blue-100/80 bg-white/80 p-5 shadow-sm transition hover:shadow-md">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Volume &amp; AOV
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    Volume &amp; AOV
+                  </span>
+                  <InfoTooltip
+                    title="Volume Transaksi & Rata-rata Keranjang (AOV)"
+                    source="PostgreSQL orders.id & total_amount"
+                    formula="COUNT(orders.id) & SUM(total_amount) / COUNT(orders.id)"
+                    description="Volume mengukur total nota yang berhasil diproses kasir. Average Order Value (AOV) mengukur rata-rata rupiah yang dibelanjakan pelanggan per kunjungan toko."
+                    align="left"
+                  />
+                </div>
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
                   <ShoppingBag className="h-5 w-5" />
                 </div>
@@ -281,11 +300,20 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Peak Hour */}
-            <div className="glass-panel relative overflow-hidden rounded-2xl border border-amber-100/80 bg-white/80 p-5 shadow-sm transition hover:shadow-md">
+            <div className="glass-panel relative overflow-visible rounded-2xl border border-amber-100/80 bg-white/80 p-5 shadow-sm transition hover:shadow-md">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Jam Paling Sibuk
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    Jam Paling Sibuk
+                  </span>
+                  <InfoTooltip
+                    title="Waktu Puncak Transaksi (Peak Hour)"
+                    source="PostgreSQL orders.order_date"
+                    formula="MAX(COUNT(*)) GROUP BY EXTRACT(HOUR FROM order_date)"
+                    description="Mengidentifikasi jam operasional dengan kepadatan antrean kasir tertinggi. Bermanfaat untuk menyusun jadwal shift kasir dan pembukaan kasir tambahan."
+                    align="right"
+                  />
+                </div>
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
                   <Clock className="h-5 w-5" />
                 </div>
@@ -300,11 +328,20 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Member Revenue Share */}
-            <div className="glass-panel relative overflow-hidden rounded-2xl border border-indigo-100/80 bg-white/80 p-5 shadow-sm transition hover:shadow-md">
+            <div className="glass-panel relative overflow-visible rounded-2xl border border-indigo-100/80 bg-white/80 p-5 shadow-sm transition hover:shadow-md">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Pangsa Member
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    Pangsa Member
+                  </span>
+                  <InfoTooltip
+                    title="Pangsa Kontribusi Omset Member"
+                    source="PostgreSQL orders.customer_id & total_amount"
+                    formula="(SUM(total_amount WHERE customer_id IS NOT NULL) / Total Omset) * 100%"
+                    description="Menghitung porsi rupiah belanja yang disumbangkan oleh pelanggan terdaftar dibandingkan pelanggan umum (walk-in) untuk mengukur efektivitas program loyalitas."
+                    align="right"
+                  />
+                </div>
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-100 text-indigo-700">
                   <Users className="h-5 w-5" />
                 </div>
@@ -323,12 +360,21 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Section 2: Visualisasi Tren Penjualan (Multi-Axis Dual Chart) */}
-          <div className="glass-panel rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm">
+          <div className="glass-panel relative overflow-visible rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm">
             <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">
-                  Dinamika Tren Omset vs Volume Transaksi
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-slate-900">
+                    Dinamika Tren Omset vs Volume Transaksi
+                  </h3>
+                  <InfoTooltip
+                    title="Grafik Multi-Axis Tren Penjualan"
+                    source="PostgreSQL orders.total_amount & order_date"
+                    formula="Sumbu Kiri (Area Hijau): Omset (Rp); Sumbu Kanan (Garis Oranye): Frekuensi Transaksi"
+                    description="Menampilkan korelasi antara nominal omset dan volume transaksi per titik waktu. Membantu mendeteksi apakah pertumbuhan omset didorong oleh kenaikan jumlah pembeli atau peningkatan nilai belanja per struk."
+                    align="left"
+                  />
+                </div>
                 <p className="text-xs text-slate-500">
                   Visualisasi berkesinambungan antara nominal omset harian/bulanan (area hijau) dan frekuensi transaksi kasir (garis oranye).
                 </p>
@@ -417,12 +463,21 @@ export default function AnalyticsPage() {
           {/* Section 3: Peak Traffic & Day of Week Grid */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* 24-Hour Traffic Intensity */}
-            <div className="glass-panel rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm">
+            <div className="glass-panel relative overflow-visible rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">
-                    Intensitas Jam Belanja (24 Jam)
-                  </h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base font-bold text-slate-900">
+                      Intensitas Jam Belanja (24 Jam)
+                    </h3>
+                    <InfoTooltip
+                      title="Distribusi Trafik Transaksi 24 Jam"
+                      source="PostgreSQL orders.order_date"
+                      formula="COUNT(*) & SUM(total_amount) GROUP BY EXTRACT(HOUR FROM order_date)"
+                      description="Mengelompokkan transaksi sepanjang 24 jam sehari (00:00 - 23:00) untuk memetakan lonjakan jam sibuk (peak hours), jam makan siang, dan jam pulang kantor untuk penjadwalan staf kasir."
+                      align="left"
+                    />
+                  </div>
                   <p className="text-xs text-slate-500">
                     Distribusi transaksi untuk mengoptimalkan jadwal kasir dan persiapan stok.
                   </p>
@@ -475,12 +530,21 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Day of Week Traffic */}
-            <div className="glass-panel rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm">
+            <div className="glass-panel relative overflow-visible rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">
-                    Pola Belanja Hari dalam Seminggu
-                  </h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base font-bold text-slate-900">
+                      Pola Belanja Hari dalam Seminggu
+                    </h3>
+                    <InfoTooltip
+                      title="Pola Belanja Hari dalam Seminggu"
+                      source="PostgreSQL orders.order_date"
+                      formula="Agregasi per hari: EXTRACT(DOW FROM order_date)"
+                      description="Menganalisis hari-hari dengan omset dan nilai keranjang (AOV) tertinggi guna menentukan waktu promo mingguan dan persiapan restock barang."
+                      align="right"
+                    />
+                  </div>
                   <p className="text-xs text-slate-500">
                     Performa transaksi dan rata-rata belanja (AOV) dari Minggu hingga Sabtu.
                   </p>
@@ -533,16 +597,25 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Section 4: Market Basket Intelligence & Rekomendasi Bundling */}
-          <div className="glass-panel rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm">
+          <div className="glass-panel relative overflow-visible rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm">
             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 uppercase tracking-wider">
                   <Layers className="h-4 w-4" />
                   <span>Market Basket Analysis (Cross-Selling)</span>
                 </div>
-                <h3 className="text-lg font-bold text-slate-900">
-                  Rekomendasi Paket Bundling Hemat
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-slate-900">
+                    Rekomendasi Paket Bundling Hemat
+                  </h3>
+                  <InfoTooltip
+                    title="Market Basket Analysis (Cross-Selling)"
+                    source="PostgreSQL order_items (order_id, product_id)"
+                    formula="Self-join order_items WHERE A.product_id < B.product_id HAVING COUNT(*) >= 2"
+                    description="Algoritma afinitas frekuensi kemunculan bersama (co-occurrence) dua produk dalam satu invoice. Merekomendasikan paket kombo hemat diskon 5%-10% untuk menaikkan nilai rata-rata belanja pelanggan (basket size)."
+                    align="left"
+                  />
+                </div>
                 <p className="text-xs text-slate-500">
                   Pasangan produk yang paling sering dibeli bersamaan oleh pelanggan dalam 1 struk. Buat promo kombo bundling untuk menaikkan nilai keranjang belanja.
                 </p>
@@ -604,12 +677,21 @@ export default function AnalyticsPage() {
           {/* Section 5: Customer Loyalty & Segmentation */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Member vs Walk-in Cards */}
-            <div className="glass-panel col-span-1 rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm lg:col-span-2">
+            <div className="glass-panel relative overflow-visible col-span-1 rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm lg:col-span-2">
               <div className="mb-4 flex items-center justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">
-                    Segmentasi: Pelanggan Terdaftar (Member) vs Umum
-                  </h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base font-bold text-slate-900">
+                      Segmentasi: Pelanggan Terdaftar (Member) vs Umum
+                    </h3>
+                    <InfoTooltip
+                      title="Segmentasi Pembeli (Member vs Walk-in)"
+                      source="PostgreSQL orders.customer_id & customers"
+                      formula="Group by (customer_id IS NOT NULL) -> Member vs Walk-in"
+                      description="Mengukur perbandingan kontribusi omset dan kebiasaan belanja antara pelanggan terdaftar (member) dan pembeli umum (walk-in) untuk mengukur efektivitas program loyalitas toko."
+                      align="left"
+                    />
+                  </div>
                   <p className="text-xs text-slate-500">
                     Perbandingan daya beli antara member terdaftar dan pelanggan non-member.
                   </p>
@@ -698,7 +780,7 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Birthday Promo Card */}
-            <div className="glass-panel col-span-1 flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm">
+            <div className="glass-panel relative overflow-visible col-span-1 flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm">
               <div>
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-100 text-rose-600">
@@ -708,9 +790,18 @@ export default function AnalyticsPage() {
                     Privilege 5%
                   </Badge>
                 </div>
-                <h3 className="text-base font-bold text-slate-900">
-                  Diskon Ulang Tahun Member
-                </h3>
+                <div className="flex items-center gap-1.5">
+                  <h3 className="text-base font-bold text-slate-900">
+                    Diskon Ulang Tahun Member
+                  </h3>
+                  <InfoTooltip
+                    title="Program Diskon Hari Ulang Tahun Member"
+                    source="PostgreSQL customers.birth_date & orders"
+                    formula="Diskon 5% otomatis (maks. Rp 50.000) pada hari ulang tahun member"
+                    description="Mencatat akumulasi diskon khusus ulang tahun yang dinikmati pelanggan terdaftar, mendorong retensi dan keterikatan emosional pelanggan."
+                    align="right"
+                  />
+                </div>
                 <p className="mt-1 text-xs text-slate-500">
                   Pelanggan yang bertransaksi tepat pada hari ulang tahunnya berhak menerima diskon 5% otomatis.
                 </p>
@@ -738,16 +829,25 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Section 6: Actionable Business Insights */}
-          <div className="glass-panel rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm">
+          <div className="glass-panel relative overflow-visible rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 uppercase tracking-wider">
                   <Lightbulb className="h-4 w-4" />
                   <span>Smart Recommendations</span>
                 </div>
-                <h3 className="text-lg font-bold text-slate-900">
-                  Rekomendasi Bisnis &amp; Tindakan Strategis
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-slate-900">
+                    Rekomendasi Bisnis &amp; Tindakan Strategis
+                  </h3>
+                  <InfoTooltip
+                    title="Sistem Rekomendasi Keputusan Toko"
+                    source="Kompilasi analitik transaksi, jam sibuk, perputaran produk, dan afinitas keranjang"
+                    formula="Analisis heuristik data-driven berprioritas dampak omset"
+                    description="Menyajikan daftar aksi taktis yang dapat langsung diterapkan oleh tim toko untuk mendongkrak penjualan dan mengoptimalkan persediaan stok."
+                    align="left"
+                  />
+                </div>
                 <p className="text-xs text-slate-500">
                   Wawasan cerdas yang dihasilkan dari analisis data transaksi toko untuk memaksimalkan omset dan efisiensi operasional.
                 </p>
