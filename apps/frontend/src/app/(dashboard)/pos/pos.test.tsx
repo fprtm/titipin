@@ -322,4 +322,29 @@ describe('PosPage Component', () => {
 
     expect(screen.getByText(/Cetak Struk \(80mm\)/)).toBeDefined();
   });
+
+  it('filters product catalog with debounce when typing in search input', async () => {
+    render(<PosPage />);
+
+    expect(await screen.findByText('Kopi Susu Gula Aren')).toBeDefined();
+    expect(screen.getByText('Roti Bakar Cokelat')).toBeDefined();
+
+    const searchInput = screen.getByPlaceholderText(/Cari nama produk atau kode barang/i);
+    fireEvent.change(searchInput, { target: { value: 'Roti' } });
+
+    // After debounce interval, only Roti Bakar Cokelat is visible
+    await waitFor(() => {
+      expect(screen.queryByText('Kopi Susu Gula Aren')).toBeNull();
+      expect(screen.getByText('Roti Bakar Cokelat')).toBeDefined();
+    });
+
+    // Clear search
+    const clearBtn = screen.getByLabelText('Hapus pencarian');
+    fireEvent.click(clearBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText('Kopi Susu Gula Aren')).toBeDefined();
+      expect(screen.getByText('Roti Bakar Cokelat')).toBeDefined();
+    });
+  });
 });

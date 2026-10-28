@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import {
   eq,
   and,
+  or,
   sql,
   desc,
   asc,
@@ -174,12 +175,22 @@ export class OrdersRepository {
       const toDate = query.to.includes('T') ? new Date(query.to) : new Date(`${query.to}T23:59:59.999Z`);
       conditions.push(lte(schema.orders.orderDate, toDate));
     }
+    if (query.search?.trim()) {
+      const searchTerm = `%${query.search.trim()}%`;
+      conditions.push(
+        or(
+          ilike(schema.orders.orderNumber, searchTerm),
+          ilike(schema.customers.customerName, searchTerm),
+        )!,
+      );
+    }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
     const [countResult] = await this.getClient(tx)
       .select({ count: count() })
       .from(schema.orders)
+      .leftJoin(schema.customers, eq(schema.orders.customerId, schema.customers.id))
       .where(whereClause);
     const total = countResult?.count ? Number(countResult.count) : 0;
 
@@ -375,8 +386,14 @@ export class OrdersRepository {
       const toDate = query.to.includes('T') ? new Date(query.to) : new Date(`${query.to}T23:59:59.999Z`);
       conditions.push(lte(schema.orders.orderDate, toDate));
     }
-    if (query.search) {
-      conditions.push(ilike(schema.orders.orderNumber, `%${query.search}%`));
+    if (query.search?.trim()) {
+      const searchTerm = `%${query.search.trim()}%`;
+      conditions.push(
+        or(
+          ilike(schema.orders.orderNumber, searchTerm),
+          ilike(schema.customers.customerName, searchTerm),
+        )!,
+      );
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
