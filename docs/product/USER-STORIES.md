@@ -19,6 +19,8 @@
 * **EPIC-05: Riwayat, Audit Detail Transaksi & Audit Trail**
 * **EPIC-06: Dashboard Analitik & Monitoring**
 * **EPIC-07: Manajemen Pengguna Internal (User Management)**
+* **EPIC-08: Analitik Penjualan & Business Intelligence Lanjutan**
+* **EPIC-09: Ergonomi Kasir & Observabilitas Produksi**
 
 ---
 
@@ -433,3 +435,67 @@
 * **Kasus Pengecualian:**
   - Email sudah digunakan oleh akun lain: Server menolak dengan HTTP 422 "Email sudah terdaftar".
   - Kasir mencoba memanggil endpoint pendaftaran pengguna: Ditolak dengan HTTP 403 Forbidden.
+
+---
+
+## EPIC-08: ANALITIK PENJUALAN & BUSINESS INTELLIGENCE LANJUTAN
+
+### US-ANL-01: Visualisasi Tren Penjualan Dual-Axis & Ringkasan KPI
+* **Sebagai:** Admin Toko / Pemilik Usaha
+* **Saya ingin:** Melihat visualisasi grafik gabungan omset dan kuantitas transaksi beserta kartu KPI omset, rata-rata nilai order (AOV), dan volume unit terjual
+* **Agar:** Saya dapat mengevaluasi kesehatan pertumbuhan penjualan toko dan efektivitas transaksi secara presisi.
+* **Prioritas:** `SHOULD HAVE` (P1)
+* **Aturan Terkait:** BR-019
+* **Alur Skenario:**
+  1. Admin membuka menu navigasi "Analitik" (`/analytics`).
+  2. Sistem menampilkan kartu KPI: Total Omset (IDR), Total Transaksi, Rata-rata Nilai Order (AOV), dan Total Barang Terjual.
+  3. Sistem merender grafik dual-axis interaktif (Bar omset dan Line volume transaksi) sesuai filter rentang waktu terpilih (Hari Ini, Bulan Ini, Kuartal Ini, Tahun Ini).
+
+### US-ANL-02: Rekomendasi Paket Bundling (Market Basket Analysis)
+* **Sebagai:** Manajer Toko / Bagian Promosi
+* **Saya ingin:** Mengetahui kombinasi produk apa saja yang paling sering dibeli secara bersamaan oleh pelanggan
+* **Agar:** Saya dapat merancang paket promo *bundling* atau menata peletakan barang berdekatan di rak toko guna meningkatkan nilai transaksi (*basket size*).
+* **Prioritas:** `SHOULD HAVE` (P1)
+* **Aturan Terkait:** BR-020
+* **Alur Skenario:**
+  1. Admin mengakses tab atau bagian "Market Basket Analysis" di halaman Analitik.
+  2. Sistem menganalisis histori seluruh item dalam satu transaksi (`order_items`).
+  3. Sistem menampilkan daftar pasangan produk dengan frekuensi pembelian bersama minimal 2 kali (`pairCount >= 2`) diurutkan dari frekuensi tertinggi.
+  4. Sistem memberikan estimasi kalkulasi promo bundling diskon 5%-10%.
+
+### US-ANL-03: Distribusi Jam Sibuk Toko & Segmentasi Pelanggan
+* **Sebagai:** Admin / Manajer Operasional Toko
+* **Saya ingin:** Memeriksa grafik 24 jam pola kedatangan transaksi dan perbandingan kontribusi omset antara Member vs Pelanggan Umum
+* **Agar:** Saya dapat mengoptimalkan jadwal shift jaga kasir saat jam sibuk dan merancang program retensi loyalitas member.
+* **Prioritas:** `SHOULD HAVE` (P1)
+* **Alur Skenario:**
+  1. Admin meninjau grafik "Distribusi Jam Sibuk (Peak Hours)" untuk mengidentifikasi lonjakan transaksi harian.
+  2. Admin meninjau kartu "Segmentasi Pelanggan" yang menampilkan proporsi persentase omset dan volume pesanan antara member terdaftar dan walk-in.
+
+---
+
+## EPIC-09: ERGONOMI KASIR & OBSERVABILITAS PRODUKSI
+
+### US-POS-01: Navigasi Cepat Papan Ketik Kasir & Debounced Search
+* **Sebagai:** Kasir Toko
+* **Saya ingin:** Mengoperasikan kasir POS dengan tombol pintasan keyboard (F2, F8, F9, Esc) dan mencari produk tanpa jeda lag
+* **Agar:** Proses checkout antrean pelanggan berjalan cepat tanpa tergantung pada mouse atau trackpad.
+* **Prioritas:** `MUST HAVE` (P0)
+* **Aturan Terkait:** BR-021, BR-022
+* **Alur Skenario:**
+  1. Kasir menekan `F2` untuk langsung mengarahkan kursor ke input pencarian produk.
+  2. Kasir mengetik nama barang; sistem meredam pencarian dengan debounce 300ms untuk respon yang mulus.
+  3. Kasir menekan `F8` untuk menahan transaksi jika pelanggan ingin mengambil barang tambahan.
+  4. Kasir menekan `F9` untuk membuka modal konfirmasi pembayaran dan menyelesaikan nota.
+  5. Kasir menekan `Esc` jika ingin membatalkan/menutup modal yang terbuka.
+
+### US-OPS-01: Monitoring Metrik Prometheus & Stress Test Ketahanan
+* **Sebagai:** DevOps / Lead Engineer
+* **Saya ingin:** Memantau metrik performa aplikasi secara real-time via Prometheus endpoint dan memvalidasi integritas transaksi konkuren tinggi
+* **Agar:** Sistem beroperasi stabil di produksi, tidak terjadi kebocoran koneksi database, dan tidak ada celah *overselling*.
+* **Prioritas:** `MUST HAVE` (P0)
+* **Aturan Terkait:** NFR-PRF-01, NFR-MON-01
+* **Alur Skenario:**
+  1. Scraper eksternal atau developer memanggil `GET /api/metrics` untuk menginspeksi penggunaan CPU, heap, HTTP latency, dan PostgreSQL connection pool.
+  2. Developer menjalankan `pnpm benchmark` untuk menguji 30 checkout bersamaan pada stok 5 barang.
+  3. Seluruh 30 checkout selesai dalam $<200\text{ms}$ tanpa deadlock, tepat 5 berhasil, 25 ditolak, dan stok akhir tepat 0.

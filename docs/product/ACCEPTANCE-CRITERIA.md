@@ -494,3 +494,88 @@ Format pengujian mengadopsi standar **BDD (Behavior-Driven Development)**:
   - `[PASS]` TEST-07: Integritas soft delete produk (tidak bisa di-order, tetap tampil di riwayat lama).
   - `[PASS]` TEST-08: Soft delete user — blokir login & silent refresh ditolak, audit trail order tetap utuh.
   - `[PASS]` TEST-09: RBAC Guard — Kasir mengakses endpoint Admin (`/api/users`, `/api/audit-logs`) ditolak 403 Forbidden.
+
+---
+
+## 10. MODUL ANALITIK PENJUALAN & BUSINESS INTELLIGENCE (`analytics`)
+
+### AC-ANL-01: Ringkasan Metrik Overview & Filter Periode
+* **Terkait:** FR-ANL-01, BR-019
+* **Given:** Pengguna dengan role `ADMIN` login ke sistem dan membuka `/analytics`.
+* **When:** Memilih filter periode (`daily`, `monthly`, `quarterly`, `yearly`) atau kustom (`from`, `to`).
+* **Then:**
+  1. Server merespon `200 OK` via `GET /api/analytics/overview`.
+  2. Data menyajikan: `totalRevenue`, `totalOrders`, `averageOrderValue` (AOV), dan `totalUnitsSold`.
+  3. Menyertakan array tren multi-axis (`revenue` dan `orderCount` per titik waktu) untuk visualisasi dual-axis Recharts.
+  4. Response dibatasi hanya untuk role `ADMIN` (role `CASHIER` menerima `403 Forbidden`).
+
+### AC-ANL-02: Rekomendasi Bundling Kombo (Market Basket Analysis)
+* **Terkait:** FR-ANL-02, BR-020
+* **Given:** Terdapat minimal 2 transaksi di mana dua produk berbeda dibeli bersamaan dalam satu pesanan.
+* **When:** Memanggil `GET /api/analytics/basket-analysis`.
+* **Then:**
+  1. Server merespon `200 OK` dengan daftar pasangan produk.
+  2. Setiap pasangan menyajikan `productA`, `productB`, `pairCount` ($\ge 2$), dan estimasi `potentialDiscountRevenue`.
+  3. Pasangan diurutkan secara menurun (*descending*) berdasarkan `pairCount`.
+
+### AC-ANL-03: Distribusi Jam Belanja Sibuk (Peak Hours)
+* **Terkait:** FR-ANL-03
+* **Given:** Transaksi historis tercatat dengan timestamp `order_date` yang bervariasi.
+* **When:** Memanggil `GET /api/analytics/peak-hours`.
+* **Then:**
+  1. Server mengembalikan array 24 elemen (jam 00:00 s.d. 23:00) yang memetakan `orderCount` dan `totalRevenue` per jam.
+  2. Mengidentifikasi jam dengan transaksi tertinggi sebagai penanda jam sibuk toko (*peak shopping hour*).
+
+### AC-ANL-04: Segmentasi Pelanggan (Member vs Walk-in)
+* **Terkait:** FR-ANL-04, BR-013
+* **When:** Memanggil `GET /api/analytics/customer-segments`.
+* **Then:**
+  1. Server mengembalikan komparasi antara kategori `Member` (`customer_id IS NOT NULL`) dan `Walk-in` (`customer_id IS NULL`).
+  2. Menghitung persentase kontribusi omset (*revenue share*) dan persentase volume transaksi secara akurat.
+
+---
+
+## 11. ERGONOMI KASIR POS & PINTASAN KEYBOARD
+
+### AC-POS-01: Navigasi Cepat Papan Ketik (Keyboard Shortcuts)
+* **Terkait:** FR-POS-01, BR-021
+* **Given:** Kasir membuka antarmuka terminal kasir `/pos`.
+* **When:** Menekan tombol pintasan keyboard:
+  - `F2`: Fokus kursor langsung beralih ke input pencarian produk katalog.
+  - `F8`: Memicu fungsi tahan keranjang (*hold cart*) jika keranjang memiliki item.
+  - `F9`: Membuka modal konfirmasi pembayaran / checkout jika keranjang memiliki item.
+  - `Esc`: Menutup modal pembayaran atau modal hold tanpa memproses transaksi.
+* **Then:** Antarmuka merespon seketika tanpa perlu kasir menggunakan mouse/trackpad, dan badge visual tombol (`kbd`) tampil di tombol terkait.
+
+### AC-POS-02: Debounced Search Input
+* **Terkait:** FR-POS-01, BR-022
+* **Given:** Kasir mengetik kata kunci pencarian produk di `/pos` atau riwayat di `/orders`.
+* **When:** Kasir mengetik karakter dengan cepat (interval $<300\text{ms}$).
+* **Then:** Sistem menahan pengiriman query ke server hingga jeda pengetikan mencapai 300ms, mencegah *query flooding* ke database.
+
+---
+
+## 12. OBSERVABILITY, GIN TRIGRAM & STRESS BENCHMARK
+
+### AC-MON-01: Prometheus Metrics Scraping
+* **Terkait:** FR-MON-01, NFR-MON-01
+* **When:** Scraper Prometheus atau penguji memanggil `GET /api/metrics`.
+* **Then:**
+  1. Server merespon status `200 OK` dengan `Content-Type: text/plain; version=0.0.4`.
+  2. Menyertakan metrik CPU (`process_cpu_user_seconds_total`), heap memori V8, counter request `http_requests_total`, histogram `http_request_duration_seconds_bucket`, dan status connection pool PostgreSQL (`database_connections_active`, `idle`, `waiting`).
+
+### AC-PRF-01: Akselerasi Indeks GIN Trigram
+* **Terkait:** NFR-PRF-01
+* **Given:** Ekstensi `pg_trgm` terpasang di PostgreSQL.
+* **When:** Menjalankan query pencarian produk, pelanggan, atau invoice dengan pola substring `ILIKE '%keyword%'`.
+* **Then:** Query planner PostgreSQL mengeksekusi *Bitmap Index Scan* via indeks `idx_products_name_trgm`, `idx_customers_name_trgm`, atau `idx_orders_number_trgm` tanpa melakukan sequential scan.
+
+### AC-PRF-02: Benchmark Beban Konkuren Atomik
+* **Terkait:** NFR-REL-01, NFR-PRF-01
+* **Given:** Produk dengan sisa stok tepat 5 unit di database.
+* **When:** Skrip `pnpm benchmark` dijalankan, mengirimkan **30 request checkout konkuren** secara serentak.
+* **Then:**
+  1. Tepat 5 transaksi berhasil (`201 Created`).
+  2. Tepat 25 transaksi ditolak dengan bersih (`422 Unprocessable Entity`).
+  3. Sisa stok produk di database adalah tepat 0 (*zero-overselling*).
+  4. Durasi total eksekusi $< 500\text{ms}$ (throughput $> 200\text{ req/sec}$) tanpa *connection pool starvation* atau deadlock (40P01).
