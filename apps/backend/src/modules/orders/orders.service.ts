@@ -14,6 +14,7 @@ import { DiscardDraftOrderUseCase } from './use-cases/discard-draft-order.use-ca
 import { ResumeDraftOrderUseCase } from './use-cases/resume-draft-order.use-case';
 import { FindOrdersUseCase } from './use-cases/find-orders.use-case';
 import { GetOrderByIdUseCase } from './use-cases/get-order-by-id.use-case';
+import { ExportOrdersUseCase } from './use-cases/export-orders.use-case';
 
 @Injectable()
 export class OrdersService {
@@ -25,6 +26,7 @@ export class OrdersService {
     private readonly resumeDraftOrderUseCase: ResumeDraftOrderUseCase,
     private readonly findOrdersUseCase: FindOrdersUseCase,
     private readonly getOrderByIdUseCase: GetOrderByIdUseCase,
+    private readonly exportOrdersUseCase: ExportOrdersUseCase,
   ) {}
 
   async checkout(
@@ -61,5 +63,9 @@ export class OrdersService {
 
   async findById(id: number): Promise<OrderDetailData> {
     return this.getOrderByIdUseCase.execute(id);
+  }
+
+  async exportOrders(query: { from?: string; to?: string; customer_id?: string; search?: string }): Promise<Buffer> {
+    return this.exportOrdersUseCase.execute(query);
   }
 }

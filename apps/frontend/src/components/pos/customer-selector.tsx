@@ -10,6 +10,7 @@ export interface CustomerSelectorProps {
   onSelectCustomerType: (type: 'WALK_IN' | 'MEMBER') => void;
   onSelectCustomer: (customer: CustomerItem | null) => void;
   onOpenNewMemberModal: () => void;
+  searchInputRef?: React.RefObject<HTMLInputElement | null>;
 }
 
 export function CustomerSelector({
@@ -18,6 +19,7 @@ export function CustomerSelector({
   onSelectCustomerType,
   onSelectCustomer,
   onOpenNewMemberModal,
+  searchInputRef,
 }: CustomerSelectorProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<CustomerItem[]>([]);
@@ -95,6 +97,11 @@ export function CustomerSelector({
         >
           <UserCheck className="h-3.5 w-3.5" />
           <span>Member</span>
+          <kbd className={`text-[10px] font-mono px-1 py-0.2 rounded border ${
+            customerType === 'MEMBER'
+              ? 'bg-emerald-800/80 border-emerald-600 text-emerald-100'
+              : 'bg-slate-200 border-slate-300 text-slate-600'
+          }`}>F3</kbd>
         </button>
       </div>
 
@@ -165,6 +172,7 @@ export function CustomerSelector({
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
                   <input
+                    ref={searchInputRef}
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}

@@ -11,8 +11,9 @@ import {
   ParseIntPipe,
   HttpCode,
   HttpStatus,
+  Res,
 } from '@nestjs/common';
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
 import { OrdersService } from './orders.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -135,6 +136,28 @@ export class OrdersController {
     const ipAddress = (req.headers['x-forwarded-for'] as string) || req.ip;
     const userAgent = req.headers['user-agent'];
     return this.ordersService.finalizeDraft(cashierId, dto, { ipAddress, userAgent });
+  }
+
+  // GET /api/orders/export (MUST be declared before :id)
+  @Get('export')
+  @Roles(Role.ADMIN, Role.CASHIER)
+  async exportOrders(
+    @Query('from') from?: string,
+    @Query('to') to?: string,
+    @Query('customer_id') customer_id?: string,
+    @Query('search') search?: string,
+    @Res() res?: Response,
+  ) {
+    const buffer = await this.ordersService.exportOrders({ from, to, customer_id, search });
+    const filename = `Laporan_Penjualan_Titipin_${new Date().toISOString().slice(0, 10)}.xlsx`;
+
+    res?.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+      'Content-Length': String(buffer.length),
+    });
+
+    return res?.end(buffer);
   }
 
   // GET /api/orders/:id (MUST be declared after static sub-paths)

@@ -14,6 +14,7 @@ import {
   ChevronDown,
   X,
   Check,
+  FileSpreadsheet,
 } from 'lucide-react';
 import { apiClient } from '../../../lib/api-client';
 import { formatCurrency, formatDate } from '../../../lib/utils';
@@ -125,6 +126,41 @@ export default function OrdersHistoryPage() {
     return name.includes(q) || phone.includes(q);
   });
 
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportExcel = async () => {
+    setIsExporting(true);
+    try {
+      const params: Record<string, string> = {};
+      if (fromDate) params.from = fromDate;
+      if (toDate) params.to = toDate;
+      if (selectedCustomerId) params.customer_id = selectedCustomerId;
+      if (searchQuery.trim()) params.search = searchQuery.trim();
+
+      const response = await apiClient.get('/orders/export', {
+        params,
+        responseType: 'blob',
+      });
+
+      const blob = new Blob([response.data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      const todayStr = new Date().toISOString().slice(0, 10);
+      link.download = `Laporan_Penjualan_Titipin_${todayStr}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to export orders to Excel', err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -139,15 +175,28 @@ export default function OrdersHistoryPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={fetchOrders}
-          disabled={isLoading}
-          className="glass-button flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:text-slate-900 self-start sm:self-auto"
-        >
-          <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-          <span>Segarkan</span>
-        </button>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <button
+            type="button"
+            onClick={handleExportExcel}
+            disabled={isExporting || isLoading}
+            className="glass-button flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-emerald-800 hover:text-emerald-950 active:scale-95 transition-all disabled:opacity-60"
+            aria-label="Ekspor Excel"
+          >
+            <FileSpreadsheet className={`h-3.5 w-3.5 ${isExporting ? 'animate-bounce text-emerald-600' : 'text-emerald-700'}`} />
+            <span>{isExporting ? 'Mengekspor...' : 'Ekspor Excel'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={fetchOrders}
+            disabled={isLoading}
+            className="glass-button flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:text-slate-900 self-start sm:self-auto"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+            <span>Segarkan</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter Toolbar */}

@@ -183,4 +183,32 @@ describe('OrdersHistoryPage Component', () => {
       );
     });
   });
+
+  it('triggers Excel export when Ekspor Excel button is clicked', async () => {
+    window.URL.createObjectURL = vi.fn().mockReturnValue('blob:mock-url');
+    window.URL.revokeObjectURL = vi.fn();
+
+    vi.mocked(apiClient.get).mockImplementation((url: string) => {
+      if (url.includes('/orders/export')) {
+        return Promise.resolve({ data: new ArrayBuffer(8) });
+      }
+      return Promise.resolve({ data: { data: [] } });
+    });
+
+    render(<OrdersHistoryPage />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Ekspor Excel/i })).toBeDefined();
+    });
+
+    const exportBtn = screen.getByRole('button', { name: /Ekspor Excel/i });
+    fireEvent.click(exportBtn);
+
+    await waitFor(() => {
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/orders/export',
+        expect.objectContaining({ responseType: 'blob' }),
+      );
+    });
+  });
 });

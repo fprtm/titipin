@@ -234,4 +234,92 @@ describe('PosPage Component', () => {
       );
     });
   });
+
+  it('triggers checkout modal on F1 shortcut and closes on Escape', async () => {
+    render(<PosPage />);
+
+    // Add item to cart first
+    const productCard = await screen.findByText('Kopi Susu Gula Aren');
+    fireEvent.click(productCard);
+
+    // Press F1
+    fireEvent.keyDown(window, { key: 'F1', code: 'F1' });
+
+    // Payment modal should appear
+    expect(await screen.findByText('Pembayaran Tunai')).toBeDefined();
+
+    // Press Escape
+    fireEvent.keyDown(window, { key: 'Escape', code: 'Escape' });
+
+    // Payment modal should close
+    await waitFor(() => {
+      expect(screen.queryByText('Pembayaran Tunai')).toBeNull();
+    });
+  });
+
+  it('triggers hold cart on F4 shortcut', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce({
+      data: { success: true, message: 'Draft order created' },
+    } as never);
+
+    render(<PosPage />);
+
+    const productCard = await screen.findByText('Kopi Susu Gula Aren');
+    fireEvent.click(productCard);
+
+    // Press F4
+    fireEvent.keyDown(window, { key: 'F4', code: 'F4' });
+
+    await waitFor(() => {
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/orders/hold',
+        expect.objectContaining({
+          items: [{ product_id: 1, quantity: 1 }],
+        }),
+      );
+    });
+  });
+
+  it('allows toggling between 58mm and 80mm thermal receipt formats', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce({
+      data: {
+        success: true,
+        data: {
+          id: 100,
+          invoiceNumber: 'INV-TEST-5880',
+          totalAmount: 18000,
+          status: 'COMPLETED',
+        },
+      },
+    } as never);
+
+    render(<PosPage />);
+
+    const productCard = await screen.findByText('Kopi Susu Gula Aren');
+    fireEvent.click(productCard);
+
+    // Open payment and pay
+    const payBtn = await screen.findByText(/Bayar Sekarang/);
+    fireEvent.click(payBtn);
+
+    const confirmPayBtn = await screen.findByText('Selesaikan Pembayaran');
+    fireEvent.click(confirmPayBtn);
+
+    // Receipt modal opens
+    expect(await screen.findByText('Transaksi Berhasil')).toBeDefined();
+    expect(screen.getByText('58mm (Kecil)')).toBeDefined();
+    expect(screen.getByText('80mm (Standar)')).toBeDefined();
+
+    // Toggle to 58mm
+    const btn58mm = screen.getByText('58mm (Kecil)');
+    fireEvent.click(btn58mm);
+
+    expect(screen.getByText(/Cetak Struk \(58mm\)/)).toBeDefined();
+
+    // Toggle back to 80mm
+    const btn80mm = screen.getByText('80mm (Standar)');
+    fireEvent.click(btn80mm);
+
+    expect(screen.getByText(/Cetak Struk \(80mm\)/)).toBeDefined();
+  });
 });

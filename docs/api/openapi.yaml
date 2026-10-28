@@ -580,6 +580,45 @@ paths:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
 
+  /api/orders/export:
+    get:
+      tags: [Orders]
+      summary: Ekspor riwayat transaksi penjualan ke file Excel (.xlsx) multi-sheet
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Tanggal awal transaksi (YYYY-MM-DD)
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Tanggal akhir transaksi (YYYY-MM-DD)
+        - name: customer_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter ID pelanggan
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Cari nomor nota invoice
+      responses:
+        '200':
+          description: File Excel laporan transaksi berhasil di-generate
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
   /api/orders/hold:
     post:
       tags: [Orders]
