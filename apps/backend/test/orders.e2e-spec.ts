@@ -479,6 +479,34 @@ describe('OrdersController, POS Checkout & Draft Engine (E2E)', () => {
     expect(response.body.meta.page).toBe(1);
   });
 
+  it('Orders Search: Filters orders by invoice orderNumber and customerName', async (ctx) => {
+    if (!isOrdersModuleMounted) {
+      ctx.skip();
+      return;
+    }
+
+    // Search by invoice prefix/substring
+    const resOrderNumber = await request(app.getHttpServer())
+      .get('/api/orders?search=INV-')
+      .set('Authorization', `Bearer ${cashierAccessToken}`);
+
+    expect(resOrderNumber.status).toBe(200);
+    expect(resOrderNumber.body.success).toBe(true);
+    expect(Array.isArray(resOrderNumber.body.data)).toBe(true);
+    for (const item of resOrderNumber.body.data) {
+      expect(item.orderNumber).toContain('INV-');
+    }
+
+    // Search by non-existent query
+    const resNotFound = await request(app.getHttpServer())
+      .get('/api/orders?search=NON_EXISTENT_ORDER_XYZ_999')
+      .set('Authorization', `Bearer ${cashierAccessToken}`);
+
+    expect(resNotFound.status).toBe(200);
+    expect(resNotFound.body.data.length).toBe(0);
+    expect(resNotFound.body.meta.total).toBe(0);
+  });
+
   it('Orders Detail: GET /api/orders/:id returns invoice detail with immutable price snapshots', async (ctx) => {
     if (!isOrdersModuleMounted) {
       ctx.skip();

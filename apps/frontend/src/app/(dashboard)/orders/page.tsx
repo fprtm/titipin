@@ -26,12 +26,26 @@ export default function OrdersHistoryPage() {
   const [customers, setCustomers] = useState<CustomerItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
   const [isCustomerDropdownOpen, setIsCustomerDropdownOpen] = useState(false);
   const [customerSearchInput, setCustomerSearchInput] = useState('');
   const customerDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Debounce search query to prevent aggressive API requests while typing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Reset pagination when debounced search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch]);
 
   // Close customer dropdown on click outside
   useEffect(() => {
@@ -77,7 +91,7 @@ export default function OrdersHistoryPage() {
       if (fromDate) params.from = fromDate;
       if (toDate) params.to = toDate;
       if (selectedCustomerId) params.customer_id = selectedCustomerId;
-      if (searchQuery.trim()) params.search = searchQuery.trim();
+      if (debouncedSearch.trim()) params.search = debouncedSearch.trim();
 
       const res = await apiClient.get('/orders', { params });
       const items = res.data?.data?.items || (Array.isArray(res.data?.data) ? res.data?.data : []);
@@ -94,7 +108,7 @@ export default function OrdersHistoryPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, perPage, fromDate, toDate, selectedCustomerId, searchQuery]);
+  }, [currentPage, perPage, fromDate, toDate, selectedCustomerId, debouncedSearch]);
 
   useEffect(() => {
     fetchOrders();
@@ -108,6 +122,7 @@ export default function OrdersHistoryPage() {
 
   const handleResetFilters = () => {
     setSearchQuery('');
+    setDebouncedSearch('');
     setFromDate('');
     setToDate('');
     setSelectedCustomerId('');
@@ -135,7 +150,7 @@ export default function OrdersHistoryPage() {
       if (fromDate) params.from = fromDate;
       if (toDate) params.to = toDate;
       if (selectedCustomerId) params.customer_id = selectedCustomerId;
-      if (searchQuery.trim()) params.search = searchQuery.trim();
+      if (debouncedSearch.trim()) params.search = debouncedSearch.trim();
 
       const response = await apiClient.get('/orders/export', {
         params,
@@ -209,9 +224,23 @@ export default function OrdersHistoryPage() {
               type="text"
               placeholder="Cari No. Order..."
               value={searchQuery}
-              onChange={(e) => handleFilterChange(setSearchQuery, e.target.value)}
-              className="glass-input pl-9 pr-3 py-2 text-xs w-full"
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="glass-input pl-9 pr-8 py-2 text-xs w-full"
             />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setDebouncedSearch('');
+                  setCurrentPage(1);
+                }}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                aria-label="Hapus pencarian"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
 
           {/* Date from */}

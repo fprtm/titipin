@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Search, Package, Loader2, RefreshCw, X, Filter } from 'lucide-react';
 import type { ProductItem } from '@titipin/shared';
 import { ProductCard } from './product-card';
@@ -21,8 +21,23 @@ export function PosCatalog({
   onRefresh,
   searchInputRef,
 }: PosCatalogProps) {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [filterMode, setFilterMode] = useState<'ALL' | 'IN_STOCK' | 'LOW_STOCK'>('ALL');
+
+  // Debounce search query to prevent excessive re-renders / filtering on every keystroke
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchInput);
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  const handleClearSearch = () => {
+    setSearchInput('');
+    setDebouncedQuery('');
+    searchInputRef?.current?.focus();
+  };
 
   const cartQuantityMap = useMemo(() => {
     const map = new Map<number, number>();
@@ -35,7 +50,7 @@ export function PosCatalog({
   const filteredProducts = useMemo(() => {
     return products.filter((prod) => {
       // Search matching code or name
-      const query = searchQuery.toLowerCase().trim();
+      const query = debouncedQuery.toLowerCase().trim();
       if (query) {
         const name = (prod.productName || prod.product_name || '').toLowerCase();
         const code = (prod.productCode || prod.product_code || '').toLowerCase();
@@ -54,7 +69,7 @@ export function PosCatalog({
 
       return true;
     });
-  }, [products, searchQuery, filterMode]);
+  }, [products, debouncedQuery, filterMode]);
 
   return (
     <div className="flex flex-col h-full space-y-4">
@@ -67,16 +82,16 @@ export function PosCatalog({
             <input
               ref={searchInputRef}
               type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Cari nama produk atau kode barang... [F2]"
               className="glass-input w-full pl-10 pr-9 py-2 text-sm rounded-xl"
             />
-            {searchQuery && (
+            {searchInput && (
               <button
                 type="button"
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                onClick={handleClearSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                 aria-label="Hapus pencarian"
               >
                 <X className="h-4 w-4" />
@@ -158,8 +173,8 @@ export function PosCatalog({
             <div>
               <p className="text-sm font-semibold text-slate-700">Tidak ada produk ditemukan</p>
               <p className="text-xs text-slate-500 mt-0.5">
-                {searchQuery
-                  ? `Tidak ada hasil yang cocok dengan "${searchQuery}"`
+                {(debouncedQuery || searchInput)
+                  ? `Tidak ada hasil yang cocok dengan "${debouncedQuery || searchInput}"`
                   : 'Belum ada produk terdaftar dalam katalog'}
               </p>
             </div>
