@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Store, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, Sparkles } from 'lucide-react';
+import { Store, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../../hooks/use-auth';
 import { loginSchema } from '@titipin/shared';
 import { Button } from '../../../components/ui/button';
@@ -67,7 +67,6 @@ export default function LoginPage() {
           </div>
           <div className="flex items-center gap-1.5 pt-1">
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">Titipin POS</h1>
-            <Sparkles className="h-4 w-4 text-emerald-600" />
           </div>
           <p className="text-xs font-medium text-slate-500 sm:text-sm">
             Sistem Kasir & Order Management

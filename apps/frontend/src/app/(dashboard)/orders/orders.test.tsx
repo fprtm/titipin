@@ -107,6 +107,34 @@ describe('OrdersHistoryPage Component', () => {
     });
   });
 
+  it('searches order history with debounced search query and allows clearing search', async () => {
+    render(<OrdersHistoryPage />);
+
+    await waitFor(() => {
+      expect(screen.getByText('INV-20261028-0001')).toBeDefined();
+    });
+
+    const searchInput = screen.getByPlaceholderText('Cari No. Order...');
+    fireEvent.change(searchInput, { target: { value: 'Budi' } });
+
+    await waitFor(() => {
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/orders',
+        expect.objectContaining({
+          params: expect.objectContaining({ search: 'Budi' }),
+        }),
+      );
+    });
+
+    const clearBtn = screen.getByLabelText('Hapus pencarian');
+    expect(clearBtn).toBeDefined();
+    fireEvent.click(clearBtn);
+
+    await waitFor(() => {
+      expect(searchInput).toHaveProperty('value', '');
+    });
+  });
+
   it('renders empty state when no orders match', async () => {
     vi.mocked(apiClient.get).mockImplementation((url: string) => {
       if (url.includes('/orders')) {
